@@ -15,7 +15,6 @@ CREATE TABLE `posts` (
   `title` varchar(200) NOT NULL,
   `content` text NOT NULL,
   `view_count` integer NOT NULL DEFAULT 0,
-  `accepted_id` integer,
   `is_spoiler` tinyint NOT NULL DEFAULT 0,
   `is_notice` tinyint NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT (now()),
