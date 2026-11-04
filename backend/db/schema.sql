@@ -1,3 +1,9 @@
+CREATE DATABASE IF NOT EXISTS talesroom
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+use talesroom;
+
 CREATE TABLE `users` (
   `id` varchar(100) PRIMARY KEY,
   `password` varchar(255) NOT NULL,
@@ -96,12 +102,10 @@ CREATE TABLE `theme_reviews` (
 
 CREATE UNIQUE INDEX `uk_users_email` ON `users` (`email`);
 CREATE UNIQUE INDEX `uk_users_nickname` ON `users` (`nickname`);
-CREATE UNIQUE INDEX `uk_posts_accepted_id` ON `posts` (`accepted_id`);
 CREATE UNIQUE INDEX `uk_post_reactions_post_id_user_id` ON `post_reactions` (`post_id`, `user_id`);
 CREATE UNIQUE INDEX `uk_theme_reviews_theme_id_user_id` ON `theme_reviews` (`theme_id`, `user_id`);
 
 ALTER TABLE `posts` ADD CONSTRAINT `fk_posts_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-ALTER TABLE `posts` ADD CONSTRAINT `fk_posts_accepted_id` FOREIGN KEY (`accepted_id`) REFERENCES `comments` (`id`) ON DELETE SET NULL;
 
 ALTER TABLE `post_reactions` ADD CONSTRAINT `fk_post_reactions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 ALTER TABLE `post_reactions` ADD CONSTRAINT `fk_post_reactions_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE;
