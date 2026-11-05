@@ -2,6 +2,8 @@ const express = require('express');
 
 const themeController = require('../controllers/themeController');
 
+const themeReviewController = require('../controllers/themeReviewController');
+
 const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -20,5 +22,11 @@ router.put('/:id', authMiddleware, themeController.update);
 
 // 관리자 테마 삭제
 router.delete('/:id', authMiddleware, themeController.remove);
+
+//평점/후기 crud
+router.get('/{:id}/ratings', themeReviewController.getThemeReviews); //T-03
+
+router.post('/{:id}/ratings', authMiddleware, themeReviewController.createThemeReview); //T-04
+router.delete('/{:id}/ratings', authMiddleware, themeReviewController.deleteThemeReview); //T-05
 
 module.exports = router;
