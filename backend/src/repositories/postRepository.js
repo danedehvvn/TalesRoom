@@ -42,4 +42,9 @@ async function createLog(data, options) {
     return PostLog.create(data, options);
 }
 
-module.exports = { findAll, create, findById, update, createLog };
+// 글 삭제, destroy = 찾아 둔 글을 DB에서 지움
+async function remove(post) {
+    return post.destroy();
+}
+
+module.exports = { findAll, create, findById, update, createLog, remove };

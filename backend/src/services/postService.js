@@ -84,4 +84,15 @@ async function updatePost(user, id, body) {
     return { id: post.id };
 }
 
-module.exports = { getPosts, createPost,updatePost };
+// 삭제 함수
+async function deletePost(user, id) {
+    const post = await postRepository.findById(id);     // 1. 글이 있는지
+    if (!post) throw httpError(404, '게시글을 찾을 수 없습니다.');
+    const isOwner = post.userId === user.userId;        // 2. 권한(삭제는 작성자 또는 관리자)
+    const isAdmin = user.role === 'ADMIN';
+    if (!isOwner && !isAdmin) throw httpError(403, '작성자 또는 관리자만 삭제할 수 있습니다.');
+    
+    await postRepository.remove(post);                  // 3. 삭제
+}
+
+module.exports = { getPosts, createPost,updatePost, deletePost };

@@ -36,4 +36,16 @@ async function update(req, res) {
   }
 }
 
-module.exports = { getList, create, update };
+async function remove(req, res) {
+  try {
+    const id = Number(req.params.id);             // 글 번호
+    await postService.deletePost(req.user, id);
+    res.status(200).json({ success: true, data: null, message: '삭제되었습니다.'});   // 명세서
+  } catch (err) {
+    const status = err.status || 500;
+    if (status === 500) console.error(err);
+    res.status(status).json({ success: false, data: null, message: err.message });
+  }
+}
+
+module.exports = { getList, create, update, remove };

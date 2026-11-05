@@ -12,5 +12,6 @@ const fakeAuth = (req, res, next) => {
 router.get('/', postController.getList);                // P-01 목록
 router.post('/', fakeAuth, postController.create);      // P-03 작성 : 주소 -> fakeAuth -> create
 router.put('/:id', fakeAuth, postController.update);    // P-04 수정
+router.delete('/:id', fakeAuth, postController.remove); // P-05 삭제
 
 module.exports = router;
