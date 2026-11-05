@@ -1,0 +1,345 @@
+const bcrypt = require("bcrypt");
+const userRepository = require(
+  "../repositories/userRepository",
+);
+
+// Error 객체 만들기 함수입니다
+const createHttpError = (
+  statusCode,
+  message,
+) => {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+
+  return error;
+};
+
+// page size
+const parsePositiveInteger = (
+  value,
+  defaultValue,
+  fieldName,
+) => {
+  if (value === undefined) {
+    return defaultValue;
+  }
+
+  const parsedValue = Number(value); // req query 숫자로 변환
+
+  if (
+    !Number.isInteger(parsedValue) ||
+    parsedValue < 1
+  ) {
+    throw createHttpError(
+      400,
+      `${fieldName}는 1 이상의 정수여야 합니다.`,
+    );
+  }
+
+  return parsedValue;
+};
+
+//page, size를 db조회에쓸 값으로 바꾸기
+const parsePagination = (query = {}) => {
+  const page = parsePositiveInteger(
+    query.page,
+    1,
+    "page", // 기본값 1
+  );
+
+  const size = parsePositiveInteger(
+    query.size,
+    10,
+    "size", // 기본값 10
+  );
+
+  return {
+    page,
+    size,
+    offset: (page - 1) * size,
+  };
+};
+
+// U-01 내 정보 조회
+const getUserById = async (userId) => { // 로그인한 사람 정보를 db에서 조회합니다
+  const user =
+    await userRepository.findById(userId);
+
+  if (!user) { //!user면 404
+    throw createHttpError(
+      404,
+      "사용자를 찾을 수 없습니다.",
+    );
+  }
+
+  // 비밀번호 제외한 정보를 controller에 줍니다
+  return user; 
+};
+
+// U-02 닉네임·비밀번호 변경
+const updateProfile = async (
+  userId,
+  requestBody = {},
+) => {
+  const body =
+    requestBody &&
+    typeof requestBody === "object"
+      ? requestBody
+      : {};
+
+      // 수정가능한 필드 3개 
+  const {
+    nickname,
+    currentPassword,
+    newPassword,
+  } = body;
+
+  // 비밀번호 검증을 위해 암호화된 비밀번호 조회
+  const user =
+    await userRepository.findPasswordById(
+      userId,
+    );
+
+  if (!user) {
+    throw createHttpError(
+      404,
+      "사용자를 찾을 수 없습니다.",
+    );
+  }
+
+  // db에 전달할 수정 내용
+  const updateData = {};
+
+  // 닉네임 변경
+  if (nickname !== undefined) {
+    //닉네임은 문자열
+    if (typeof nickname !== "string") {
+      throw createHttpError(
+        400,
+        "닉네임 형식이 올바르지 않습니다.",
+      );
+    }
+
+    const normalizedNickname =
+      nickname.trim();
+
+    if (
+      normalizedNickname.length < 2 ||
+      normalizedNickname.length > 10
+    ) {
+      throw createHttpError(
+        400,
+        "닉네임은 2자 이상 10자 이하로 입력해야 합니다.",
+      );
+    }
+
+    //같은 닉네임 쓰는지 확인(회원있는지 조회하는 방식으로)
+    const nicknameOwner =
+      await userRepository.findByNickname(
+        normalizedNickname,
+      );
+
+      //중복닉네임 에러(조회된게 본인이 아니어야합니다)
+    if (
+      nicknameOwner &&
+      nicknameOwner.userId !== userId
+    ) {
+      throw createHttpError(
+        400,
+        "이미 사용 중인 닉네임입니다.",
+      );
+    }
+
+    //검증 끝난 닉네임만 수정 대상에 갑니다
+    updateData.nickname =
+      normalizedNickname;
+  }
+
+  // 둘중하나라도 되면 비밀번호 변경 요청으로 갑니다
+  const passwordChangeRequested =
+    currentPassword !== undefined ||
+    newPassword !== undefined;
+
+  // 비밀번호 변경
+  if (passwordChangeRequested) {
+    // 변경할때 새 비밀번호, 지금 비밀번호 필요합니다
+    if (
+      typeof currentPassword !== "string" ||
+      currentPassword.length === 0 ||
+      typeof newPassword !== "string" ||
+      newPassword.length === 0
+    ) {
+      throw createHttpError(
+        400,
+        "비밀번호 변경 시 현재 비밀번호와 새 비밀번호가 필요합니다.",
+      );
+    }
+
+    // 새 비밀번호에 영어, 숫자 있는지 확인
+    const hasLetter =
+      /[A-Za-z]/.test(newPassword);
+
+    const hasNumber =
+      /\d/.test(newPassword);
+
+    if (
+      newPassword.length < 8 ||
+      newPassword.length > 20 ||
+      !hasLetter ||
+      !hasNumber
+    ) {
+      throw createHttpError(
+        400,
+        "새 비밀번호는 8~20자이며 영문과 숫자를 포함해야 합니다.",
+      );
+    }
+
+    // 입력한 지금 비밀번호와 db bcrypt 해시랑 비교합니다
+    const passwordMatched =
+      await bcrypt.compare(
+        currentPassword,
+        user.password,
+      );
+
+    if (!passwordMatched) {
+      throw createHttpError(
+        400,
+        "현재 비밀번호가 올바르지 않습니다.",
+      );
+    }
+
+    // 가입때 쓴 bcrypt rounds를 읽습니다
+    const saltRounds = bcrypt.getRounds(
+      user.password,
+    );
+
+    // 새 비밀번호를 암호화
+    updateData.password =
+      await bcrypt.hash(
+        newPassword,
+        saltRounds,
+      );
+  }
+
+  // 닉네임과 비밀번호 모두 전달안되면 수정 안됩니다
+  if (Object.keys(updateData).length === 0) {
+    throw createHttpError(
+      400,
+      "변경할 정보가 없습니다.",
+    );
+  }
+
+  // 검증 끝난 필드만 db에 반영합니다
+  try {
+    await userRepository.update(
+      userId,
+      updateData,
+    );
+  } catch (error) {
+    // 같은 닉네임으로 변경할때, db unique 로 중복 오류 발생가능합니다
+    if (
+      error.name ===
+      "SequelizeUniqueConstraintError"
+    ) {
+      throw createHttpError(
+        400,
+        "이미 사용 중인 닉네임입니다.",
+      );
+    }
+
+    throw error;
+  }
+
+  // 수정된 정보 다시 조회
+  const updatedUser =
+    await userRepository.findById(userId);
+
+  if (!updatedUser) {
+    throw createHttpError(
+      404,
+      "사용자를 찾을 수 없습니다.",
+    );
+  }
+
+  // 필요한 값만 주기
+  return {
+    userId: updatedUser.userId,
+    nickname: updatedUser.nickname,
+  };
+};
+
+// U-03 내가 쓴 글
+const getMyPosts = async (
+  userId,
+  query = {},
+) => {
+  const {
+    page,
+    size,
+    offset,
+  } = parsePagination(query);
+
+  const [rows, totalCount] =
+    await Promise.all([
+      userRepository.findMyPosts(
+        userId,
+        size,
+        offset,
+      ),
+
+      userRepository.countMyPosts(
+        userId,
+      ),
+    ]);
+
+    // reposiotry 조회결과를 api 명세 items 형식으로 바꿈
+  const items = rows.map((row) => ({
+    id: row.id,
+    category: row.category,
+    title: row.title,
+
+    author: {
+      userId: row.author.userId,
+      nickname: row.author.nickname,
+    },
+
+    viewCount: Number(row.viewCount),
+    likeCount: Number(row.likeCount),
+    commentCount: Number(row.commentCount),
+    isSolved: Boolean(row.isSolved),
+    isSpoiler: Boolean(row.isSpoiler),
+    createdAt: row.createdAt,
+  }));
+
+  // 목록 페이징 정보를 Controller에 주기
+  return {items, page, size, totalCount, totalPages: Math.ceil(totalCount / size,),};
+};
+
+// U-04 내가 쓴 댓글
+const getMyComments = async (userId, query = {}) => {
+  const {page, size, offset} = parsePagination(query); // page, size를 실제 페이징 값으로 바꿈
+
+  // 댓글 목록, 전체 댓글 수 동시에 조회
+  const [rows, totalCount] =
+    await Promise.all([userRepository.findMyComments(userId, size, offset), userRepository.countMyComments(userId)]);
+
+    // Repository 조회 결과를 API 명세 형식으로 바꿈
+  const items = rows.map((row) => ({
+    id: row.id,
+    postId: row.postId,
+    postTitle: row.postTitle,
+    content: row.content,
+    isAccepted: Boolean(row.isAccepted),
+    createdAt: row.createdAt,
+  }));
+
+  // 목록 페이징 정보 controller에 주기
+  return {items, page, size, totalCount, totalPages: Math.ceil(totalCount / size),};
+};
+
+module.exports = {
+  getUserById,
+  updateProfile,
+  getMyPosts,
+  getMyComments,
+};

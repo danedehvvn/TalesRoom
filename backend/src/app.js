@@ -14,6 +14,10 @@ app.use(express.json());                            // 본문에 담긴 JSON 읽
 const authRouter = require('./routes/authRoutes');
 // 라우터 등록
 app.use('/api/auth', authRouter);
+// 라우터 불러오기 
+const userRouter = require('./routes/userRouter');
+// 라우터 등록
+app.use('/api/auth', userRouter);
 
 // 라우터 등록
 // app.use('/api/posts', postRouter);
@@ -30,6 +34,8 @@ app.get('/', (req, res) => {
 
 // 포트번호
 const PORT = process.env.PORT || 3000;
+
+
 
 // DB 접속 후 서버 ON
 sequelize.authenticate()
