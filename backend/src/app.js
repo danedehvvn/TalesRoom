@@ -25,6 +25,9 @@ app.use('/api/auth', userRouter);
 const postRouter = require('./routes/postRouter');  // 게시글 라우터 가져오기
 app.use('/api/posts', postRouter);                  // /api/posts로 시작하는 요청은 전부 postRouter가 처리
 
+const themeRouter= require('./routes/themeRoutes');
+app.use('/api/themes', themeRouter);
+
 
 // 서버 확인용 주소
 // http://localhost:3000/
