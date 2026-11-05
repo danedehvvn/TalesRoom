@@ -1,4 +1,4 @@
-const { Post, User } = require('../models');        // index.js에서 관계 설정이 끝난 모델을 가져옴
+const { Post, User, PostLog } = require('../models');        // index.js에서 관계 설정이 끝난 모델을 가져옴
 
 // 게시글 목록 조회 (공지 제외, 최신순, 작성자 포함)
 // async : 비동기 함수 ( DB 조회는 시간이 걸리기 떄문 )
@@ -27,4 +27,19 @@ async function create(data) {
     return Post.create(data);
 }
 
-module.exports = { findAll, create };
+// findByPk = 기본키(id)로 찾기
+async function findById(id) {
+    return Post.findByPk(id);
+}
+
+// 글 수정(UPDATE)
+async function update(post, data, options) {
+    return post.update(data,options);           // 수정 바로 반영
+}
+
+// 글 수정 기록 저장
+async function createLog(data, options) {
+    return PostLog.create(data, options);
+}
+
+module.exports = { findAll, create, findById, update, createLog };

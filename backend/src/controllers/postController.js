@@ -24,4 +24,16 @@ async function create(req, res) {
     }
 }
 
-module.exports = { getList, create };
+async function update(req, res) {
+  try {
+    const id = Number(req.params.id);
+    const data = await postService.updatePost(req.user, id, req.body);
+    res.status(200).json({ success: true, data, message: '수정되었습니다.'});   // 수정 성공 시
+  } catch (err) {
+    const status = err.status || 500;
+    if (status === 500) console.error(err);
+    res.status(status).json({ success: false, data: null, message: err.messgage });
+  }
+}
+
+module.exports = { getList, create, update };
