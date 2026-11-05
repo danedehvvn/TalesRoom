@@ -27,6 +27,9 @@ app.use('/api/posts', postRouter);                  // /api/posts로 시작하�
 const themeRouter= require('./routes/themeRoutes');
 app.use('/api/themes', themeRouter);
 
+const commentRouter= require('./routes/commentRouter');
+app.use('/api', commentRouter);
+
 
 // 서버 확인용 주소
 // http://localhost:3000/
