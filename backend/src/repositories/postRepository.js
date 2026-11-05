@@ -22,4 +22,9 @@ async function findAll() {
     });
 }
 
-module.exports = { findAll };
+// 게시글 1개 저장 (INSERT)
+async function create(data) {
+    return Post.create(data);
+}
+
+module.exports = { findAll, create };

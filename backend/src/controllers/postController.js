@@ -12,4 +12,16 @@ async function getList(req, res) {
   }
 }
 
-module.exports = { getList };
+async function create(req, res) {
+    try {
+        const data = await postService. createPost(req.user, req.body); // req.user : 로그인 정보, req.body : 프론트에서 보낸 정보
+        
+        res.status(201).json({ success: true, data, message: '게시글이 등록되었습니다.'});
+    } catch (err) {
+        const status = err.status || 500;
+        if (status === 500) console.error(err);
+        res.status(stats).json({ success: false, data: null, message: err.message });
+    }
+}
+
+module.exports = { getList, create };
