@@ -115,3 +115,8 @@ ALTER TABLE `comments` ADD CONSTRAINT `fk_comments_post_id` FOREIGN KEY (`post_i
 
 ALTER TABLE `theme_reviews` ADD CONSTRAINT `fk_theme_reviews_theme_id` FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`) ON DELETE CASCADE;
 ALTER TABLE `theme_reviews` ADD CONSTRAINT `fk_theme_reviews_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+CREATE INDEX `idx_posts_created_at` ON `posts` (`created_at`);
+CREATE INDEX `idx_comments_created_at` ON `comments` (`created_at`);
+CREATE INDEX `idx_themes_created_at` ON `themes` (`created_at`);
+CREATE INDEX `idx_theme_reviews_created_at` ON `theme_reviews` (`created_at`);
