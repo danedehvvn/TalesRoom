@@ -2,28 +2,53 @@ const { sequelize } = require('../models');
 const postRepository = require('../repositories/postRepository');
 const CATEGORIES = ['INFO', 'QUESTION', 'CHAT', 'DEBATE'];          // 카테고리 구분
 
-async function getPosts() {
-    const posts = await postRepository.findAll();       // 1. DB에서 글 목록 가져오기
-    const items = posts.map((post) => {                 // 2. API 명세서 items 형식으로 바꿈, map = 새 배열 만드는 함수
-        const p = post.get({ plain: true});
-
-        return {
-            id: p.id,
-            category: p.category,
-            title: p.title,
-            author: p.author,
-            viewCount: p.viewCount,
-            isSpoiler: p.isSpoiler === 1,               // DB에는 0/1, 명세서에는 true/false라고 되어있다. 오류 나면 확인해볼것
-            createdAt : p.createdAt,
-        };
-    });
-    return { items };
-}
-
 function httpError(status, message) {
     const err = new Error(message);                     // 사용자 노출 문구
     err.status = status;
     return err;
+}
+
+function toListItem(post) {
+    const p = post.get({ plain: true });
+    return {
+        id: p.id,
+        category: p.category,
+        title: p.title,
+        author: p.author,
+        viewCount: p.viewCount,
+        isSpoiler: p.isSpoiler === 1,
+        createdAt: p.createdAt,
+    };
+}
+
+// 주소 뒤 값들 문자열로 불러오기
+async function getPosts(query) {
+    const { category, keyword } = query;
+
+    if (category && !CATEGORIES.includes(category)) {   // 카테고리 검사
+        throw httpError(400, '잘못된 카테고리입니다.');
+    }
+    const page = Math.max(parseInt(query.page, 10) || 1, 1); // 페이지 검사
+    const size = Math.min(Math.max(parseInt(query.size, 10) || 10, 1), 50);
+    const offset = (page - 1) * size;
+
+    const [notices, result] = await Promise.all([                 // 공지 + 일반글 불러오기
+        postRepository.findNotices(),
+        postRepository.findPage({
+            category,
+            keyword: keyword ? keyword.trim() : undefined,        // 공백 제거
+            limit: size,
+            offset,
+        }),
+    ]);
+    return {                                                      // 명세서 응답 양식
+        notices: notices.map(toListItem),
+        items: result.rows.map(toListItem),
+        page,
+        size,
+        totalCount: result.count,
+        totalPages: Math.ceil(result.count/size),       // 올림
+    };
 }
 
 // 작성, 수정 공통 입력 검사
