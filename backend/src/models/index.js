@@ -3,6 +3,7 @@
 const sequelize = require('../config/db');      // DB 연결 객체
 const User = require('./User');                 // 회원 모델
 const Post = require('./Post');                 // 게시글 모델
+const PostLog = require('./PostLog');
 const Theme= require('./Theme');                // 테마 모델
 const ThemeReview = require('./ThemeReview');   // 후기평점 모델
 
@@ -13,6 +14,11 @@ User.hasMany(Post, { foreignKey: 'userId' });
 // as: 'author' -> 작성자 정보가 'author'라는 이름으로 들어감.
 Post.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 
+// + 수정 기록 여러개 (1:N)
+Post.hasMany(PostLog, { foreignKey: 'postId' });
+
+// 다른 파일에서 const { Post, User } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
+module.exports = { sequelize, User, Post, PostLog };
 // 회원(관리자) 1명 -> 테마 여러개 (1:N)
 User.hasMany(Theme, {foreignKey: 'userId'});
 Theme.belongsTo(User, {foreignKey: 'userId', as: 'author' })
