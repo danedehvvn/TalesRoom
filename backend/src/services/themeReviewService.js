@@ -90,24 +90,62 @@ const createThemeReview = async (rating,content,userId,themeId)=>{
     id: review.id, //새로 등록된 후기의 id 반환
     avgRating: summary.avgRating,
     reviewCount: summary.reviewCount
-  };
+  }
+
+}
+
+//3. 후기 삭제
+const deleteThemeReview=async (themeId, loginUserId, role, targetUserId)=>{
+
+  // 로그인 유저인지 확인
+  if (!loginUserId) {
+    const error = new Error('로그인이 필요합니다.');
+    error.status = 401;
+    throw error;
+  }
+
+  // 다른 회원의 후기 삭제는 관리자만 가능
+  if (targetUserId && targetUserId !== loginUserId && role !== 'ADMIN') {
+    const error = new Error('관리자만 다른 회원의 후기를 삭제할 수 있습니다.');
+    error.status = 403;
+    throw error;
+  }
+
+  // 테마 존재하는지 확인
+  const theme = await themeRepository.findThemeById(themeId);
+
+  if (!theme) {
+    const error = new Error('테마를 찾을 수 없습니다.');
+    error.status = 404;
+    throw error;
+  }
+
+   // 삭제 대상 결정 -일반유저면 자기 id, 관리자면 지정한 유저 id
+  const userId = targetUserId || loginUserId
+
+  //이 유저가 후기를 작성했는지 조회
+  const existingReview = await themeReviewRepository.findByThemeAndUser(themeId, userId);
+
+  if (!existingReview) {
+    const error = new Error('작성한 후기가 없습니다.');
+    error.status = 404;
+    throw error;
+  }
+
+  //삭제
+  await themeReviewRepository.deleteThemeReview(userId,themeId)
+
+  // 삭제 후 평균 평점과 후기 개수 조회
+  const summary = await themeReviewRepository.getRatingSummary(themeId);
+
+  return {
+    avgRating: summary.avgRating,
+    reviewCount: summary.reviewCount
+  }
 
 }
 
 
 
-// //2. 테마 상세 정보 조회
-// const getThemeById= async (id)=>{
-//   const theme= await themeRepository.findThemeById(id);
 
-//   if(!theme){ // 해당 아이디가 없으면
-//     const error = new Error('존재하지 않는 아이디의 테마입니다.');
-//     error.status=404;
-//     throw error;
-//   }
-
-//   return theme;
-// }
-
-
-module.exports = { getThemeReviews,createThemeReview };
+module.exports = { getThemeReviews,createThemeReview, deleteThemeReview };

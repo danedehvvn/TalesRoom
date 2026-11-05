@@ -13,7 +13,7 @@ router.get('/{:id}', themeController.getThemeById); //T-02
 router.get('/{:id}/ratings', themeReviewController.getThemeReviews); //T-03
 //인증 필요!
 router.post('/{:id}/ratings', themeReviewController.createThemeReview); //T-04
-// router.delete('/{:id}/ratings', themeReviewController) //T-05
+router.delete('/{:id}/ratings', themeReviewController.deleteThemeReview); //T-05
 
 
 

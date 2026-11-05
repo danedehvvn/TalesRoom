@@ -29,7 +29,7 @@ const getThemeReviews= async (req,res,next)=>{
 
   }catch(err){
 
-    // next(error); //공통 에러 미들웨어로 넘김(아직 없음)
+    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
     console.error(err)
 
     const status =err.status||500
@@ -62,7 +62,33 @@ const createThemeReview=async(req,res,next)=>{
 
 
   }catch(err){
-    // next(error); //공통 에러 미들웨어로 넘김(아직 없음)
+    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
+    console.error(err)
+
+    const status =err.status||500
+    res.status(status).json({error: err.message || "서버 오류가 발생했습니다."})
+  }
+}
+
+//3. 평점 후기 삭제
+const deleteThemeReview=async (req,res,next)=>{
+  try{
+
+    const themeId= Number(req.params.id);
+    const targetUserId = req.query.userId;
+
+    //로그인 유저 정보 가져오기 - 아직 인증 미들웨어 미연결 관계로 테스트용 하드코딩
+    // const loginUserId = req.user?.id;
+    // const role = req.user?.role;
+    const loginUserId = 'admin01';
+    const role = 'ADMIN';
+
+    const result= await themeReviewService.deleteThemeReview(themeId, loginUserId, role, targetUserId)
+
+    res.status(200).json({success: true, data: result, message:"후기가 삭제되었습니다."})
+
+  }catch(err){
+    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
     console.error(err)
 
     const status =err.status||500
@@ -71,4 +97,4 @@ const createThemeReview=async(req,res,next)=>{
 }
 
 
-module.exports = { getThemeReviews, createThemeReview};
+module.exports = { getThemeReviews, createThemeReview, deleteThemeReview};

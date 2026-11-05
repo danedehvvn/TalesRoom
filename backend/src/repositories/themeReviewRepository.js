@@ -52,24 +52,16 @@ const getRatingSummary = async (themeId) => {
 };
 
 
-// //3. 후기 평점 삭제
-// const deleteThemeReview=async(id)=>{
-
-// }
-// const deleteBoard =async (id)=>{
-//   const board=await Board.findByPk(id)
-
-//   if(!board){
-//     const error=new Error("게시글 못찾음")
-//     error.status=404
-//     throw error
-//   }
-
-//   await board.destroy();
-
-//   return board;
-// }
+//3. 후기 평점 삭제
+const deleteThemeReview=async(userId, themeId)=>{
+  return await ThemeReview.destroy(
+    {where: {
+      userId,
+      themeId
+    }}
+  )
+}
 
 
-module.exports = { findThemeReviews, createThemeReview, findByThemeAndUser, getRatingSummary };
+module.exports = { findThemeReviews, createThemeReview, findByThemeAndUser, getRatingSummary, deleteThemeReview };
 
