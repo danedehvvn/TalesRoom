@@ -67,7 +67,7 @@ async function createPost(user, body) {                 // user = 로그인한 �
 
     // 모든 조건 통과 -> 저장
     const post = await postRepository.create({
-        userId: user.userId,
+        userId: user.id,
         category,
         title,
         content,
@@ -81,7 +81,7 @@ async function createPost(user, body) {                 // user = 로그인한 �
 async function updatePost(user, id, body) {
     const post = await postRepository.findById(id);             // 1. 글이 있는지?
     if (!post) throw httpError(404, '게시글을 찾을 수 없습니다.');
-    const isOwner = post.userId === user.userId;                // 2. 권한: 작성자 본인인지?
+    const isOwner = post.userId === user.id;                // 2. 권한: 작성자 본인인지?
     const isAdminOnNotice = post.isNotice === 1 && user.role === 'ADMIN';
     if (!isOwner && !isAdminOnNotice) throw httpError(403, '작성자만 수정할 수 있습니다.');
     
@@ -90,7 +90,7 @@ async function updatePost(user, id, body) {
     await sequelize.transaction(async (t) => {                // 4. 트랜잭션: 전부 성공 or 전부 취소
         await postRepository.createLog({                        // 4-1. 수정 전 내용 저장
             postId: post.id,
-            userId: user.userId,
+            userId: user.id,
             category: post.category,
             title: post.title,
             content: post.content,
@@ -113,7 +113,7 @@ async function updatePost(user, id, body) {
 async function deletePost(user, id) {
     const post = await postRepository.findById(id);     // 1. 글이 있는지
     if (!post) throw httpError(404, '게시글을 찾을 수 없습니다.');
-    const isOwner = post.userId === user.userId;        // 2. 권한(삭제는 작성자 또는 관리자)
+    const isOwner = post.userId === user.id;        // 2. 권한(삭제는 작성자 또는 관리자)
     const isAdmin = user.role === 'ADMIN';
     if (!isOwner && !isAdmin) throw httpError(403, '작성자 또는 관리자만 삭제할 수 있습니다.');
     
