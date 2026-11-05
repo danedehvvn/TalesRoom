@@ -1,5 +1,5 @@
-const { ThemeReview, User} = require('../models');       
-
+const { ThemeReview, User, Theme} = require('../models');       
+const { fn, col } = require('sequelize');
 
 // 1. 후기평점 조회
 const findThemeReviews= async (themeId, limit, offset)=>{
@@ -18,15 +18,39 @@ const findThemeReviews= async (themeId, limit, offset)=>{
   });
 }
 
-// 2. 후기평점 등록
-// const createThemeReview= async(content)=>{
-//   return await Theme.findByPk(id);
-// }
+//2. 후기평점 등록
+const createThemeReview= async (rating, content, userId, themeId)=>{
+  const themeReveiw =await ThemeReview.create({rating, content, userId, themeId})
+  return themeReveiw;
+}
 
-// const createBoard=async(title, content, user_id)=>{
-//   const board =await Board.create({title, content, user_id})
-//   return board;
-// }
+// 2-1. 특정 회원이 해당 테마에 이미 후기를 작성했는지 확인
+const findByThemeAndUser = async (themeId, userId) =>{
+  return await ThemeReview.findOne({
+    where: {
+      themeId,
+      userId
+    }
+  });
+};
+
+// 2-2. 평균 평점과 후기 개수
+const getRatingSummary = async (themeId) => {
+  const result = await ThemeReview.findOne({
+    attributes: [
+      [fn('AVG', col('rating')), 'avgRating'],
+      [fn('COUNT', col('id')), 'reviewCount']
+    ],
+    where: { themeId },
+    raw: true
+  });
+
+  return {
+    avgRating: Number(result?.avgRating ?? 0), //? - 옵셔널 체이닝 적용
+    reviewCount: Number(result?.reviewCount ?? 0)
+  };
+};
+
 
 // //3. 후기 평점 삭제
 // const deleteThemeReview=async(id)=>{
@@ -47,4 +71,5 @@ const findThemeReviews= async (themeId, limit, offset)=>{
 // }
 
 
-module.exports = { findThemeReviews };
+module.exports = { findThemeReviews, createThemeReview, findByThemeAndUser, getRatingSummary };
+
