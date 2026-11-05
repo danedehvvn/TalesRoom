@@ -10,6 +10,11 @@ const app = express();
 app.use(cors({ origin: 'http://localhost:5173' })); // 프론트 React
 app.use(express.json());                            // 본문에 담긴 JSON 읽기
 
+// 라우터 불러오기
+const authRouter = require('./routes/authRoutes');
+// 라우터 등록
+app.use('/api/auth', authRouter);
+
 // 라우터 등록
 // app.use('/api/posts', postRouter);
 
