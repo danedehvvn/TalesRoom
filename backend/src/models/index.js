@@ -43,4 +43,3 @@ Comment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 // 다른 파일에서 const { Post, User } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
 
 module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment };
-
