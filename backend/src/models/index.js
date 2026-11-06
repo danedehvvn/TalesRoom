@@ -17,8 +17,6 @@ Post.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 // + 수정 기록 여러개 (1:N)
 Post.hasMany(PostLog, { foreignKey: 'postId' });
 
-// 다른 파일에서 const { Post, User } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
-module.exports = { sequelize, User, Post, PostLog };
 // 회원(관리자) 1명 -> 테마 여러개 (1:N)
 User.hasMany(Theme, {foreignKey: 'userId'});
 Theme.belongsTo(User, {foreignKey: 'userId', as: 'author' })
@@ -33,4 +31,4 @@ ThemeReview.belongsTo(User, {foreignKey:'userId', as: 'author'});
 
 
 // 다른 파일에서 const { Post, User } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
-module.exports = { sequelize, User, Post, Theme, ThemeReview };
+module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview };
