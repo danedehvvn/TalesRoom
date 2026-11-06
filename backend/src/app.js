@@ -12,12 +12,17 @@ app.use(express.json());                            // 본문에 담긴 JSON 읽
 
 // 라우터 불러오기
 const authRouter = require('./routes/authRoutes');
-// 라우터 등록
-app.use('/api/auth', authRouter);
-// 라우터 불러오기 
+app.use('/api/auth', authRouter);// 인증 라우터 등록
+// 라우터 불러오기
 const userRouter = require('./routes/userRouter');
 // 라우터 등록
-app.use('/api/auth', userRouter);
+app.use('/api/users', userRouter);
+
+const searchRouter = require('./routes/searchRouter');
+app.use('/api/search', searchRouter);
+
+const themeRouter = require('./routes/themeRouter');
+app.use('/api/themes', themeRouter);
 
 // 라우터 등록
 // app.use('/api/posts', postRouter);
@@ -25,8 +30,10 @@ app.use('/api/auth', userRouter);
 const postRouter = require('./routes/postRouter');  // 게시글 라우터 가져오기
 app.use('/api/posts', postRouter);                  // /api/posts로 시작하는 요청은 전부 postRouter가 처리
 
-const themeRouter= require('./routes/themeRoutes');
-app.use('/api/themes', themeRouter);
+
+
+const commentRouter= require('./routes/commentRouter');
+app.use('/api', commentRouter);
 
 
 // 서버 확인용 주소
@@ -37,8 +44,6 @@ app.get('/', (req, res) => {
 
 // 포트번호
 const PORT = process.env.PORT || 3000;
-
-
 
 // DB 접속 후 서버 ON
 sequelize.authenticate()
