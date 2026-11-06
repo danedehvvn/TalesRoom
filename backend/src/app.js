@@ -54,3 +54,6 @@ sequelize.authenticate()
     .catch((err) => {
         console.error('DB 연결 실패', err.message);
     });
+
+const adminRouter = require('./routes/adminRouter');
+app.use('/api/admin', adminRouter);
