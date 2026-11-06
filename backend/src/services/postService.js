@@ -47,7 +47,59 @@ async function getPosts(query) {
         page,
         size,
         totalCount: result.count,
-        totalPages: Math.ceil(result.count/size),       // 올림
+        totalPages: Math.ceil(result.count / size),       // 올림
+    };
+}
+
+// 게시글 상세 조회
+async function getPostDetail(id, user) {
+    // 1. 게시글 존재 여부 확인
+    const post = await postRepository.findById(id);
+    if (!post) { throw httpError(404, '게시글을 찾을 수 없습니다.'); }
+
+    // 2. 조회수 1 증가 실행
+    await postRepository.viewCount(post);
+
+    // 3. 연관된 작성자, 댓글, 좋아요 데이터가 포함된 상세 정보 조회
+    const detailedPost = await postRepository.findByIdWithDetails(id);
+    const p = detailedPost.get({plain: true});
+
+    // 좋아요 기능이 아직 구현 전이어서 임시로 해둠 
+    const likeCount =0; 
+    const liked = false;
+
+    // 4. 로그인 User의 좋아요 누름 여부
+    const reaction = await postRepository.findReaction(id, user ? user.id : null);
+
+    // comments 배열에서 채택된 댓글(isAccepted === 1)을 찾아 acceptedId 추출
+    const commentsList = p.comments || [];
+    const acceptedComment = commentsList.find(c => c.isAccepted === 1 || c.isAccepted === true);
+    const acceptedId = acceptedComment ? acceptedComment.id : null;
+
+    // 6. 데이터 조립 및 반환
+    return { 
+        id: p.id, 
+        category: p.category, 
+        title: p.title,
+        content: p.content,
+        isSpoiler: p.isSpoiler === 1,
+        isNotice: p.isNotice === 1,
+        isSolved: acceptedId !== null, //채택된 ID가 있으면 해결된 글 
+        acceptedId:acceptedId,
+        viewCount: p.viewCount +1, // +1 조회수 반영
+        likeCount: likeCount, // 좋아요 총 갯수 
+        liked:liked, // 본인이 좋아요 눌렀는지 여부 
+        isMine: user ? p.userId === user.id : false, // 내가 작성한 글인지 여부 
+        author: p.author,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+        comments: (p.comments || []).map(comment => ({
+            id: comment.id,
+            content: comment.content,
+            isAccepted: comment.id === acceptedId, // 해당 댓글이 채택되었는지 여부
+            author: comment.author,
+            createdAt: comment.createdAt,
+        })),
     };
 }
 
@@ -84,7 +136,7 @@ async function updatePost(user, id, body) {
     const isOwner = post.userId === user.id;                // 2. 권한: 작성자 본인인지?
     const isAdminOnNotice = post.isNotice === 1 && user.role === 'ADMIN';
     if (!isOwner && !isAdminOnNotice) throw httpError(403, '작성자만 수정할 수 있습니다.');
-    
+
     validatePostBody(user, body);                               // 3. 입력 검사
 
     await sequelize.transaction(async (t) => {                // 4. 트랜잭션: 전부 성공 or 전부 취소
@@ -116,8 +168,8 @@ async function deletePost(user, id) {
     const isOwner = post.userId === user.id;        // 2. 권한(삭제는 작성자 또는 관리자)
     const isAdmin = user.role === 'ADMIN';
     if (!isOwner && !isAdmin) throw httpError(403, '작성자 또는 관리자만 삭제할 수 있습니다.');
-    
+
     await postRepository.remove(post);                  // 3. 삭제
 }
 
-module.exports = { getPosts, createPost,updatePost, deletePost };
+module.exports = { getPosts, getPostDetail, createPost, updatePost, deletePost };

@@ -31,7 +31,7 @@ User.hasMany(ThemeReview, {foreignKey:'userId'});
 ThemeReview.belongsTo(User, {foreignKey:'userId', as: 'author'});
 
 // 게시글 1개 -> 댓글 여러 개 (1:N)
-Post.hasMany(Comment, { foreignKey: 'postId' });
+Post.hasMany(Comment, { foreignKey: 'postId', as :'comments'});
 Comment.belongsTo(Post, { foreignKey: 'postId' });
 
 // 회원 1명 -> 댓글 여러 개 (1:N)
