@@ -39,7 +39,7 @@ const findByNickname = async (nickname) => {
   });
 };
 
-// 이메일 중복 확인 (findByNickname과 같은 방식, 회원 아이디만 조회)
+// 이메일 중복 확인
 const findByEmail = async (email) => {
   return User.findOne({
     where: {

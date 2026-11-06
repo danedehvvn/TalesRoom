@@ -137,7 +137,7 @@ const updateProfile = async (
     }
 
     //같은 닉네임 쓰는지 확인 (authService 공용 함수 사용)
-    //두 번째 값으로 내 아이디(userId)를 넘겨서 본인은 검사에서 뺍니다
+    //두 번째 값으로 내 아이디(userId)를 넘겨서 본인은 검사 제외
     const duplicateError =
       await duplicateNickname(
         normalizedNickname,
