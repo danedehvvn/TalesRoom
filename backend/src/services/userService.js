@@ -2,6 +2,9 @@ const bcrypt = require("bcrypt");
 const userRepository = require(
   "../repositories/userRepository",
 );
+const { duplicateNickname } = require(
+  "./authService", // 닉네임 중복 검사 공용 함수
+);
 
 // Error 객체 만들기 함수입니다
 const createHttpError = (
@@ -133,20 +136,19 @@ const updateProfile = async (
       );
     }
 
-    //같은 닉네임 쓰는지 확인(회원있는지 조회하는 방식으로)
-    const nicknameOwner =
-      await userRepository.findByNickname(
+    //같은 닉네임 쓰는지 확인 (authService 공용 함수 사용)
+    //두 번째 값으로 내 아이디(userId)를 넘겨서 본인은 검사에서 뺍니다
+    const duplicateError =
+      await duplicateNickname(
         normalizedNickname,
+        userId,
       );
 
-      //중복닉네임 에러(조회된게 본인이 아니어야합니다)
-    if (
-      nicknameOwner &&
-      nicknameOwner.userId !== userId
-    ) {
+      //중복닉네임 에러
+    if (duplicateError) {
       throw createHttpError(
-        400,
-        "이미 사용 중인 닉네임입니다.",
+        duplicateError.status,
+        duplicateError.message,
       );
     }
 
