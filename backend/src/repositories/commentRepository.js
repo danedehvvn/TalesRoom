@@ -9,8 +9,8 @@ const findPostById = async (postId) => {
 const createComment = async (content, postId, userId) => {
     return await Comment.create({
         content,
-        post_Id: postId,
-        user_id: userId
+        postId: postId,
+        userId: userId
     });
 };
 
