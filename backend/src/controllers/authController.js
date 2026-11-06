@@ -7,7 +7,6 @@ const { isEmpty, duplicateId, duplicateEmail, duplicateNickname } = require('../
 const signup = async(req,res)=>{
     try {
         // 요청 본문에서 필요한 데이터 추출
-        // role(권한)은 받지 않는다. 요청에 role을 넣어 관리자로 가입하는 것을 막기 위해서다.
         const { id, password, email, nickname } = req.body;
 
         // 1. 필수 입력 값 확인
@@ -31,14 +30,13 @@ const signup = async(req,res)=>{
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // 4. 데이터베이스에 새로운 사용자 생성 및 저장 
-        // 중복 검사에서 앞뒤 공백을 지우고 비교했으므로, 저장할 때도 공백을 지운 값으로 저장
         await User.create({
             id: id.trim(),
             password: hashedPassword,   // 암호화 비밀번호 저장
             email: email.trim(),
             nickname: nickname.trim(),
-            // role은 넣지 않는다 → DB에 NULL로 저장되고, NULL이면 일반 회원으로 본다.
-            // 최초 관리자는 DB에서 직접 'ADMIN'으로 지정하고, 이후 관리자는 유저 리스트 화면에서 부여한다.
+            //role은 넣지 않는다 → DB에 NULL로 저장되고, NULL이면 일반 회원
+            //최초 관리자는 DB에서 직접 'ADMIN'으로 지정 부여한다
         });
 
         // 5. 회원 가입 성공 응답 반환
