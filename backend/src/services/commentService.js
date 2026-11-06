@@ -63,4 +63,66 @@ const deleteComment = async (commentId, loginUser) => {
     return true;
 };
 
-module.exports = { createComment, deleteComment };
+//3. 답변 채택 비즈니스 로직
+const acceptComment = async (commentId, loginUser) => {
+
+    // 댓글 존재 여부 확인
+    const comment = await commentRepository.findCommentById(commentId);
+
+    if (!comment){
+        const error= new Error('댓글을 찾을 수 없습니다.');
+        error.status = 404;
+        throw error;
+    }
+
+    // 게시글 존재 여부 확인
+    const post = await commentRepository.findPostById(comment.postId);
+
+    if (!post){
+        const error = new Error('게시글을 찾을 수 없습니다.');
+        error.status = 404;
+        throw error;
+    }
+
+    // 질문 카테고리인지 확인
+    if (post.category !== 'QUESTION'){
+        const error = new Error('질문 카테고리 글만 채택할 수 있습니다.');
+        error.status = 400;
+        throw error;
+    }
+
+    // 질문 작성자인지 확인
+    if (post.userId !== loginUser.id){
+        const error = new Error('질문 작성자만 채택할 수 있습니다.');
+        error.status = 403;
+        throw error;
+    }
+
+    // 본인 댓글은 채택 불가
+    if (comment.userId === loginUser.id) {
+        const error = new Error('본인 댓글은 채택할 수 없습니다.');
+        error.status = 400;
+        throw error;
+    }
+
+    // 이미 채택된 답변이 있는지 확인. 있으면 400 반환
+    const accepted = await commentRepository.findAcceptedComment(post.id);
+
+    if (accepted) {
+        const error = new Error('이미 채택된 답변이 있습니다.');
+        error.status = 400;
+        throw error;
+    }
+
+    // 답변 채택
+    await commentRepository.acceptComment(comment);
+
+    return {
+        postId: post.id,
+        acceptedId: comment.id,
+        isSolved: true // 추후 게시글 조회 api 수정시 수정 필요
+    };
+};
+
+
+module.exports = { createComment, deleteComment, acceptComment };
