@@ -31,7 +31,7 @@ async function update(req, res) {
   } catch (err) {
     const status = err.status || 500;
     if (status === 500) console.error(err);
-    res.status(status).json({ success: false, data: null, message: err.messgage });
+    res.status(status).json({ success: false, data: null, message: err.message });
   }
 }
 
