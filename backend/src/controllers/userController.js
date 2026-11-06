@@ -33,7 +33,7 @@ const sendErrorResponse = (
 const getMyInfo = async (req, res) => {
   try {
     // 미들웨어에서 저장한 id
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     // service에 사용자 정보 조회 요청
     const data =
@@ -52,7 +52,7 @@ const getMyInfo = async (req, res) => {
 
 const updateMyInfo = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const data =
       await userService.updateProfile(
@@ -73,7 +73,7 @@ const updateMyInfo = async (req, res) => {
 
 const getMyPosts = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const data =
       await userService.getMyPosts(
@@ -94,7 +94,7 @@ const getMyPosts = async (req, res) => {
 
 const getMyComments = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const data =
       await userService.getMyComments(
