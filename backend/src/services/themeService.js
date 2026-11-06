@@ -1,31 +1,31 @@
 const themeRepository = require('../repositories/themeRepository');
 
 //1. 테마 목록 조회
-const getThemes=async(page)=>{
-  const limit= 10; //10개 페이징
-  const offset = (page-1)*limit;
+const getThemes=async(page, size)=>{
+    const limit= size;
+    const offset = (page-1)*limit;
 
-  const result = await themeRepository.findAllThemes(limit, offset); //{count, rows} 반환
+    const result = await themeRepository.findAllThemes(limit, offset); //{count, rows} 반환
 
   // Sequelize 모델 결과(result) → API 응답 객체로 변환
-  const items = result.rows.map((theme) => {
+    const items = result.rows.map((theme) => {
     const t = theme.get({ plain: true });
 
     //JSON 응답 형식 맞춰서
     return {
-      id: t.id,
-      title: t.title,
-      storeName: t.storeName,
-      genre: t.genre,
-      minPeople: t.minPeople,
-      maxPeople: t.maxPeople,
-      playTime: t.playTime,
-      difficulty: t.difficulty,
-      createdAt: t.createdAt,
+        id: t.id,
+        title: t.title,
+        storeName: t.storeName,
+        genre: t.genre,
+        minPeople: t.minPeople,
+        maxPeople: t.maxPeople,
+        playTime: t.playTime,
+        difficulty: t.difficulty,
+        createdAt: t.createdAt,
     };
-  });
+    });
 
-  return{
+    return{
     items, //변환된 배열
     pagination:{
       page,

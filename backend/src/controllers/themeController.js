@@ -10,13 +10,19 @@ const getThemes= async (req,res,next)=>{
       page=1;
     }
 
-    const result =await themeService.getThemes(page)
+    let size=Number(req.query.size ) || 10;
 
-    res.status(200).json(result)
+    if(!Number.isSafeInteger(size) || size <1){
+      page=10;
+    }
+
+    const result =await themeService.getThemes(page, size);
+
+    res.status(200).json({success: true, data: result, message:"OK"});
 
   }catch(err){
 
-    // next(error); //공통 에러 미들웨어로 넘김(아직 없음)
+    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
     console.error(err)
 
     const status =err.status||500
@@ -42,7 +48,7 @@ const getThemeById = async(req,res,next)=>{
     res.status(200).json(theme);
 
   }catch(err){
-    // next(error); //공통 에러 미들웨어로 넘김(아직 없음)
+    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
     console.error(err)
 
     const status =err.status||500
