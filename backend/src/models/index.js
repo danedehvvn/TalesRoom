@@ -6,6 +6,7 @@ const Post = require('./Post');                 // 게시글 모델
 const PostLog = require('./PostLog');
 const Theme= require('./Theme');                // 테마 모델
 const ThemeReview = require('./ThemeReview');   // 후기평점 모델
+const Comment = require('./Comment');   // 댓글 모델
 
 // 회원 1명 -> 글 여러개 (1:N)
 User.hasMany(Post, { foreignKey: 'userId' });
@@ -31,6 +32,15 @@ ThemeReview.belongsTo(Theme,{foreignKey:'themeId'})
 User.hasMany(ThemeReview, {foreignKey:'userId'});
 ThemeReview.belongsTo(User, {foreignKey:'userId', as: 'author'});
 
+// 게시글 1개 -> 댓글 여러 개 (1:N)
+Post.hasMany(Comment, { foreignKey: 'postId' });
+Comment.belongsTo(Post, { foreignKey: 'postId' });
+
+// 회원 1명 -> 댓글 여러 개 (1:N)
+User.hasMany(Comment, { foreignKey: 'userId' });
+Comment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
+
+
 
 // 다른 파일에서 const { Post, User } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
-module.exports = { sequelize, User, Post, Theme, ThemeReview };
+module.exports = { sequelize, User, Post, Theme, ThemeReview, Comment };

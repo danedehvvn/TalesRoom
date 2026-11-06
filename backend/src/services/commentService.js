@@ -21,7 +21,7 @@ const createComment = async (postId, content, loginUser) => {
     const newComment = await commentRepository.createComment(content, postId, loginUser.id);
 
     // 질문 카테고리인 경우 메시지 분기 처리
-    const successMessage = post.category === '질문'
+    const successMessage = post.category === 'QUESTION'
         ? '답변이 등록되었습니다.'
         : '댓글이 등록되었습니다.';
 
@@ -42,14 +42,14 @@ const deleteComment = async (commentId, loginUser) => {
     }
 
     // 채택된 답변인지 확인
-    if (comment.is_adopted) {
+    if (comment.isAccepted) {
         const error = new Error('채택된 답변은 삭제할 수 없습니다.');
         error.status = 400;
         throw error;
     }
 
     // 권한 검사 (작성자 본인 또는 관리자)
-    const isOwner = comment.user_id === loginUser.id;
+    const isOwner = comment.userId === loginUser.id;
     const isAdmin = loginUser.role === 'admin';
 
     if (!isOwner && !isAdmin) {
