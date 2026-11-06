@@ -10,7 +10,7 @@
    - 파일: `02_요구사항분석서_취업할거조.pdf`
 3. **DB 명세서 (ERD 포함)** -업로드x
    - 파일: `03_DB명세서_취업할거조.pdf`
-4. **클래스 다이어그램** -업로드x
+4. **클래스 다이어그램** -업로드 o
    - 파일: `04_클래스다이어그램_취업할거조.pdf`
 5. **WBS (작업 분할 구조도)**
    - 링크: 🔗 [05*WBS*취업할거조 (구글 문서 바로가기)](https://docs.google.com/document/d/1lKusY2YVK_uV0R0vQyORB8fQ8jOO9nXEH5wKkuFj9qY/edit?tab=t.0)
