@@ -109,4 +109,4 @@ async function findReaction(postId, userId) {
     return PostReaction.findone({ where: { postId, userId } });
 }
 
-module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove};
+module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove, findReaction};
