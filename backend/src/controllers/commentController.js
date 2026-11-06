@@ -67,4 +67,33 @@ const deleteComment = async (req, res) => {
     }
 };
 
-module.exports = { createComment, deleteComment };
+//3. 답변 채택
+const acceptComment= async(req,res)=>{
+    try{
+        const commentId=Number(req.params.id); //댓글 번호
+        const loginUser=req.user;
+
+        // 로그인 확인
+        if (!loginUser || !loginUser.id) {
+            return res.status(401).json({
+                success: false,
+                data: null,
+                message: '로그인이 필요합니다.'
+            });
+        }
+
+        const result= await commentService.acceptComment(commentId, loginUser);
+        
+        res.status(200).json({success: true, data: result, message:"답변이 채택되었습니다."});
+
+    }catch(error){
+        console.error('답변 채택 에러: ', error);
+        const status = error.status || 500;
+        return res.status(status).json({
+            success: false,
+            message: error.message || '서버 내부 오류가 발생했습니다.'
+        });
+    }
+}
+
+module.exports = { createComment, deleteComment, acceptComment };
