@@ -1,5 +1,5 @@
-const { Post, User, PostLog } = require('../models');        // index.js에서 관계 설정이 끝난 모델을 가져옴
-const { Op } = require('sequelize');                         // Op ?? : Sequelize의 조건 연산자
+const { Post, Comment, User, PostLog } = require('../models');        // index.js에서 관계 설정이 끝난 모델을 가져옴
+const { Op, where } = require('sequelize');                         // Op ?? : Sequelize의 조건 연산자
 
 const List_ATTRIBUTES = ['id', 'category', 'title', 'viewCount', 'isSpoiler', 'createdAt'];
 const AUTHOR_INCLUDE = {
@@ -14,7 +14,7 @@ const AUTHOR_INCLUDE = {
 // 1. 페이징 상관 없이 공지 전부 넣기
 async function findNotices() {
     return Post.findAll({
-        where: { isNotice: 1},
+        where: { isNotice: 1 },
         attributes: List_ATTRIBUTES,
         include: [AUTHOR_INCLUDE],
         order: [['createdAt', 'DESC']],
@@ -29,7 +29,7 @@ async function findPage({ category, keyword, limit, offset }) {
     if (keyword) {                              // 키워드 입력 시
         where[Op.or] = [
             { title: { [Op.like]: `%${keyword}%` } },
-            { content: { [Op.like]: `%${keyword}` } },
+            { content: { [Op.like]: `%${keyword}%` } }, // % 빠진 거 추가
         ];
     }
     return Post.findAndCountAll({               // 목록과 개수 반환
@@ -52,9 +52,45 @@ async function findById(id) {
     return Post.findByPk(id);
 }
 
+// 상세 조회를 위한 게시글 + 작성자 + 댓글 목록 조회
+async function findByIdWithDetails(id) {
+    const { Post, Comment, User } = require('../models'); // PostReaction 제외
+
+    return await Post.findByPk(id, {
+        include: [
+            // 1. 게시글 작성자 정보
+            {
+                model: User,
+                as: 'author',
+                attributes: ['id', 'nickname', 'email', 'role']
+            },
+            // 2. 댓글 목록 및 댓글 작성자 정보
+            {
+                model: Comment,
+                as: 'comments',
+                separate: true,
+                order: [['createdAt', 'DESC']],
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        attributes: ['id', 'nickname', 'email', 'role']
+                    }
+                ]
+            }
+            // ★ 좋아요(PostReaction)는 임시로 주석 처리 또는 제외
+        ]
+    });
+}
+
+// 조회수 1 증가 
+async function viewCount(post) {
+    return post.increment('viewCount');
+}
+
 // 글 수정(UPDATE)
 async function update(post, data, options) {
-    return post.update(data,options);           // 수정 바로 반영
+    return post.update(data, options);           // 수정 바로 반영
 }
 
 // 글 수정 기록 저장
@@ -67,4 +103,10 @@ async function remove(post) {
     return post.destroy();
 }
 
-module.exports = { findNotices, findPage, create, findById, update, createLog, remove };
+// 특정 User가 해당 게시글에 좋아요 눌렀는지 확인
+async function findReaction(postId, userId) {
+    if (!userId) return null;
+    return PostReaction.findone({ where: { postId, userId } });
+}
+
+module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove};

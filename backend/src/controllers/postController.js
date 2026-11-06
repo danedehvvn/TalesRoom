@@ -11,6 +11,19 @@ async function getList(req, res) {
   }
 }
 
+// 게시글 상세 조회 컨트롤러 
+async function getDetail(req, res) {
+  try {
+    const id = Number(req.params.id);
+    const data = await postService.getPostDetail(id, req.user);
+    res.status(200).json({ success: true, data, message: 'OK' });
+  } catch (err) {
+    const status = err.status || 500;
+    if (status === 500) console.error(err);
+    res.status(status).json({ success: false, data: null, message: err.message });
+  }
+}
+
 async function create(req, res) {
     try {
         const data = await postService. createPost(req.user, req.body); // req.user : 로그인 정보, req.body : 프론트에서 보낸 정보
@@ -47,4 +60,4 @@ async function remove(req, res) {
   }
 }
 
-module.exports = { getList, create, update, remove };
+module.exports = { getList, getDetail, create, update, remove };
