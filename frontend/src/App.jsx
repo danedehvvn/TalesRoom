@@ -7,6 +7,7 @@ import ThemeFormPage from './pages/ThemeFormPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import PostDetailPage from './pages/PostDetailPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/themes/new" element={<ThemeFormPage key="new" />} />
             <Route path="/themes/:id" element={<ThemeDetailPage />} />
             <Route path="/themes/:id/edit" element={<ThemeFormPage key="edit" />} />
+            <Route path="/posts/:id" element={<PostDetailPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
