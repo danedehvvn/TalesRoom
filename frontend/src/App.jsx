@@ -1,25 +1,24 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Layout from "./components/Layout";
-import AuthProvider from "./context/AuthProvider";
-
-//페이지 불러오기
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-// import SignUpPage from "./pages/SignUpPage";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import AuthProvider from './context/AuthProvider';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
-    // AuthProvider로 감싸면 모든 페이지에서 useAuth()로 로그인 상태 사용
     <AuthProvider>
       <BrowserRouter>
+        <Header />
         <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            {/* <Route path="/sign-up" element={<SignUpPage />} /> */}
-          </Route>
+          { /* 기본 '/' 경로로 들어왔을 때 메인 홈페이지가 보이도록 설정*/}
+          <Route path="/" element={<HomePage />} />
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </AuthProvider>
   );

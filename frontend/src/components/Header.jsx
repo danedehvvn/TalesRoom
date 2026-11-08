@@ -28,7 +28,7 @@ function Header() {
           <NavLink to="/themes">테마 탐색</NavLink>
         </div>
 
-        {/* 로그인 상태에 따라 "닉네임 + 로그아웃" 또는 "로그인" 표시 */}
+        {/* 로그인 상태에 따라 "닉네임 + 로그아웃" 또는 "로그인 / 회원가입" 표시 */}
         {isLoggedIn ? (
           <div className="user-menu">
             <span className="user-nickname">{user.nickname}님</span>
@@ -37,9 +37,10 @@ function Header() {
             </button>
           </div>
         ) : (
-          <Link to="/login" className="login-link">
-            로그인
-          </Link>
+          <div className="auth-links" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <Link to="/login" className="login-link"> 로그인 </Link>
+            <Link to="/signup" className="signup-link"> 회원가입 </Link>
+          </div>
         )}
       </nav>
     </header>
