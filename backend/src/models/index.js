@@ -7,6 +7,7 @@ const PostLog = require('./PostLog');
 const Theme= require('./Theme');                // 테마 모델
 const ThemeReview = require('./ThemeReview');   // 후기평점 모델
 const Comment = require('./Comment');   // 댓글 모델
+const PostReaction = require('./PostReaction');// 게시글 좋아요 모델
 
 // 회원 1명 -> 글 여러개 (1:N)
 User.hasMany(Post, { foreignKey: 'userId' });
@@ -38,8 +39,11 @@ Comment.belongsTo(Post, { foreignKey: 'postId' });
 User.hasMany(Comment, { foreignKey: 'userId' });
 Comment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 
+// 게시글 1개 -> 좋아요 여러 개 (1:N)
+// hasMany : 게시글과 좋아요의 관계에서 1쪽의 모델(Post)에서 N쪽의 모델(PostReactions)을 참조할 때 사용
+// belongsTo : 게시글과 좋아요의 관계에서 N쪽의 모델(PostReactions)에서 1쪽의 모델(Post)을 참조할 때 사용
+Post.hasMany(PostReaction, { foreignKey: 'postId', as: 'reactions' });//as: 'reactions' -> 게시글 상세에서 좋아요 정보를 전부 가지고 있는 배열 변수명(reactions)으로 들어감
+PostReaction.belongsTo(Post, { foreignKey: 'postId' });
 
-
-// 다른 파일에서 const { Post, User } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
-
-module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment };
+// 다른 파일에서 const { Post, User, PostLog, Theme, ThemeReview, Comment, PostReactions } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
+module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment, PostReaction };
