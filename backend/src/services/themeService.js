@@ -1,4 +1,5 @@
 const themeRepository = require('../repositories/themeRepository');
+const themeReviewRepository = require('../repositories/themeReviewRepository');
 
 //1. 테마 목록 조회
 const getThemes=async(page, size)=>{
@@ -37,7 +38,7 @@ const getThemes=async(page, size)=>{
 }
 
 //2. 테마 상세 정보 조회
-const getThemeById= async (id)=>{
+const getThemeById= async (id, authUser)=>{
   const theme= await themeRepository.findThemeById(id);
 
   if(!theme){ // 해당 아이디가 없으면
@@ -46,7 +47,19 @@ const getThemeById= async (id)=>{
     throw error;
   }
 
-  return theme;
+  const [summary, myReview] = await Promise.all([
+    themeReviewRepository.getRatingSummary(id),
+    authUser?.id
+      ? themeReviewRepository.findByThemeAndUser(id, authUser.id)
+      : Promise.resolve(null)
+  ]);
+
+  return {
+    ...theme.get({ plain: true }),
+    avgRating: summary.avgRating,
+    reviewCount: summary.reviewCount,
+    myReviewed: Boolean(myReview)
+  };
 }
 
 
@@ -290,6 +303,7 @@ async function getFilteredThemes(query = {}) {
         difficulty: Number(row.difficulty),
         minPeople: Number(row.minPeople),
         maxPeople: Number(row.maxPeople),
+        playTime: Number(row.playTime),
         price: Number(row.price),
         imageUrl: null,
         avgRating: Number(row.avgRating),

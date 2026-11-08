@@ -103,10 +103,11 @@ async function remove(post) {
     return post.destroy();
 }
 
-// 특정 User가 해당 게시글에 좋아요 눌렀는지 확인
+/* // 특정 User가 해당 게시글에 좋아요 눌렀는지 확인 -> postReactionRepository에 있음
 async function findReaction(postId, userId) {
     if (!userId) return null;
     return PostReaction.findone({ where: { postId, userId } });
-}
+} */
 
-module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove, findReaction};
+// module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove, findReaction};
+module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove };   //--! 주석 처리한 findReaction 제거 (postReactionRepository로 옮김)

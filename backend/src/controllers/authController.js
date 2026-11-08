@@ -1,13 +1,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');// 로그인 토큰(JWT) 발급
-const { User } = require('../models');    
-const { Op } = require('sequelize');    
+const { User } = require('../models');
+const { isEmpty, duplicateId, duplicateEmail, duplicateNickname } = require('../services/authService'); // 중복 검사 함수
 
 // 회원 가입 컨트롤러
-exports.signup = async (req, res) => {
+const signup = async(req,res)=>{
     try {
         // 요청 본문에서 필요한 데이터 추출
-        const { id, password, email, nickname, role } = req.body;
+        const { id, password, email, nickname } = req.body;
 
         // 1. 필수 입력 값 확인
         if (!id || !password || !email || !nickname) {
@@ -15,25 +15,14 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ message: '모든 필드를 입력해주세요!' });
         }
 
-        // 2. 아이디, 이메일, 닉네임 중복 검사 
-        const existingUser = await User.findOne({
-            where: {
-                // 아이디, 이메일, 닉네임 중 하나라도 일치하는 사용자가 있는지 검색 
-                [Op.or]: [{ id }, { email }, { nickname }]
-            }
-        });
+        // 2. 아이디 → 이메일 → 닉네임 순서로 중복 검사 (authService의 세 함수 사용)
+        let error = await duplicateId(id);
+        if (!error) error = await duplicateEmail(email);
+        if (!error) error = await duplicateNickname(nickname);
 
-        // 이미 존재하는 사용자라면 409 에러 응답 반환
-        if (existingUser) {
-            if(existingUser.id === id) {
-                return res.status(409).json({ message: '이미 존재하는 아이디입니다!' });
-            }
-            if(existingUser.email === email) {
-                return res.status(409).json({ message: '이미 존재하는 이메일입니다!' });
-            }
-            if(existingUser.nickname === nickname) {
-                return res.status(409).json({ message: '이미 존재하는 닉네임입니다!' });
-            }
+        // 문제가 있으면 그 상태코드와 메시지로 응답 (비어 있음, 중복 모두 400)
+        if (error) {
+            return res.status(error.status).json({ message: error.message });
         }
 
         // 3. 비밀번호 보안 암호화
@@ -42,11 +31,12 @@ exports.signup = async (req, res) => {
 
         // 4. 데이터베이스에 새로운 사용자 생성 및 저장 
         await User.create({
-            id,
+            id: id.trim(),
             password: hashedPassword,   // 암호화 비밀번호 저장
-            email,
-            nickname,
-            role: role || 'null'        // 권한 값이 없으면 null(일반 회원), 있으면 해당 값 저장
+            email: email.trim(),
+            nickname: nickname.trim(),
+            //role은 넣지 않는다 → DB에 NULL로 저장되고, NULL이면 일반 회원
+            //최초 관리자는 DB에서 직접 'ADMIN'으로 지정 부여한다
         });
 
         // 5. 회원 가입 성공 응답 반환
@@ -60,7 +50,7 @@ exports.signup = async (req, res) => {
 }
 
 // 로그인 컨트롤러 (REQ-USR-004)
-exports.login = async (req, res) => {
+const login = async(req,res)=>{
     try {
         const { id, password } = req.body;
 
@@ -104,3 +94,34 @@ exports.login = async (req, res) => {
         res.status(500).json({ success: false, data: null, message: '서버 내부 오류가 발생했습니다!' });
     }
 }
+
+// 중복 검사 컨트롤러 (회원가입 전 확인용): 아이디 → 이메일 → 닉네임 순서로 검사
+// 검사 함수들은 services/authService.js 에 있다
+const duplicate = async (req, res) => {
+    try {
+        const { id, email, nickname } = req.body || {};//body 없이 요청이 와도 에러 나지 않게
+
+        // 1. 세 값이 모두 비어 있으면 입력 요청
+        if (isEmpty(id) && isEmpty(email) && isEmpty(nickname)) {
+            return res.status(400).json({ success: false, data: null, message: '입력해 주세요' });
+        }
+
+        // 2. 순서대로 검사(먼저 발생한 문제만 응답)
+        let error = await duplicateId(id);
+        if (!error) error = await duplicateEmail(email);
+        if (!error) error = await duplicateNickname(nickname);
+
+        // 3. 문제가 있으면 그 상태코드와 메시지로 응답
+        if (error) {
+            return res.status(error.status).json({ success: false, data: null, message: error.message });
+        }
+
+        // 4. 세 값 모두 정상
+        res.status(200).json({ success: true, data: null, message: '사용 가능한 아이디, 이메일, 닉네임입니다.' });
+    } catch (error) {
+        console.error('중복 검사 중 오류 발생:', error);
+        res.status(500).json({ success: false, data: null, message: '서버 내부 오류가 발생했습니다!' });
+    }
+};
+
+module.exports = { signup, login, duplicate };

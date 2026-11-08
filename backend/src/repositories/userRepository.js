@@ -39,6 +39,19 @@ const findByNickname = async (nickname) => {
   });
 };
 
+// 이메일 중복 확인
+const findByEmail = async (email) => {
+  return User.findOne({
+    where: {
+      email
+    },
+    attributes: [
+      ["id", "userId"]
+    ],
+    raw: true
+  });
+};
+
 // 닉네임·비밀번호 변경
 const update = async (
   userId,
@@ -193,6 +206,7 @@ module.exports = {
   findById,
   findPasswordById,
   findByNickname,
+  findByEmail,
   update,
   findMyPosts,
   countMyPosts,
