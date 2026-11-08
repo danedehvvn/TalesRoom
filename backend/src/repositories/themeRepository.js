@@ -101,6 +101,7 @@ async function findAll(
            t.difficulty,
            t.min_people AS minPeople,
            t.max_people AS maxPeople,
+           t.play_time AS playTime,
            t.price,
 
            COALESCE(
@@ -125,6 +126,7 @@ async function findAll(
            t.difficulty,
            t.min_people,
            t.max_people,
+           t.play_time,
            t.price
 
          ORDER BY
