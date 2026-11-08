@@ -1,5 +1,4 @@
 // frontend/src/pages/SignUpPage.jsx
-import React from 'react';
 import { useSignUp } from '../hooks/useSignUp';
 import '../styles/SignUpPage.css';
 
