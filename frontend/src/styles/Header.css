@@ -66,6 +66,17 @@
   color: #6854a3;
 }
 
+.signup-link {
+  margin-left: auto;
+  color: #242035;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  color: #6854a3;
+}
+
 /* 로그인 상태일 때: 닉네임 + 로그아웃 버튼 */
 .user-menu {
   margin-left: auto;
