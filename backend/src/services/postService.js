@@ -1,5 +1,6 @@
 const { sequelize } = require('../models');
 const postRepository = require('../repositories/postRepository');
+const postReactionRepository = require('../repositories/postReactionRepository');//좋아요 DB 작업
 const CATEGORIES = ['INFO', 'QUESTION', 'CHAT', 'DEBATE'];          // 카테고리 구분
 
 function httpError(status, message) {
@@ -64,12 +65,15 @@ async function getPostDetail(id, user) {
     const detailedPost = await postRepository.findByIdWithDetails(id);
     const p = detailedPost.get({plain: true});
 
-    // 좋아요 기능이 아직 구현 전이어서 임시로 해둠 
-    const likeCount =0; 
-    const liked = false;
+    // 좋아요 기능이 아직 구현 전이어서 임시로 해둠
+    // const likeCount =0;
+    const likeCount = await postReactionRepository.countReactions(p.id); //실제 좋아요 수 조회
+    // const liked = false;      → reaction을 조회한 다음 줄로 옮김
 
     // 4. 로그인 User의 좋아요 누름 여부
-    const reaction = await postRepository.findReaction(id, user ? user.id : null);
+    // const reaction = await postRepository.findReaction(id, user ? user.id : null);
+    const reaction = await postReactionRepository.findReaction(p.id, user ? user.id : null);//(user ? user.id : null) -> user.id게시글을 로그인 해야 확인 가능하므로 해당 부분의 처리가 상세에서 추가 되면 변경 될 부분
+    const liked = !!reaction;// !!reaction -> !로 값을 boolean으로 변환 처리 !!로 원래 의미로 처리(좋아요 값이 있으면 true, 없으면(null) false)
 
     // comments 배열에서 채택된 댓글(isAccepted === 1)을 찾아 acceptedId 추출
     const commentsList = p.comments || [];
@@ -172,4 +176,27 @@ async function deletePost(user, id) {
     await postRepository.remove(post);                  // 3. 삭제
 }
 
-module.exports = { getPosts, getPostDetail, createPost, updatePost, deletePost };
+//좋아요 토글 (처음 누르면 좋아요(추가), 다시 누르면 좋아요 취소(삭제))
+async function toggleLike(user, id) {
+    //게시글 체크
+    const post = await postRepository.findById(id);
+    if (!post) throw httpError(404, '게시글을 찾을 수 없습니다.');
+
+    //로그인 User의 좋아요 누름 여부
+    const reaction = await postReactionRepository.findReaction(post.id, user.id);
+
+    if (reaction) {//자바 스크립트에서 reaction이 null이면 false, 객체가 있으면 true로 판단
+        await postReactionRepository.removeReaction(reaction); //이미 눌렀으면 -> 삭제
+    } else {
+        await postReactionRepository.createReaction(post.id, user.id); //안 눌렀으면 -> 좋아요 추가
+    }
+
+    //바뀐 결과를 돌려줌(반영), (프론트는 이 값으로 버튼 상태를 바꿀 수 있음)
+    //const likeCount = await postReactionRepository.countReactions(post.id); //이부분은 카운트 변경도 필요시 활성
+    return {
+        liked: !reaction, //변경 상태인 boolean 값을 liked로 돌려줌
+        //likeCount, //이부분은 카운트 변경도 필요시 활성
+    };
+}
+
+module.exports = { getPosts, getPostDetail, createPost, updatePost, deletePost, toggleLike };
