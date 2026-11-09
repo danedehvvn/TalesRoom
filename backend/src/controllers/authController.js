@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');// 로그인 토큰(JWT) 발급
 const { User } = require('../models');
 const { isEmpty, duplicateId, duplicateEmail, duplicateNickname } = require('../services/authService'); // 중복 검사 함수
+const { isVerified, clearVerification } = require('../services/emailVerificationService');//회원가입시 이메일 인증 확인,삭제 함수
 
 // 회원 가입 컨트롤러
 const signup = async(req,res)=>{
@@ -25,6 +26,11 @@ const signup = async(req,res)=>{
             return res.status(error.status).json({ message: error.message });
         }
 
+        //이메일 인증을 했는지 확인 (POST /api/auth/signup/verify 성공 후 10분 안이어야 함)
+        if (!isVerified(email.trim(), 'signup')) {//인증 완료 여부 확인
+            return res.status(400).json({ message: '이메일 인증을 완료해 주세요.' });
+        }
+
         // 3. 비밀번호 보안 암호화
         const saltRounds = 10; 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -38,6 +44,9 @@ const signup = async(req,res)=>{
             //role은 넣지 않는다 → DB에 NULL로 저장되고, NULL이면 일반 회원
             //최초 관리자는 DB에서 직접 'ADMIN'으로 지정 부여한다
         });
+
+        //가입이 끝났으니 인증 기록 삭제 (같은 인증으로 또 가입하지 못하게)
+        clearVerification(email.trim(), 'signup');
 
         // 5. 회원 가입 성공 응답 반환
         res.status(201).json({ message: '회원 가입이 완료되었습니다!' });

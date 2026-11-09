@@ -5,7 +5,7 @@ const { PostReaction } = require('../models');//index.js에서 관계 설정이 
 // 특정 회원(로그인한 사용자)이 해당 게시글에 좋아요를 눌렀는지 확인
 // 눌렀으면 좋아요 행(객체), 안 눌렀으면 null을 돌려줌
 const findReaction = async (postId, userId) => {
-    if (!userId) return null;
+    if (!userId) return null;//게시글을 로그인 해야 확인 가능하므로 해당 부분의 처리가 상세에서 추가 되면 삭제 될 부분
     return await PostReaction.findOne({ where: { postId, userId } });
 };
 
