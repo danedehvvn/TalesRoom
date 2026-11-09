@@ -1,5 +1,5 @@
 //헤더(네비 바) 컴포넌트
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import "../styles/Header.css";
 
@@ -7,6 +7,8 @@ import logo from "../assets/logo.png";
 
 function Header() {
   const { user, isLoggedIn } = useAuth();
+  const location = useLocation();
+  const isCommunityActivity = location.pathname === "/mypage/posts" || location.pathname === "/mypage/comments";
 
   return (
     <header className="site-header">
@@ -17,7 +19,7 @@ function Header() {
         </Link>
 
         <div className="nav-links">
-          <NavLink to="/posts">커뮤니티</NavLink>
+          <NavLink to="/posts" className={({ isActive }) => (isActive || isCommunityActivity ? "active" : undefined)}>커뮤니티</NavLink>
           <NavLink to="/themes">테마 탐색</NavLink>
         </div>
 

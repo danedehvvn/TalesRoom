@@ -10,6 +10,11 @@ import SignUpPage from './pages/SignUpPage';
 import PostDetailPage from './pages/PostDetailPage';
 import PostListPage from './pages/PostListPage'; // 커뮤니티 목록 (P-01)
 import PostFormPage from './pages/PostFormPage'; // 글쓰기·글 수정 (P-03, P-04)
+import RequireAuth from './components/RequireAuth';
+import MyPagePage from './pages/MyPagePage';
+import MyPageEditPage from './pages/MyPageEditPage';
+import MyPostsPage from './pages/MyPostsPage';
+import MyCommentsPage from './pages/MyCommentsPage';
 
 function App() {
   return (
@@ -29,6 +34,12 @@ function App() {
             <Route path="/posts" element={<PostListPage />} />
             <Route path="/posts/new" element={<PostFormPage key="new" />} />
             <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
+            <Route element={<RequireAuth />}>
+              <Route path="/mypage" element={<MyPagePage />} />
+              <Route path="/mypage/edit" element={<MyPageEditPage />} />
+              <Route path="/mypage/posts" element={<MyPostsPage />} />
+              <Route path="/mypage/comments" element={<MyCommentsPage />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
