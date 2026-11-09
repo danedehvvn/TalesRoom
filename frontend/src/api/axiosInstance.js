@@ -8,10 +8,13 @@ export const TOKEN_KEY = "token";
 export const USER_KEY = "user";
 
 // axios.create = 기본 설정이 들어간 axios 복사본 만들기
+const serverUrl =
+  import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+
 const api = axios.create({
-  // .env의 VITE_API_URL이 있으면 그 주소, 없으면 "/api"
-  // "/api"는 지금 페이지와 같은 주소(localhost:5173/api)로 보내고 → vite.config.js 프록시가 3000번으로 넘겨줘요
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: serverUrl
+    ? `${serverUrl}/api`
+    : "/api",
 });
 
 // 요청 인터셉터 = 모든 요청이 서버로 나가기 직전에 실행되는 함수
