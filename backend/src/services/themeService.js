@@ -54,8 +54,22 @@ const getThemeById= async (id, authUser)=>{
       : Promise.resolve(null)
   ]);
 
+  const t = theme.get({ plain: true });
   return {
-    ...theme.get({ plain: true }),
+    id: t.id,
+    title: t.title,
+    store_name: t.storeName,
+    address: t.address,
+    longitude: t.longitude ?? null,
+    latitude: t.latitude ?? null,
+    content: t.content,
+    genre: t.genre,
+    difficulty: t.difficulty,
+    minPeople: t.minPeople,
+    maxPeople: t.maxPeople,
+    playTime: t.playTime,
+    price: t.price,
+    thumbnailUrl: t.thumbnailUrl ?? null,
     avgRating: summary.avgRating,
     reviewCount: summary.reviewCount,
     myReviewed: Boolean(myReview)
@@ -298,14 +312,15 @@ async function getFilteredThemes(query = {}) {
     const items = rows.map((row) => ({
         id: row.id,
         title: row.title,
-        storeName: row.storeName,
+        store_name: row.storeName,
         genre: row.genre,
         difficulty: Number(row.difficulty),
         minPeople: Number(row.minPeople),
         maxPeople: Number(row.maxPeople),
         playTime: Number(row.playTime),
         price: Number(row.price),
-        imageUrl: null,
+        thumbnailUrl: row.thumbnailUrl ?? null,
+        created_at: row.createdAt,
         avgRating: Number(row.avgRating),
         reviewCount: Number(row.reviewCount)
     }));

@@ -24,9 +24,13 @@ const Theme = sequelize.define('Theme', {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    mapUrl: { // 지도 링크 또는 좌표 정보
-        type: DataTypes.STRING(500),
-        allowNull: true,         
+    longitude: { //x좌표
+        type: DataTypes.DECIMAL(10, 7),
+        allowNull: true
+    },
+    latitude: { //y좌표
+        type: DataTypes.DECIMAL(10, 7),
+        allowNull: true
     },
     content: { //내용
         type: DataTypes.TEXT,        
@@ -60,6 +64,10 @@ const Theme = sequelize.define('Theme', {
         type: DataTypes.STRING(50),
         allowNull: false, 
     },
+    thumbnailUrl: { //이미지 링크
+        type: DataTypes.STRING(2048),
+        allowNull: true
+    }
 
 }, {
     tableName: 'themes',                         // 실제 테이블 이름
