@@ -2,8 +2,8 @@ import client from './client';
 
 // 게시글 상세 조회 API (조회수 증가 및 본문 데이터 반환)
 export const getPostDetail = async (id) => {
-    const response = await client.get(`/api/posts/${id}`);
-    return response.data.data || response.data;
+  const response = await client.get(`api/posts/${id}`);
+  return response.data.data || response.data;
 };
 // 게시글 API 모음 (API 명세서 P-01 ~ P-05)
 // 화면 코드는 이 함수들만 부르고, 주소나 요청 방식은 여기서만 관리해요.

@@ -8,10 +8,13 @@ export const TOKEN_KEY = "token";
 export const USER_KEY = "user";
 
 // axios.create = 기본 설정이 들어간 axios 복사본 만들기
+const serverUrl =
+  import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+
 const api = axios.create({
-  // .env의 VITE_API_URL이 있으면 그 주소, 없으면 "/api"
-  // "/api"는 지금 페이지와 같은 주소(localhost:5173/api)로 보내고 → vite.config.js 프록시가 3000번으로 넘겨줘요
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: serverUrl
+    ? `${serverUrl}/api`
+    : "/api",
 });
 
 // 요청 인터셉터 = 모든 요청이 서버로 나가기 직전에 실행되는 함수
@@ -23,6 +26,25 @@ api.interceptors.request.use((config) => {
   }
   return config; // 수정한 설정으로 요청을 계속 보내요
 });
+
+// 응답 인터셉터: 토큰 만료 또는 인증 실패 처리
+api.interceptors.response.use(
+  (response) => response,
+
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+
+      // 로그인 화면에서 비밀번호를 틀린 경우에는 그대로 오류 메시지를 표시
+      if (window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // 서버 에러 응답에서 사용자에게 보여줄 문구를 꺼내는 도우미
 // 백엔드 공통 실패 형식 { success: false, data: null, message } 의 message를 사용해요

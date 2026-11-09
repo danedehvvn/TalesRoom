@@ -35,8 +35,11 @@ function App() {
             <Route path="/posts" element={<PostListPage />} />
             <Route path="/posts/new" element={<PostFormPage key="new" />} />
             <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
+            
             {/* 관리자: 화면에서 role을 확인하고, 서버도 adminMiddleware로 한 번 더 막아요 */}
             <Route path="/admin/users" element={<AdminUsersPage />} />
+
+            {/* 마이페이지 관련 인증 보호 라우트 */}
             <Route element={<RequireAuth />}>
               <Route path="/mypage" element={<MyPagePage />} />
               <Route path="/mypage/edit" element={<MyPageEditPage />} />
