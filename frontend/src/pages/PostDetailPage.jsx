@@ -1,4 +1,6 @@
 import { useParams } from 'react-router-dom';
+import PostDeleteButton from '../components/PostDeleteButton'; // 삭제 버튼 (확인 팝업 → DELETE 요청 → 목록 이동)
+import useAuth from '../hooks/useAuth'; // 로그인한 내 정보 { id, nickname, role } 꺼내기
 import { usePostDetail } from '../hooks/usePostDetail';
 import SpoilerCheckModal from '../components/SpoilerCheckModal';
 import '../styles/PostDetail.css';
@@ -14,6 +16,8 @@ function PostDetailPage() {
         handleSpoilerCancel,
         navigate,
     } = usePostDetail(id);
+    const { user } = useAuth(); // 로그인한 내 정보
+    const isAdmin = user?.role === 'ADMIN'; // 관리자면 남의 글도 삭제 가능 (요구사항)
 
     if (loading || !post) {
         return <div className="loading">게시글을 불러오는 중입니다...</div>;
@@ -67,8 +71,14 @@ function PostDetailPage() {
                 )}
             </div>
 
-            <div className="post-actions" style={{ marginTop: '20px' }}>
+            {/* display:flex + gap → 버튼들을 가로로 나란히, 사이 간격 8px */}
+            <div className="post-actions" style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
                 <button onClick={() => navigate('/posts')} className="btn-back">목록으로</button>
+                {/* 수정: 작성자만 (서버가 isMine = 글 작성자 id === 토큰의 id 로 알려줌) */}
+                {/* Link(a 태그)는 밑줄·글꼴이 달라져서, 다른 버튼과 같은 button + navigate로 이동 */}
+                {post.isMine && <button onClick={() => navigate(`/posts/${post.id}/edit`)} className="btn-back">수정</button>}
+                {/* 삭제: 작성자 또는 관리자 (서버도 403으로 한 번 더 막음) */}
+                {(post.isMine || isAdmin) && <PostDeleteButton postId={post.id} className="btn-back" />}
             </div>
         </div>
     );
