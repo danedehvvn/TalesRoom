@@ -142,3 +142,25 @@
     flex-direction: column;
   }
 }
+
+/* 🏆 명예의 전당 섹션 스타일 */
+.home-hof-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.home-hof-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.home-hof-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.home-hof-desc {
+  color: #666;
+}

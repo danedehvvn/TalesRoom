@@ -1,6 +1,8 @@
 const { sequelize } = require('../models');
+const User = require('../models/User');
 const postRepository = require('../repositories/postRepository');
 const postReactionRepository = require('../repositories/postReactionRepository');//좋아요 DB 작업
+const { calculateGrade } = require('./userService');
 const CATEGORIES = ['INFO', 'QUESTION', 'CHAT', 'DEBATE'];          // 카테고리 구분
 
 function httpError(status, message) {
@@ -116,21 +118,52 @@ function validatePostBody(user, body) {
     if (isNotice && user.role !== 'ADMIN') throw httpError(403, '공지 설정은 관리자만 가능합니다.');
 }
 
-async function createPost(user, body) {                 // user = 로그인한 사람, body(req) = 프론트에서 보낸 값
+// 게시글 작성 (작성 시 점수 +10점 부여 및 등급 자동 갱신)
+async function createPost(user, body) {                 
     const { category, title, content, isSpoiler, isNotice } = body;
 
-    validatePostBody(user, body);   // 공통 검사로 교체하였음
+    validatePostBody(user, body);   
 
-    // 모든 조건 통과 -> 저장
     const post = await postRepository.create({
         userId: user.id,
         category,
         title,
         content,
-        isSpoiler: isSpoiler ? 1 : 0, // true/false -> DB에서 1, 0
+        isSpoiler: isSpoiler ? 1 : 0, 
         isNotice: isNotice ? 1 : 0,
     });
+
+    // 게시글 작성 시 활동 점수 +10점 적립 및 등급 자동 갱신
+    const dbUser = await User.findByPk(user.id);
+    if (dbUser) {
+        const newScore = (dbUser.score || 0) + 10;
+        const newGrade = calculateGrade(newScore);
+        await dbUser.update({ score: newScore, grade: newGrade });
+    }
+
     return { id: post.id };
+}
+
+// 삭제 함수 (게시글 삭제 시 점수 -10점 차감 및 등급 재계산 반영)
+async function deletePost(user, id) {
+    const post = await postRepository.findById(id);     
+    if (!post) throw httpError(404, '게시글을 찾을 수 없습니다.');
+    const isOwner = post.userId === user.id;        
+    const isAdmin = user.role === 'ADMIN';
+    if (!isOwner && !isAdmin) throw httpError(403, '작성자 또는 관리자만 삭제할 수 있습니다.');
+
+    // 1. 게시글 삭제 실행
+    await postRepository.remove(post);                  
+
+    // 2. 게시글 작성자(post.userId)의 점수 -10점 차감 및 등급 갱신
+    // (관리자가 남의 글을 지웠을 경우에도 실제 글 작성자의 점수가 깎이도록 post.userId 기준 처리)
+    const authorUser = await User.findByPk(post.userId);
+    if (authorUser) {
+        // 점수가 0 밑으로 떨어지지 않도록 Math.max 처리
+        const newScore = Math.max((authorUser.score || 0) - 10, 0);
+        const newGrade = calculateGrade(newScore);
+        await authorUser.update({ score: newScore, grade: newGrade });
+    }
 }
 
 // 수정 함수
@@ -163,17 +196,6 @@ async function updatePost(user, id, body) {
         }, { transaction: t });
     });
     return { id: post.id };
-}
-
-// 삭제 함수
-async function deletePost(user, id) {
-    const post = await postRepository.findById(id);     // 1. 글이 있는지
-    if (!post) throw httpError(404, '게시글을 찾을 수 없습니다.');
-    const isOwner = post.userId === user.id;        // 2. 권한(삭제는 작성자 또는 관리자)
-    const isAdmin = user.role === 'ADMIN';
-    if (!isOwner && !isAdmin) throw httpError(403, '작성자 또는 관리자만 삭제할 수 있습니다.');
-
-    await postRepository.remove(post);                  // 3. 삭제
 }
 
 //좋아요 토글 (처음 누르면 좋아요(추가), 다시 누르면 좋아요 취소(삭제))

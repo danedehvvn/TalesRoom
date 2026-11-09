@@ -1,5 +1,6 @@
 //메인 홈페이지
 import "../styles/HomePage.css";
+import HallOfFame from "../components/HallOfFame";
 
 function HomePage() {
   return (
@@ -27,11 +28,20 @@ function HomePage() {
         </div>
       </section>
 
+      {/* 메인 화면에 배치된 명예의 전당 카드 섹션 */}
+      <section className="home-section home-hof-section">
+        <div className="home-hof-header">
+          <h2 className="home-hof-title">🏆 방탈출 명예의 전당</h2>
+          <p className="home-hof-desc">최고의 점수를 기록한 명예로운 탈출러들입니다.</p>
+        </div>
+        <HallOfFame />
+      </section>
+
       <section className="home-theme">
-          <div>
-            <h2>지금 인기있는 테마</h2>
-            <p>다양한 테마 중 마음에 드는 이야기를 찾아보세요.</p>
-          </div>
+        <div>
+          <h2>지금 인기있는 테마</h2>
+          <p>다양한 테마 중 마음에 드는 이야기를 찾아보세요.</p>
+        </div>
       </section>
 
       <section className="home-section">

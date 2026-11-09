@@ -23,6 +23,14 @@ const User = sequelize.define('User', {
         allowNull: false,
         unique: true,                           // 같은 닉네임 중복 불가
     },
+    score: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0 // 기본 활동 점수 0점
+    },
+    grade: {
+        type: DataTypes.STRING(20),
+        defaultValue: '방린이'   // 기본 등급
+    },
 }, {
     tableName: 'users',                         // 실제 테이블 이름
     underscored: true,                          // createdAt <-> created_at 자동 변환
