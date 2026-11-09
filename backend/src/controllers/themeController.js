@@ -39,20 +39,18 @@ const getThemeById = async(req,res,next)=>{
 
     if(!Number.isSafeInteger(id) || id <1){
       return res.status(400).json({
-        error: "올바른 테마 ID를 입력해 주세요."
+        success: false,
+        data: null,
+        message: "올바른 테마 ID를 입력해 주세요."
       });
     }
 
-    const theme=await themeService.getThemeById(id);
+    const theme=await themeService.getThemeById(id, req.user);
     
-    res.status(200).json(theme);
+    res.status(200).json({success: true, data: theme, message: 'OK'});
 
   }catch(err){
-    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
-    console.error(err)
-
-    const status =err.status||500
-    res.status(status).json({error: err.message || "서버 오류가 발생했습니다."})
+    return sendErrorResponse(res, err);
   }
 }
 

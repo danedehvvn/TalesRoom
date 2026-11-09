@@ -1,4 +1,5 @@
 const themeRepository = require('../repositories/themeRepository');
+const themeReviewRepository = require('../repositories/themeReviewRepository');
 
 //1. 테마 목록 조회
 const getThemes=async(page, size)=>{
@@ -37,7 +38,7 @@ const getThemes=async(page, size)=>{
 }
 
 //2. 테마 상세 정보 조회
-const getThemeById= async (id)=>{
+const getThemeById= async (id, authUser)=>{
   const theme= await themeRepository.findThemeById(id);
 
   if(!theme){ // 해당 아이디가 없으면
@@ -46,7 +47,33 @@ const getThemeById= async (id)=>{
     throw error;
   }
 
-  return theme;
+  const [summary, myReview] = await Promise.all([
+    themeReviewRepository.getRatingSummary(id),
+    authUser?.id
+      ? themeReviewRepository.findByThemeAndUser(id, authUser.id)
+      : Promise.resolve(null)
+  ]);
+
+  const t = theme.get({ plain: true });
+  return {
+    id: t.id,
+    title: t.title,
+    store_name: t.storeName,
+    address: t.address,
+    longitude: t.longitude ?? null,
+    latitude: t.latitude ?? null,
+    content: t.content,
+    genre: t.genre,
+    difficulty: t.difficulty,
+    minPeople: t.minPeople,
+    maxPeople: t.maxPeople,
+    playTime: t.playTime,
+    price: t.price,
+    thumbnailUrl: t.thumbnailUrl ?? null,
+    avgRating: summary.avgRating,
+    reviewCount: summary.reviewCount,
+    myReviewed: Boolean(myReview)
+  };
 }
 
 
@@ -285,13 +312,15 @@ async function getFilteredThemes(query = {}) {
     const items = rows.map((row) => ({
         id: row.id,
         title: row.title,
-        storeName: row.storeName,
+        store_name: row.storeName,
         genre: row.genre,
         difficulty: Number(row.difficulty),
         minPeople: Number(row.minPeople),
         maxPeople: Number(row.maxPeople),
+        playTime: Number(row.playTime),
         price: Number(row.price),
-        imageUrl: null,
+        thumbnailUrl: row.thumbnailUrl ?? null,
+        created_at: row.createdAt,
         avgRating: Number(row.avgRating),
         reviewCount: Number(row.reviewCount)
     }));

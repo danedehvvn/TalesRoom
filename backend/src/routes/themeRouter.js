@@ -5,6 +5,7 @@ const themeController = require('../controllers/themeController');
 const themeReviewController = require('../controllers/themeReviewController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
+const optionalAuthMiddleware = require('../middlewares/optionalAuthMiddleware');
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ const router = express.Router();
 router.get('/', themeController.getList);
 
 // 경로별 추가g
-router.get('/:id', themeController.getThemeById);
+router.get('/:id', optionalAuthMiddleware, themeController.getThemeById);
 
 // 관리자 테마 등록
 router.post('/', authMiddleware, themeController.create);

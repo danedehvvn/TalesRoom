@@ -1,4 +1,5 @@
 // frontend/src/pages/SignUpPage.jsx
+
 //import React from 'react'; // React 18부터는 import React from 'react'; 생략 가능(문제 발생 : 사용위치 없음 일단은 주석처리)
 import { useSignUp } from '../hooks/useSignUp';
 import '../styles/SignUpPage.css';

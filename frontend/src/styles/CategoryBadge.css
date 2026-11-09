@@ -1,0 +1,20 @@
+/* 카테고리 배지 공통 모양: 둥근 알약 + 작은 굵은 글씨 */
+.category-badge {
+  display: inline-flex;          /* 글자 크기만큼만 차지 */
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;               /* 두 글자 배지 폭을 맞춰 줄이 가지런하게 */
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;          /* 완전히 둥근 모서리 */
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;           /* 줄바꿈 금지 */
+}
+
+/* 카테고리별 색 (디자인 가이드 팔레트 기준) */
+.category-badge--question { background: #f0ecf7; color: #6854a3; }  /* 질문: soft + 보라 */
+.category-badge--info     { background: #e7f4ef; color: #2f7d5b; }  /* 정보: 연초록 */
+.category-badge--chat     { background: #fff4df; color: #b7791f; }  /* 수다: warn + 금색 */
+.category-badge--debate   { background: #fcebee; color: #d35a63; }  /* 토론: 연분홍 + red */
+.category-badge--notice   { background: #fcebee; color: #d35a63; }  /* 공지: 토론과 같은 강조색 */
