@@ -58,7 +58,7 @@ function ResetPasswordPage() {
     e.preventDefault(); // 폼 제출 시 페이지 새로고침 막기
     setError('');
 
-    // 1. 입력 확인
+    //입력 확인
     if (!codeSent) {
       setError('먼저 인증번호를 발송해 주세요.');
       return;
@@ -68,8 +68,8 @@ function ResetPasswordPage() {
       return;
     }
 
-    // 2. 새 비밀번호 규칙 (백엔드와 같은 규칙: 8~20자, 영문과 숫자를 각각 1개 이상)
-    //    서버도 검사하지만, 요청 전에 먼저 알려주면 인증번호를 아낄 수 있음
+    //새 비밀번호 규칙 (백엔드와 같은 규칙: 8~20자, 영문과 숫자를 각각 1개 이상)
+    //- 서버도 검사하지만, 요청 전에 먼저 알려주면 인증번호를 아낄 수 있음
     const hasLetter = /[A-Za-z]/.test(newPassword);
     const hasNumber = /\d/.test(newPassword);
     if (newPassword.length < 8 || newPassword.length > 20 || !hasLetter || !hasNumber) {
@@ -77,13 +77,13 @@ function ResetPasswordPage() {
       return;
     }
 
-    // 3. 새 비밀번호 확인 일치
+    //새 비밀번호 확인 일치
     if (newPassword !== confirmPassword) {
       setError('새 비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    // 4. 서버에 변경 요청
+    //서버에 변경 요청
     setSaving(true);
     try {
       await resetPassword(id.trim(), email.trim(), code.trim(), newPassword);

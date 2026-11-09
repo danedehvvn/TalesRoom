@@ -21,7 +21,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           {/* 아이디 찾기 (로그인 화면의 '아이디 찾기' 링크가 이 주소로 이동) */}
           <Route path="/find-id" element={<FindIdPage />} />
-          {/* //--- 비밀번호 재설정 (로그인 화면, 아이디 찾기 결과 화면의 '비밀번호 재설정' 링크가 이 주소로 이동) */}
+          {/* 비밀번호 재설정 (로그인 화면, 아이디 찾기 결과 화면의 '비밀번호 재설정' 링크가 이 주소로 이동) */}
           <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Routes>
         <Footer />
