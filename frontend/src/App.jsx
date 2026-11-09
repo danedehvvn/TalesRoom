@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import PostDetailPage from './pages/PostDetailPage';
+import PostListPage from './pages/PostListPage'; // 커뮤니티 목록 (P-01)
+import PostFormPage from './pages/PostFormPage'; // 글쓰기·글 수정 (P-03, P-04)
 
 function App() {
   return (
@@ -23,6 +25,10 @@ function App() {
             <Route path="/themes/:id" element={<ThemeDetailPage />} />
             <Route path="/themes/:id/edit" element={<ThemeFormPage key="edit" />} />
             <Route path="/posts/:id" element={<PostDetailPage />} />
+            {/* 커뮤니티: 같은 PostFormPage를 주소에 :id가 있는지로 작성/수정 구분 */}
+            <Route path="/posts" element={<PostListPage />} />
+            <Route path="/posts/new" element={<PostFormPage key="new" />} />
+            <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,0 +1,134 @@
+/* 페이지 전체: 가운데 1176px 폭 + 위아래 여백 */
+.post-list {
+  max-width: var(--content-max-width);   /* 팀 변수 1176px */
+  margin: 0 auto;                        /* 좌우 자동 = 가운데 정렬 */
+  padding: 48px 16px 80px;               /* 모바일에서도 좌우 16px 여백 */
+}
+
+/* ① 제목 영역: 왼쪽 글자, 오른쪽 글쓰기 버튼 */
+.post-list__head {
+  display: flex;
+  justify-content: space-between;        /* 양 끝으로 벌리기 */
+  align-items: flex-end;                 /* 아래쪽 기준 정렬 */
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.post-list__eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--color-primary); }
+.post-list__title { margin: 0 0 8px; font-size: 32px; font-weight: 700; color: var(--color-text); }
+.post-list__subtitle { margin: 0; font-size: 16px; color: var(--color-text-muted); }
+
+/* 글쓰기 버튼 (주요 버튼: 높이 46 이상) */
+.post-list__write {
+  flex-shrink: 0;                        /* 공간이 좁아도 버튼이 찌그러지지 않게 */
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.post-list__write:hover { background: var(--color-primary-dark); }
+
+/* ② 필터 카드 */
+.post-list__filter {
+  display: flex;
+  flex-wrap: wrap;                       /* 좁으면 검색창이 다음 줄로 */
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.post-list__chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+/* 카테고리 칩 */
+.post-list__chip {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  cursor: pointer;
+}
+.post-list__chip.is-active { border-color: var(--color-primary); background: var(--color-primary); color: #fff; font-weight: 700; }
+
+/* 정렬 표시 (클릭 X) */
+.post-list__sort { margin-left: 8px; padding: 8px 14px; border-radius: 999px; background: #f0ecf7; color: var(--color-primary); font-size: 13px; font-weight: 600; }
+
+/* 검색창 + 버튼 */
+.post-list__search { display: flex; gap: 8px; flex: 1 1 280px; max-width: 360px; }
+.post-list__search input {
+  flex: 1;                               /* 남은 폭 모두 차지 */
+  min-width: 0;                          /* flex 안 input이 넘치지 않게 */
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;                    /* 가이드: 입력창 radius 8 */
+  font-size: 14px;
+}
+.post-list__search input:focus { outline: none; border-color: #e9a34a; } /* Focus = gold */
+.post-list__search button { height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: var(--color-text); color: #fff; font-weight: 600; cursor: pointer; }
+
+/* ③ 목록 카드 */
+.post-list__card { border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); overflow: hidden; /* 모서리 밖 배경 자르기 */ }
+
+/* 한 줄(행) = 배지 | 제목·메타 | 좋아요 */
+.post-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+  color: inherit;                        /* Link 기본 파란 글씨 제거 */
+  text-decoration: none;                 /* 밑줄 제거 */
+}
+.post-row:last-child { border-bottom: none; }
+.post-row:hover { background: #faf8fc; }
+.post-row--notice { background: #fdf7f8; }   /* 공지는 살짝 붉은 배경 */
+
+.post-row__body { flex: 1; min-width: 0; }   /* min-width:0 → 긴 제목 말줄임 가능 */
+.post-row__title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;               /* 넘치면 … 처리 */
+}
+.post-row__meta { margin: 0; font-size: 13px; color: var(--color-text-muted); }
+.post-row__pin { font-size: 13px; color: #d35a63; font-weight: 600; white-space: nowrap; }
+.post-row__like { font-size: 14px; color: var(--color-text-muted); white-space: nowrap; }
+
+/* 제목 옆 작은 꼬리표 */
+.post-row__solved,
+.post-row__spoiler { display: inline-block; margin: 0 6px; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; vertical-align: middle; }
+.post-row__solved { background: #e7f4ef; color: #2f7d5b; }
+.post-row__spoiler { margin-left: 0; background: #302340; color: #fff; }  /* night 색 */
+
+/* 빈 목록 / 에러 */
+.post-list__state { padding: 64px 24px; text-align: center; color: var(--color-text-muted); }
+.post-list__state button { margin-top: 12px; height: 40px; padding: 0 18px; border: 1px solid var(--color-border); border-radius: 8px; background: #fff; cursor: pointer; }
+
+/* 스켈레톤: 회색 막대가 은은하게 깜빡임 */
+.skeleton { display: block; border-radius: 6px; background: #ece8f2; animation: skeleton-pulse 1.2s ease-in-out infinite; }
+.skeleton--badge { width: 48px; height: 28px; border-radius: 999px; }
+.skeleton--title { width: 60%; height: 18px; margin-bottom: 8px; }
+.skeleton--meta { width: 35%; height: 14px; }
+@keyframes skeleton-pulse { 50% { opacity: 0.5; } }   /* 중간에 반투명 → 깜빡임 */
+
+/* 모바일 (600px 이하): 제목 영역 세로로 */
+@media (max-width: 600px) {
+  .post-list__head { flex-direction: column; align-items: stretch; }
+  .post-list__title { font-size: 26px; }
+  .post-row { padding: 16px; }
+  .post-list__search { max-width: none; }
+}
