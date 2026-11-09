@@ -7,6 +7,8 @@ import ThemeFormPage from './pages/ThemeFormPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import FindIdPage from './pages/FindIdPage'; //아이디 찾기 화면
+import ResetPasswordPage from './pages/ResetPasswordPage'; //비밀번호 재설정 화면
 import PostDetailPage from './pages/PostDetailPage';
 import PostListPage from './pages/PostListPage'; // 커뮤니티 목록 (P-01)
 import PostFormPage from './pages/PostFormPage'; // 글쓰기·글 수정 (P-03, P-04)
@@ -39,6 +41,13 @@ function App() {
             {/* 관리자: 화면에서 role을 확인하고, 서버도 adminMiddleware로 한 번 더 막아요 */}
             <Route path="/admin/users" element={<AdminUsersPage />} />
 
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          {/* 아이디 찾기 (로그인 화면의 '아이디 찾기' 링크가 이 주소로 이동) */}
+          <Route path="/find-id" element={<FindIdPage />} />
+          {/* 비밀번호 재설정 (로그인 화면, 아이디 찾기 결과 화면의 '비밀번호 재설정' 링크가 이 주소로 이동) */}
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
             {/* 마이페이지 관련 인증 보호 라우트 */}
             <Route element={<RequireAuth />}>
               <Route path="/mypage" element={<MyPagePage />} />

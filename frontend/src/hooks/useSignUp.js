@@ -1,7 +1,11 @@
 // frontend/src/hooks/useSignUp.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup } from '../api/authApi';
+// import { signup } from '../api/authApi';
+import { signup, requestSignupCode, verifySignupCode } from '../api/authApi'; //이메일 인증 API 2개 추가
+
+//이메일 형식 검사 (발송 버튼과 가입 버튼에서 함께 사용, 백엔드와 같은 규칙)
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function useSignUp() {
   const navigate = useNavigate();
@@ -17,10 +21,71 @@ export function useSignUp() {
 
   const [errorMsg, setErrorMsg] = useState('');
 
+  //이메일 인증 상태
+  const [code, setCode] = useState('');                    // 사용자가 입력한 인증번호
+  // code : 변수명, setCode : setter 함수, useState('') : 초기값은 빈 문자열
+  const [codeSent, setCodeSent] = useState(false);         // 인증번호를 보냈는지 -> true면 인증번호 입력칸이 보임
+  const [emailVerified, setEmailVerified] = useState(false); // 인증 완료했는지 -> true여야 가입 가능
+  const [emailMsg, setEmailMsg] = useState('');            // 이메일 칸 아래에 보여줄 안내 문구 (초록 글씨)
+  const [sending, setSending] = useState(false);           // 발송 중인지 -> 버튼 여러 번 누르기 방지
+
   // 입력값 변경 핸들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    //이메일을 바꾸면 이전 인증은 무효 -> 인증 상태 초기화 (다른 이메일로 다시 인증해야 함)
+    if (name === 'email') {
+      setCode('');
+      setCodeSent(false);
+      setEmailVerified(false);
+      setEmailMsg('');
+    }
+  };
+
+  //인증번호 발송 버튼
+  const handleSendCode = async () => {
+    setErrorMsg('');
+    setEmailMsg('');
+
+    // 보내기 전에 이메일 형식부터 확인 (잘못된 이메일로 요청하지 않게)
+    if (!emailRegex.test(formData.email)) {
+      setErrorMsg('올바른 이메일 형식이 아닙니다.');
+      return;
+    }
+
+    setSending(true); // 버튼 여러 번 누르기 방지 
+
+    try {
+      const res = await requestSignupCode(formData.email);
+      setCodeSent(true);       // 인증번호 입력칸 보이기
+      setCode('');             // 다시 보낸 경우 이전에 입력한 번호 지우기
+      setEmailMsg(res.message); // '인증번호를 발송했습니다. 5분 안에 입력해 주세요.'
+    } catch (err) {
+      // 이미 사용 중인 이메일, 30초 안에 재요청 등 -> 서버 메시지를 그대로 보여줌
+      setErrorMsg(err.response?.data?.message || '인증번호 발송 중 오류가 발생했습니다.');
+    } finally {
+      setSending(false);       // 성공·실패 상관없이 버튼 다시 누를 수 있게
+    }
+  };
+
+  // 인증번호 확인 버튼
+  const handleVerifyCode = async () => {
+    setErrorMsg('');
+
+    if (!code.trim()) {
+      setErrorMsg('인증번호를 입력해 주세요.');
+      return;
+    }
+
+    try {
+      const res = await verifySignupCode(formData.email, code.trim());
+      setEmailVerified(true);   // 이제 가입 가능
+      setEmailMsg(res.message); // '이메일 인증이 완료되었습니다.'
+    } catch (err) {
+      // 번호 틀림(남은 횟수), 만료, 5회 초과 등 → 서버 메시지를 그대로 보여줌
+      setErrorMsg(err.response?.data?.message || '인증번호 확인 중 오류가 발생했습니다.');
+    }
   };
 
   // 회원가입 제출 핸들러
@@ -65,9 +130,15 @@ export function useSignUp() {
       setErrorMsg('이메일은 최대 100자까지 입력 가능합니다.');
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;//발송 버튼에서도 쓰도록 파일 맨 위로 옮김
     if (!emailRegex.test(formData.email)) {
       setErrorMsg('올바른 이메일 형식이 아닙니다.');
+      return;
+    }
+
+    //이메일 인증 완료 확인 (백엔드도 확인하지만, 요청 전에 먼저 안내)
+    if (!emailVerified) {
+      setErrorMsg('이메일 인증을 완료해 주세요.');
       return;
     }
 
@@ -100,5 +171,15 @@ export function useSignUp() {
     handleChange,
     handleSubmit,
     handleCancel,
+
+    //이메일 인증에 필요한 값과 함수
+    code,
+    setCode,
+    codeSent,
+    emailVerified,
+    emailMsg,
+    sending,
+    handleSendCode,
+    handleVerifyCode,
   };
 }

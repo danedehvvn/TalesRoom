@@ -1,0 +1,167 @@
+/* 계정 찾기 화면 공통 스타일 (아이디 찾기 / 비밀번호 재설정) */
+/* 로그인 화면(LoginPage.css)과 같은 카드 모양에 맞춤 */
+
+.find-page {
+  display: flex;
+  justify-content: center;
+  padding: 80px 24px;
+  background-color: var(--color-background);
+  min-height: 100%;
+}
+
+.find-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.find-card h1 {
+  margin: 0;
+  font-size: 28px;
+  color: var(--color-text);
+}
+
+.find-subtitle {
+  margin: 8px 0 28px;
+  color: var(--color-text-muted);
+}
+
+.find-card label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* 입력칸 + 오른쪽 작은 버튼 한 줄 */
+.find-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.find-card input {
+  flex: 1;
+  min-width: 0; /* 좁은 화면에서 입력칸이 버튼을 밀어내지 않게 */
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  outline: none;
+}
+
+.find-card input:focus {
+  border-color: var(--color-primary);
+}
+
+.find-card input:disabled {
+  background-color: var(--color-background);
+  cursor: not-allowed;
+}
+
+/* 입력칸 옆 작은 버튼 (인증번호 발송, 확인) */
+.find-sub-btn {
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-primary);
+  background-color: #f0ecf7;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+
+.find-sub-btn:hover:not(:disabled) {
+  background-color: #e2d9f3;
+}
+
+.find-sub-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 안내 문구 (초록) / 에러 문구 (빨강) */
+.find-info {
+  margin: -8px 0 14px;
+  font-size: 13px;
+  color: #2b8a3e;
+}
+
+.find-error {
+  margin: -6px 0 14px;
+  font-size: 14px;
+  color: #d64545;
+}
+
+/* 결과 박스 (찾은 아이디 보여주기) */
+.find-result {
+  margin-bottom: 20px;
+  padding: 20px;
+  text-align: center;
+  background-color: var(--color-background);
+  border-radius: var(--radius-button);
+  color: var(--color-text);
+}
+
+.find-result strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 22px;
+  color: var(--color-primary);
+}
+
+/* 큰 버튼 (로그인하기 등) */
+.find-button {
+  padding: 13px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+
+.find-button:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.find-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 아래 링크 (로그인 | 비밀번호 재설정) */
+.find-links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.find-links a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.find-links a:hover {
+  color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .find-page {
+    padding: 40px 16px;
+  }
+
+  .find-card {
+    padding: 28px 20px;
+  }
+}
