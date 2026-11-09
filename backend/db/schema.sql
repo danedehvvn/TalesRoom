@@ -61,7 +61,8 @@ CREATE TABLE `themes` (
   `title` varchar(150) NOT NULL,
   `store_name` varchar(100) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `map_url` varchar(500),
+  `longitude` DECIMAL(10,7),
+  `latitude` DECIMAL(10,7),
   `content` text NOT NULL,
   `min_people` tinyint NOT NULL DEFAULT 0,
   `max_people` tinyint NOT NULL DEFAULT 0,
@@ -69,6 +70,7 @@ CREATE TABLE `themes` (
   `difficulty` tinyint NOT NULL,
   `price` integer NOT NULL DEFAULT 0,
   `genre` varchar(50) NOT NULL,
+  `thumbnail_url` VARCHAR(2048),
   `created_at` timestamp NOT NULL DEFAULT (now()),
   `updated_at` timestamp
 );

@@ -30,8 +30,17 @@ function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (changes) => {
+    setUser((current) => {
+      if (!current) return current;
+      const nextUser = { ...current, ...changes };
+      localStorage.setItem("user", JSON.stringify(nextUser));
+      return nextUser;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, saveLogin, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn: !!user, saveLogin, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
