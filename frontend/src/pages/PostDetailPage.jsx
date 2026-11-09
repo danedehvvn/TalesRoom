@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PostDeleteButton from '../components/PostDeleteButton';
-import CommentSection from '../components/CommentSection'; // 👈 컴포넌트 폴더에서 가져옴
+import CommentSection from '../components/CommentSection';
 import useAuth from '../hooks/useAuth';
 import SpoilerCheckModal from '../components/SpoilerCheckModal';
 import api from '../api/axiosInstance';
@@ -22,7 +22,7 @@ function PostDetailPage() {
     const fetchPostDetail = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/api/posts/${id}`);
+            const res = await api.get(`/posts/${id}`);
             const postData = res.data.data || res.data;
             setPost(postData);
 
@@ -56,7 +56,7 @@ function PostDetailPage() {
         if (!commentContent.trim()) return;
 
         try {
-            await api.post(`/api/posts/${id}/comments`, { content: commentContent });
+            await api.post(`/posts/${id}/comments`, { content: commentContent });
             setCommentContent('');
             fetchPostDetail();
         } catch (err) {
@@ -70,7 +70,7 @@ function PostDetailPage() {
         if (!window.confirm('정말 이 댓글을 삭제하시겠습니까?')) return;
 
         try {
-            await api.delete(`/api/comments/${commentId}`);
+            await api.delete(`/comments/${commentId}`);
             fetchPostDetail();
         } catch (err) {
             console.error('댓글 삭제 실패', err);
