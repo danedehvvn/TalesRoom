@@ -56,7 +56,7 @@ function PostDetailPage() {
         if (!commentContent.trim()) return;
 
         try {
-            await api.post(`/api/posts/${id}/comments`, { content: commentContent });
+            await api.post(`/posts/${id}/comments`, { content: commentContent });
             setCommentContent('');
             fetchPostDetail();
         } catch (err) {
