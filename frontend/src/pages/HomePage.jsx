@@ -31,8 +31,12 @@ function HomePage() {
       {/* 메인 화면에 배치된 명예의 전당 카드 섹션 */}
       <section className="home-section home-hof-section">
         <div className="home-hof-header">
-          <h2 className="home-hof-title">🏆 방탈출 명예의 전당</h2>
-          <p className="home-hof-desc">최고의 점수를 기록한 명예로운 탈출러들입니다.</p>
+          <h2 className="home-hof-title">🏆 테일즈룸 명예의 전당</h2>
+          <p className="home-hof-desc">
+            테일즈룸 활동 최고의 점수를 기록한 명예로운 회원 랭크입니다.
+            <br />
+            테마 후기, 댓글, 게시글 작성을 통해 점수를 올려보세요!
+          </p>
         </div>
         <HallOfFame />
       </section>
