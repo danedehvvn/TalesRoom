@@ -186,7 +186,8 @@ async function create(
                 title,
                 store_name,
                 address,
-                map_url,
+                latitude,
+                longitude,
                 content,
                 min_people,
                 max_people,
@@ -194,13 +195,15 @@ async function create(
                 difficulty,
                 price,
                 genre,
+                thumbnail_url,
                 created_at
             ) VALUES (
                 :userId,
                 :title,
                 :storeName,
                 :address,
-                :mapUrl,
+                :latitude,
+                :longitude,
                 :content,
                 :minPeople,
                 :maxPeople,
@@ -208,6 +211,7 @@ async function create(
                 :difficulty,
                 :price,
                 :genre,
+                :thumbnailUrl,
                 NOW()
             )`,
             {
@@ -239,14 +243,16 @@ async function updateWithLog(
                        title,
                        store_name AS storeName,
                        address,
-                       map_url AS mapUrl,
+                       latitude,
+                       longitude,
                        content,
                        min_people AS minPeople,
                        max_people AS maxPeople,
                        play_time AS playTime,
                        difficulty,
                        price,
-                       genre
+                       genre,
+                       thumbnail_url AS thumbnailUrl
                      FROM themes
                      WHERE id = :id
                      FOR UPDATE`,
@@ -274,7 +280,8 @@ async function updateWithLog(
                     title,
                     store_name,
                     address,
-                    map_url,
+                    latitude,
+                    longitude,
                     content,
                     min_people,
                     max_people,
@@ -282,6 +289,7 @@ async function updateWithLog(
                     difficulty,
                     price,
                     genre,
+                    thumbnail_url,
                     created_at
                 ) VALUES (
                     :themeId,
@@ -289,7 +297,8 @@ async function updateWithLog(
                     :title,
                     :storeName,
                     :address,
-                    :mapUrl,
+                    :latitude,
+                    :longitude,
                     :content,
                     :minPeople,
                     :maxPeople,
@@ -297,6 +306,7 @@ async function updateWithLog(
                     :difficulty,
                     :price,
                     :genre,
+                    :thumbnailUrl,
                     NOW()
                 )`,
                 {
@@ -310,8 +320,8 @@ async function updateWithLog(
                             previousTheme.storeName,
                         address:
                             previousTheme.address,
-                        mapUrl:
-                            previousTheme.mapUrl,
+                        latitude: previousTheme.latitude,
+                        longitude: previousTheme.longitude,
                         content:
                             previousTheme.content,
                         minPeople:
@@ -325,7 +335,9 @@ async function updateWithLog(
                         price:
                             previousTheme.price,
                         genre:
-                            previousTheme.genre
+                            previousTheme.genre,
+                        thumbnailUrl: 
+                            previousTheme.thumbnailUrl,
                     },
                     type:
                         QueryTypes.INSERT,
@@ -339,7 +351,8 @@ async function updateWithLog(
                    title = :title,
                    store_name = :storeName,
                    address = :address,
-                   map_url = :mapUrl,
+                   latitude = :latitude,
+                   longitude = :longitude,
                    content = :content,
                    min_people = :minPeople,
                    max_people = :maxPeople,
@@ -347,6 +360,7 @@ async function updateWithLog(
                    difficulty = :difficulty,
                    price = :price,
                    genre = :genre,
+                   thumbnail_url = :thumbnailUrl,
                    updated_at = NOW()
                  WHERE id = :id`,
                 {

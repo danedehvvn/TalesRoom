@@ -64,4 +64,25 @@ async function createApplication(data) {
     return RecruitmentApplication.create(data);
 }
 
-module.exports = { create, findPage, findByIdWithDetails, findById, findApplication, countApproved, createApplication };
+// 신청 승인, 거절
+async function findApplicationById(id) {
+    return RecruitmentApplication.findByPk(id);
+}
+async function updateApplicationStatus(application,status) {
+    return application.update({ status });
+}
+
+// 승인되지 않은것 일괄 삭제
+async function deleteUnapproved(recruitmentId, transaction) {
+    return RecruitmentApplication.destroy({
+        where: { recruitmentId, status: { [Op.ne]: 'APPROVED' } },
+        transaction,
+    });
+}
+
+// 모집글 상태변경
+async function updateStatus(recruitment, status, transaction) {
+    return recruitment.update({ status }, { transaction } );
+}
+
+module.exports = { create, findPage, findByIdWithDetails, findById, findApplication, countApproved, createApplication, findApplicationById, updateApplicationStatus, deleteUnapproved, updateStatus };

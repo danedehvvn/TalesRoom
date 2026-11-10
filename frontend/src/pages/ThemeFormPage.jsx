@@ -33,6 +33,8 @@ export default function ThemeFormPage() {
     const values = Object.fromEntries(new FormData(event.currentTarget));
     Object.keys(values).forEach((key) => { values[key] = values[key].trim(); });
     for (const key of ['minPeople', 'maxPeople', 'playTime', 'difficulty', 'price']) values[key] = Number(values[key]);
+    for (const key of ['latitude', 'longitude']) values[key] = values[key] === '' ? null : Number(values[key]);
+    values.thumbnailUrl = values.thumbnailUrl || null;
     if (values.minPeople > values.maxPeople) return setSubmitError('최대 인원은 최소 인원 이상이어야 합니다.');
     if (['title', 'storeName', 'address', 'genre', 'content'].some((key) => !values[key])) return setSubmitError('필수 항목을 입력해 주세요.');
     setPending(true); setSubmitError('');
@@ -55,7 +57,9 @@ export default function ThemeFormPage() {
             <label key={name}>{label} *<input name={name} type="number" step="1" required min={min} defaultValue={theme[name] ?? value} /></label>)}
           <label>난이도 (1~5) *<select name="difficulty" required defaultValue={theme.difficulty ?? ''}><option value="" disabled>난이도를 선택해 주세요</option>{[1, 2, 3, 4, 5].map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
           <label>가격 (원 / 1인) *<input name="price" type="number" min="0" step="1" required defaultValue={theme.price ?? ''} placeholder="예: 25000" /></label>
-          <label>지도 URL (선택)<input name="mapUrl" type="url" maxLength={500} placeholder="https://…" defaultValue={theme.mapUrl ?? ''} /></label>
+          <label>위도 · Y좌표 (선택)<input name="latitude" type="number" min="-90" max="90" step="0.0000001" placeholder="예: 37.5665" defaultValue={theme.latitude ?? ''} /></label>
+          <label>경도 · X좌표 (선택)<input name="longitude" type="number" min="-180" max="180" step="0.0000001" placeholder="예: 126.9780" defaultValue={theme.longitude ?? ''} /></label>
+          <label className="theme-form-wide">썸네일 URL (선택)<input name="thumbnailUrl" type="url" maxLength={2048} placeholder="https://…" defaultValue={theme.thumbnailUrl ?? ''} /></label>
           <label className="theme-form-wide">테마 설명 *<textarea name="content" required rows={5} placeholder="테마의 줄거리와 특징을 입력해 주세요" defaultValue={theme.content ?? ''} /></label>
         </div>
         {submitError && <p role="alert" className="theme-error">{submitError}</p>}

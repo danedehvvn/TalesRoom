@@ -86,7 +86,7 @@ async function findByIdWithDetails(id) {
             {
                 model: User,
                 as: 'author',
-                attributes: ['id', 'nickname', 'email', 'role']
+                attributes: ['id', 'nickname', 'email', 'role', 'grade']
             },
             // 2. 댓글 목록 및 댓글 작성자 정보
             {
@@ -98,7 +98,7 @@ async function findByIdWithDetails(id) {
                     {
                         model: User,
                         as: 'author',
-                        attributes: ['id', 'nickname', 'email', 'role']
+                        attributes: ['id', 'nickname', 'email', 'role', 'grade']
                     }
                 ]
             }

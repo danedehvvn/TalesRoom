@@ -124,6 +124,18 @@ function validateAdmin(authUser) {
     if (authUser.role !== 'ADMIN') {throw createHttpError(403, '관리자만 접근할 수 있습니다.');}
 }
 
+function optionalCoordinate(value, min, max) {
+    if (value == null || (typeof value === 'string' && value.trim() === '')) return null;
+    if (typeof value !== 'number' && typeof value !== 'string') {
+        throw createHttpError(400, INVALID_THEME_DATA_MESSAGE);
+    }
+    const coordinate = Number(value);
+    if (!Number.isFinite(coordinate) || coordinate < min || coordinate > max) {
+        throw createHttpError(400, INVALID_THEME_DATA_MESSAGE);
+    }
+    return coordinate;
+}
+
 // 등록·수정 요청값 검사
 function validateThemeData(body = {}) {
     if (
@@ -180,31 +192,19 @@ function validateThemeData(body = {}) {
         );
     }
 
-    if (
-        body.mapUrl !== undefined &&
-        body.mapUrl !== null &&
-        typeof body.mapUrl !== 'string'
-    ) {
-        throw createHttpError(
-            400,
-            INVALID_THEME_DATA_MESSAGE
-        );
+    const latitude = optionalCoordinate(body.latitude, -90, 90);
+    const longitude = optionalCoordinate(body.longitude, -180, 180);
+    if (body.thumbnailUrl != null && typeof body.thumbnailUrl !== 'string') {
+        throw createHttpError(400, INVALID_THEME_DATA_MESSAGE);
     }
-
-    const mapUrl =
-        body.mapUrl === undefined ||
-        body.mapUrl === null
-            ? null
-            : body.mapUrl.trim();
-
-    if (
-        mapUrl !== null &&
-        mapUrl.length > 500
-    ) {
-        throw createHttpError(
-            400,
-            INVALID_THEME_DATA_MESSAGE
-        );
+    const thumbnailUrl = body.thumbnailUrl?.trim() || null;
+    if (thumbnailUrl !== null) {
+        let url;
+        try { url = new URL(thumbnailUrl); }
+        catch { throw createHttpError(400, INVALID_THEME_DATA_MESSAGE); }
+        if (thumbnailUrl.length > 2048 || !['http:', 'https:'].includes(url.protocol)) {
+            throw createHttpError(400, INVALID_THEME_DATA_MESSAGE);
+        }
     }
 
     const minPeople =
@@ -277,7 +277,7 @@ function validateThemeData(body = {}) {
         );
     }
 
-    return {title,storeName,address,mapUrl,content,minPeople,maxPeople,playTime,difficulty,price,genre};
+    return {title,storeName,address,latitude,longitude,thumbnailUrl,content,minPeople,maxPeople,playTime,difficulty,price,genre};
 }
 
 // T-01 테마 목록·복합 필터

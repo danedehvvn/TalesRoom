@@ -18,7 +18,8 @@ import MyPagePage from './pages/MyPagePage';
 import MyPageEditPage from './pages/MyPageEditPage';
 import MyPostsPage from './pages/MyPostsPage';
 import MyCommentsPage from './pages/MyCommentsPage';
-import ExchangePage from './pages/ExchangePage';
+import ExchangePage from './pages/ExchangePage'; // 포인트 교환소 페이지
+import RecruitmentListPage from './pages/RecruitmentListPage'; // 파티/모집 목록 페이지
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
 
             {/* 커뮤니티: 같은 PostFormPage를 주소에 :id가 있는지로 작성/수정 구분 */}
             <Route path="/posts" element={<PostListPage />} />
+            <Route path="/recruitment" element={<RecruitmentListPage />} />
             <Route path="/posts/new" element={<PostFormPage key="new" />} />
             <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
 

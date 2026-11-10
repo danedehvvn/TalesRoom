@@ -32,7 +32,10 @@ const genres = [
   "감성",
   "모험/탐험",
   "코미디",
+  "타임어택",
+  "범죄",
   "야외",
+  "?",
 ];
 const size = 6;
 
@@ -261,14 +264,17 @@ export default function ThemeExplorePage() {
               >
                 <div className="theme-artwork">
                   <ThemeThumbnail url={theme.thumbnailUrl} />
-                  {/* <span>{theme.title}</span> */}
+                  <span className="theme-genre-badge">
+                    {theme.genre && theme.genre !== "?"
+                      ? theme.genre
+                      : "미분류"}
+                  </span>
                 </div>
                 <div className="theme-card-content">
                   <h3>{theme.title}</h3>
                   <p>
                     {[
                       theme.region || theme.storeName || theme.store_name,
-                      theme.genre != "?" ? `${theme.genre}` : "미분류",
                       `${theme.minPeople}~${theme.maxPeople}명`,
                       theme.playTime ? `${theme.playTime}분` : null,
                     ]

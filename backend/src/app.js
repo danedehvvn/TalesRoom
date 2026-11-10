@@ -60,3 +60,6 @@ app.use('/api/admin', adminRouter);
 
 const recruitmentRouter = require('./routes/recruitmentRouter');
 app.use('/api/recruitments', recruitmentRouter);
+
+const partyRouter = require('./routes/partyRouter');
+app.use('/api/parties', partyRouter);

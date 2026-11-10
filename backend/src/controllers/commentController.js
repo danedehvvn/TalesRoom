@@ -20,7 +20,7 @@ const createComment = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            data: { id: result.id },
+            data: { id: result.id, author: result.author },
             message: result.message
         });
 
