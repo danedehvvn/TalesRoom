@@ -18,6 +18,7 @@ import MyPagePage from './pages/MyPagePage';
 import MyPageEditPage from './pages/MyPageEditPage';
 import MyPostsPage from './pages/MyPostsPage';
 import MyCommentsPage from './pages/MyCommentsPage';
+import ExchangePage from './pages/ExchangePage';
 
 function App() {
   return (
@@ -33,21 +34,27 @@ function App() {
             <Route path="/themes/:id" element={<ThemeDetailPage />} />
             <Route path="/themes/:id/edit" element={<ThemeFormPage key="edit" />} />
             <Route path="/posts/:id" element={<PostDetailPage />} />
+
             {/* 커뮤니티: 같은 PostFormPage를 주소에 :id가 있는지로 작성/수정 구분 */}
             <Route path="/posts" element={<PostListPage />} />
             <Route path="/posts/new" element={<PostFormPage key="new" />} />
             <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
-            
+
+            {/* 포인트 교환소 경로 추가 */}
+            <Route path="/exchange" element={<ExchangePage />} />
+
             {/* 관리자: 화면에서 role을 확인하고, 서버도 adminMiddleware로 한 번 더 막아요 */}
             <Route path="/admin/users" element={<AdminUsersPage />} />
 
-
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          {/* 아이디 찾기 (로그인 화면의 '아이디 찾기' 링크가 이 주소로 이동) */}
-          <Route path="/find-id" element={<FindIdPage />} />
-          {/* 비밀번호 재설정 (로그인 화면, 아이디 찾기 결과 화면의 '비밀번호 재설정' 링크가 이 주소로 이동) */}
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            
+            {/* 아이디 찾기 (로그인 화면의 '아이디 찾기' 링크가 이 주소로 이동) */}
+            <Route path="/find-id" element={<FindIdPage />} />
+            
+            {/* 비밀번호 재설정 (로그인 화면, 아이디 찾기 결과 화면의 '비밀번호 재설정' 링크가 이 주소로 이동) */}
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            
             {/* 마이페이지 관련 인증 보호 라우트 */}
             <Route element={<RequireAuth />}>
               <Route path="/mypage" element={<MyPagePage />} />
