@@ -57,3 +57,6 @@ sequelize.authenticate()
 
 const adminRouter = require('./routes/adminRouter');
 app.use('/api/admin', adminRouter);
+
+const recruitmentRouter = require('./routes/recruitmentRouter');
+app.use('/api/recruitments', recruitmentRouter);
