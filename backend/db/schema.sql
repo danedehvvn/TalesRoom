@@ -10,6 +10,8 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `role` varchar(20),
   `nickname` varchar(30) NOT NULL,
+  `score` integer NOT NULL DEFAULT 0,
+  `grade` varchar(20) NOT NULL DEFAULT '방린이',
   `created_at` timestamp NOT NULL DEFAULT (now()),
   `updated_at` timestamp
 );
