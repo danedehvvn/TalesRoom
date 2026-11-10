@@ -1,10 +1,12 @@
 const themeReviewRepository = require('../repositories/themeReviewRepository');
 const themeRepository = require('../repositories/themeRepository');
+const { User } = require('../models');
+const { calculateGrade } = require('./userService');
 
 //1. 테마별 후기 목록 조회
-const getThemeReviews= async (id, page, size)=>{
-  const limit= size;
-  const offset = (page-1)*limit;
+const getThemeReviews = async (id, page, size) => {
+  const limit = size;
+  const offset = (page - 1) * limit;
 
   // 테마 존재하는지 확인
   const theme = await themeRepository.findThemeById(id);
@@ -34,9 +36,9 @@ const getThemeReviews= async (id, page, size)=>{
     };
   });
 
-  return{
+  return {
     items, //변환된 배열
-    pagination:{
+    pagination: {
       page,
       size,
       totalCount: result.count, // 후기 총 개수
@@ -46,7 +48,7 @@ const getThemeReviews= async (id, page, size)=>{
 }
 
 //2. 후기 등록
-const createThemeReview = async (rating,content,userId,themeId)=>{
+const createThemeReview = async (rating, content, userId, themeId) => {
 
   // 로그인 여부 확인
   // JWT 미들웨어 완성 후에는 라우터에서 인증 처리
@@ -81,7 +83,15 @@ const createThemeReview = async (rating,content,userId,themeId)=>{
     throw error;
   }
 
-  const review= await themeReviewRepository.createThemeReview(rating,content,userId,themeId);
+  const review = await themeReviewRepository.createThemeReview(rating, content, userId, themeId);
+
+  // 테마 리뷰 작성 시 활동 점수 +15점 적립 및 등급 자동 갱신
+  const dbUser = await User.findByPk(userId);
+  if (dbUser) {
+    const newScore = (dbUser.score || 0) + 15;
+    const newGrade = calculateGrade(newScore);
+    await dbUser.update({ score: newScore, grade: newGrade });
+  }
 
   // 등록 후 평균 평점과 후기 개수 조회
   const summary = await themeReviewRepository.getRatingSummary(themeId);
@@ -94,24 +104,20 @@ const createThemeReview = async (rating,content,userId,themeId)=>{
 
 }
 
-//3. 후기 삭제
-const deleteThemeReview=async (themeId, loginUserId, role, targetUserId)=>{
-
-  // 로그인 유저인지 확인
+// 3. 후기 삭제 (테마 후기 삭제 시 점수 -15점 차감 및 등급 갱신 반영)
+const deleteThemeReview = async (themeId, loginUserId, role, targetUserId) => {
   if (!loginUserId) {
     const error = new Error('로그인이 필요합니다.');
     error.status = 401;
     throw error;
   }
 
-  // 다른 회원의 후기 삭제는 관리자만 가능
   if (targetUserId && targetUserId !== loginUserId && role !== 'ADMIN') {
     const error = new Error('관리자만 다른 회원의 후기를 삭제할 수 있습니다.');
     error.status = 403;
     throw error;
   }
 
-  // 테마 존재하는지 확인
   const theme = await themeRepository.findThemeById(themeId);
 
   if (!theme) {
@@ -120,10 +126,8 @@ const deleteThemeReview=async (themeId, loginUserId, role, targetUserId)=>{
     throw error;
   }
 
-   // 삭제 대상 결정 -일반유저면 자기 id, 관리자면 지정한 유저 id
-  const userId = targetUserId || loginUserId
+  const userId = targetUserId || loginUserId;
 
-  //이 유저가 후기를 작성했는지 조회
   const existingReview = await themeReviewRepository.findByThemeAndUser(themeId, userId);
 
   if (!existingReview) {
@@ -132,20 +136,23 @@ const deleteThemeReview=async (themeId, loginUserId, role, targetUserId)=>{
     throw error;
   }
 
-  //삭제
-  await themeReviewRepository.deleteThemeReview(userId,themeId)
+  // 1. 삭제 실행
+  await themeReviewRepository.deleteThemeReview(userId, themeId);
 
-  // 삭제 후 평균 평점과 후기 개수 조회
+  // 2. 후기 작성자(userId)의 점수 -15점 차감 및 등급 갱신
+  const dbUser = await User.findByPk(userId);
+  if (dbUser) {
+      const newScore = Math.max((dbUser.score || 0) - 15, 0);
+      const newGrade = calculateGrade(newScore);
+      await dbUser.update({ score: newScore, grade: newGrade });
+  }
+
   const summary = await themeReviewRepository.getRatingSummary(themeId);
 
   return {
     avgRating: summary.avgRating,
     reviewCount: summary.reviewCount
-  }
+  };
+};
 
-}
-
-
-
-
-module.exports = { getThemeReviews,createThemeReview, deleteThemeReview };
+module.exports = { getThemeReviews, createThemeReview, deleteThemeReview };

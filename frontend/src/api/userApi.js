@@ -19,3 +19,8 @@ export async function fetchMyComments(params) {
   const response = await api.get("/users/me/comments", { params });
   return response.data.data;
 }
+
+export async function fetchHallOfFame() {
+  const res = await api.get("/users/hall-of-fame");
+  return res.data.data;
+}
