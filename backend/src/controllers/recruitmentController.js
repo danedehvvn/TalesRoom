@@ -49,4 +49,42 @@ async function apply(req, res) {
     }
 }
 
-module.exports = { create, getList, getDetail, apply };
+async function decide(req, res) {
+    try {
+        const id = Number(req.params.id);
+        const applicationId = Number(req.params.applicationId);
+        const data = await recruitmentService.decideApplication(id, applicationId, req.user, req.body);
+        const message = data.status === 'APPROVED' ? '승인되었습니다.' : '거절되었습니다.';
+        res.status(200).json({ success: true, data, message });
+    } catch (err) {
+        const status = err.status || 500;
+        if (status === 500) console.error(err);
+        res.status(status).json({ success: false, data: null, message: err.message });
+    }
+}
+
+// PATCH 확정
+async function close(req, res) {
+    try {
+        const data = await recruitmentService.closeRecruitment(Number(req.params.id), req.user);
+        res.status(200).json({ success: true, data, message: '파티가 확정되었습니다.'});
+    } catch (err) {
+        const status = err.status || 500;
+        if (status === 500) console.error(err);
+        res.status(status).json({ success: false, data: null, message: err.message });
+    }
+}
+
+// PATCH 취소
+async function cancel(req, res) {
+    try {
+        const data = await recruitmentService.cancelRecruitment(Number(req.params.id), req.user);
+        res.status(200).json({ success: true, data, message: '취소되었습니다.'});
+    } catch (err) {
+        const status = err.status || 500;
+        if (status === 500) console.error(err);
+        res.status(status).json({ success: false, data: null, message: err.message });
+    }
+}
+
+module.exports = { create, getList, getDetail, apply, decide, close, cancel };

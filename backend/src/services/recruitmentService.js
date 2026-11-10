@@ -1,4 +1,5 @@
 const recruitmentRepository = require('../repositories/recruitmentRepository');
+const { sequelize } = require('../models');    
 
 // 에러메세지
 function httpError(status, message) {
@@ -124,7 +125,7 @@ async function applyRecruitment(id, user, body) {
     if(recruitment.userId === user.id) throw httpError(400, '본인 모집글은 신청할 수 없습니다.');
 
     const existing = await recruitmentRepository.findApplication(id, user.id);
-    if (existing) throw httpError(409, '이미 신청하였습니다.');
+    if (existing) throw httpError(400, '이미 신청하였습니다.');
 
     const approvedCount = await recruitmentRepository.countApproved(id);
     if (approvedCount + 1 >= recruitment.capacity) throw httpError(400, '모집 인원이 다 찼습니다.');
@@ -137,4 +138,71 @@ async function applyRecruitment(id, user, body) {
     return { id: application.id, status: application.status };
 }
 
-module.exports = { createRecruitment, getRecruitments, getRecruitmentDetail, applyRecruitment };
+// 승인, 거절
+const DECISIONS= ['APPROVED', 'REJECTED'];
+async function decideApplication(id, applicationId, user, body) {
+    if (!Number.isInteger(id) || id < 1) throw httpError(400, '잘못된 번호입니다.');
+    if (!Number.isInteger(applicationId) || applicationId < 1) throw httpError(400, '잘못된 번호입니다.');
+    const { status } = body || {};
+    if (!DECISIONS.includes(status)) throw httpError(400, '승인 또는 거절만 가능합니다.');
+
+    // 모집글 확인
+    const recruitment = await recruitmentRepository.findById(id);
+    if (!recruitment) throw httpError(404, '글을 찾을 수 없습니다.');
+    if (recruitment.userId !== user.id) throw httpError(403, '작성자만 승인/거절할 수 있습니다.');
+    if (recruitment.status !== 'OPEN') throw httpError(400, '모집 중인 글만 승인/거절할 수 있습니다.');
+    // 신청 확인
+    const application = await recruitmentRepository.findApplicationById(applicationId);
+    if (!application || application.recruitmentId !== id) throw httpError(404, '신청을 찾을 수 없습니다.');
+    if (application.status !== 'PENDING') throw httpError(400, '이미 처리된 신청입니다.');
+    // 승인일 때만 인원 확인
+    let approvedCount = await recruitmentRepository.countApproved(id);
+    if (status === 'APPROVED') {
+        if (approvedCount + 1 >= recruitment.capacity) throw httpError(400, '모집 인원이 다 찼습니다.');
+        approvedCount += 1;
+    }
+
+    await recruitmentRepository.updateApplicationStatus(application, status);
+    return {
+        id: application.id,
+        status,
+        currentCount: approvedCount + 1,
+        capacity: recruitment.capacity,
+        isFull: approvedCount + 1 >= recruitment.capacity,
+    };
+}
+
+// 작성자 OPEN 확인
+async function findOpenRecruitmentOfAuthor(id, user) {
+    if (!Number.isInteger(id) || id < 1) throw httpError(400, '잘못된 번호입니다.');
+    const recruitment = await recruitmentRepository.findById(id);
+    if (!recruitment) throw httpError(404, '모집글을 찾을 수 없습니다.');
+    if (recruitment.userId !== user.id) throw httpError(403, '작성자만 가능합니다.');
+    if (recruitment.status !== 'OPEN') throw httpError(400, '모집 중인 글이 아닙니다.');
+    return recruitment;
+}
+
+// 마감 -> 파티 이동
+async function closeRecruitment(id, user) {
+    const recruitment = await findOpenRecruitmentOfAuthor(id, user);
+
+    const approvedCount = await recruitmentRepository.countApproved(id);
+    if (approvedCount + 1 < recruitment.capacity) {
+        throw httpError(400, `인원이 부족합니다.`);
+    }
+    await sequelize.transaction(async (t) => {
+        await recruitmentRepository.deleteUnapproved(id, t);
+        await recruitmentRepository.updateStatus(recruitment, 'CLOSED', t);
+    });
+
+    return { id, status: 'CLOSED' };
+}
+
+// 모집 취소
+async function cancelRecruitment(id, user) {
+    const recruitment = await findOpenRecruitmentOfAuthor(id, user);
+    await recruitmentRepository.updateStatus(recruitment, 'CANCELED');
+    return { id, status: 'CANCELED' };
+}
+
+module.exports = { createRecruitment, getRecruitments, getRecruitmentDetail, applyRecruitment, decideApplication, closeRecruitment, cancelRecruitment };
