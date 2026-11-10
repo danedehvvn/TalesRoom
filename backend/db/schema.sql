@@ -106,6 +106,48 @@ CREATE TABLE `theme_reviews` (
   `created_at` timestamp NOT NULL DEFAULT (now())
 );
 
+-- 모집글 테이블
+CREATE TABLE recruitments (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
+  user_id     VARCHAR(100) NOT NULL,
+  theme_id    INT NULL,
+  title       VARCHAR(200) NOT NULL,
+  content     TEXT NOT NULL,
+  meet_date   DATETIME NOT NULL,
+  capacity    INT NOT NULL,
+  status      VARCHAR(20) NOT NULL DEFAULT 'OPEN',
+  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at  TIMESTAMP NULL,
+  FOREIGN KEY (user_id)  REFERENCES users(id),
+  FOREIGN KEY (theme_id) REFERENCES themes(id)
+);
+
+
+-- 모집 신청(댓글)
+CREATE TABLE recruitment_applications (
+  id              INT PRIMARY KEY AUTO_INCREMENT,
+  recruitment_id  INT NOT NULL,
+  user_id         VARCHAR(100) NOT NULL,
+  content         TEXT NOT NULL,
+  status          VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (recruitment_id, user_id),
+  FOREIGN KEY (recruitment_id) REFERENCES recruitments(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- 파티 안에서 댓글
+CREATE TABLE party_comments (
+  id             INT PRIMARY KEY AUTO_INCREMENT,
+  recruitment_id  INT NOT NULL,
+  user_id        VARCHAR(100) NOT NULL,
+  content        TEXT NOT NULL,
+  created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (recruitment_id) REFERENCES recruitments(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
 CREATE UNIQUE INDEX `uk_users_email` ON `users` (`email`);
 CREATE UNIQUE INDEX `uk_users_nickname` ON `users` (`nickname`);
 CREATE UNIQUE INDEX `uk_post_reactions_post_id_user_id` ON `post_reactions` (`post_id`, `user_id`);

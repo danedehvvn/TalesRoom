@@ -18,6 +18,7 @@ import MyPagePage from './pages/MyPagePage';
 import MyPageEditPage from './pages/MyPageEditPage';
 import MyPostsPage from './pages/MyPostsPage';
 import MyCommentsPage from './pages/MyCommentsPage';
+import RecruitmentListPage from './pages/RecruitmentListPage';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/posts/:id" element={<PostDetailPage />} />
             {/* 커뮤니티: 같은 PostFormPage를 주소에 :id가 있는지로 작성/수정 구분 */}
             <Route path="/posts" element={<PostListPage />} />
+            <Route path="/recruitment" element={<RecruitmentListPage />} />
             <Route path="/posts/new" element={<PostFormPage key="new" />} />
             <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
             

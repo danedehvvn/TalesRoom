@@ -21,6 +21,7 @@ function Header() {
         <div className="nav-links">
           <NavLink to="/posts" className={({ isActive }) => (isActive || isCommunityActivity ? "active" : undefined)}>커뮤니티</NavLink>
           <NavLink to="/themes">테마 탐색</NavLink>
+          <NavLink to="/recruitment">모집</NavLink>
         </div>
 
         {/* 로그인 상태에 따라 프로필 또는 로그인 / 회원가입 표시 */}

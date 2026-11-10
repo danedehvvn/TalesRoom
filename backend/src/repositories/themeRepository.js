@@ -252,7 +252,7 @@ async function updateWithLog(
                        difficulty,
                        price,
                        genre,
-                       thumbnail_url AS thumbnailUrl,
+                       thumbnail_url AS thumbnailUrl
                      FROM themes
                      WHERE id = :id
                      FOR UPDATE`,
