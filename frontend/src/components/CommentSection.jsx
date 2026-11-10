@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { formatDate } from '../utils/postFormat';
 import { isAcceptedReply, isSolvedPost, ownsComment } from '../utils/communityPost';
 
@@ -13,7 +13,7 @@ export default function CommentSection({ post, commentContent, setCommentContent
       const name = comment.author?.nickname || '익명';
       const canAccept = user && post.isMine && post.category === 'QUESTION' && !solved && !mine;
       return <li key={comment.id} className={`comment-item ${accepted ? 'comment-item--accepted' : ''}`}>
-        <span className="post-avatar" aria-hidden="true">{Array.from(name)[0]}</span><div className="comment-content-box"><div className="comment-info-row"><strong>{name}</strong>{accepted && <span className="comment-accepted-badge">✓ 채택된 답변</span>}</div><p className="comment-text">{comment.content}</p></div>
+        <span className="post-avatar" aria-hidden="true">{Array.from(name)[0]}</span><div className="comment-content-box"><div className="comment-info-row"><strong>{name}</strong>{comment.author?.grade && <span className="post-grade-badge">{comment.author.grade}</span>}{accepted && <span className="comment-accepted-badge">✓ 채택된 답변</span>}</div><p className="comment-text">{comment.content}</p></div>
         <div className="comment-item-actions"><time dateTime={comment.createdAt}>{formatDate(comment.createdAt)}</time><div>{canAccept && <button type="button" disabled={pending} className="comment-accept-button" onClick={() => onCommentAccept(comment.id)}>채택</button>}{(mine || isAdmin) && <button type="button" disabled={pending} className="comment-delete-button" onClick={() => onCommentDelete(comment.id)}>삭제</button>}</div></div>
       </li>;
     })}</ul>

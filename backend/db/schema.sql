@@ -84,7 +84,8 @@ CREATE TABLE `theme_logs` (
   `title` varchar(150) NOT NULL,
   `store_name` varchar(100) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `map_url` varchar(500),
+  `latitude` DECIMAL(10,7),
+  `longitude` DECIMAL(10,7),
   `content` text NOT NULL,
   `min_people` tinyint NOT NULL,
   `max_people` tinyint NOT NULL,
@@ -92,6 +93,7 @@ CREATE TABLE `theme_logs` (
   `difficulty` tinyint NOT NULL,
   `price` integer NOT NULL,
   `genre` varchar(50) NOT NULL,
+  `thumbnail_url` VARCHAR(2048),
   `created_at` timestamp NOT NULL DEFAULT (now())
 );
 

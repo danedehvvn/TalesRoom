@@ -37,6 +37,7 @@ const createComment = async (postId, content, loginUser) => {
 
     return {
         id: newComment.id,
+        author: dbUser ? { id: dbUser.id, nickname: dbUser.nickname, grade: dbUser.grade } : null,
         message: successMessage
     };
 };

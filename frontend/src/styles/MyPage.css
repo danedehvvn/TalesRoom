@@ -59,6 +59,8 @@
   gap: 22px;
 }
 
+
+
 .mypage-avatar {
   display: grid;
   place-items: center;
@@ -74,7 +76,6 @@
 
 .mypage-profile h2,
 .mypage-edit-profile h2 {
-  margin: 0 0 7px;
   font-size: 21px;
   line-height: 1.25;
 }
@@ -88,9 +89,24 @@
 
 .mypage-profile div > span {
   display: block;
-  margin-top: 8px;
   color: #a09aa9;
   font-size: 12px;
+}
+
+.mypage-name-grade{
+  line-height: 1.25;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.mypage-gradeBadge{
+  font-size: 0.75rem;
+  background: #7c3aed;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
 }
 
 .mypage-outline-button,
