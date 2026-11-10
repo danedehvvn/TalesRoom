@@ -18,6 +18,7 @@ import MyPagePage from './pages/MyPagePage';
 import MyPageEditPage from './pages/MyPageEditPage';
 import MyPostsPage from './pages/MyPostsPage';
 import MyCommentsPage from './pages/MyCommentsPage';
+import MyBookmarksPage from './pages/MyBookmarksPage';
 import ExchangePage from './pages/ExchangePage'; // 포인트 교환소 페이지
 import RecruitmentListPage from './pages/RecruitmentListPage'; // 파티/모집 목록 페이지
 
@@ -63,6 +64,7 @@ function App() {
               <Route path="/mypage/edit" element={<MyPageEditPage />} />
               <Route path="/mypage/posts" element={<MyPostsPage />} />
               <Route path="/mypage/comments" element={<MyCommentsPage />} />
+              <Route path="/mypage/bookmarks" element={<MyBookmarksPage />} />
             </Route>
           </Route>
         </Routes>
