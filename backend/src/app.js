@@ -30,11 +30,11 @@ app.use('/api/themes', themeRouter);
 const postRouter = require('./routes/postRouter');  // 게시글 라우터 가져오기
 app.use('/api/posts', postRouter);                  // /api/posts로 시작하는 요청은 전부 postRouter가 처리
 
-
-
 const commentRouter= require('./routes/commentRouter');
 app.use('/api', commentRouter);
 
+const exchangeRouter = require('./routes/exchangeRouter');
+app.use('/api/exchange', exchangeRouter);
 
 // 서버 확인용 주소
 // http://localhost:3000/
