@@ -30,16 +30,28 @@ app.use('/api/themes', themeRouter);
 const postRouter = require('./routes/postRouter');  // 게시글 라우터 가져오기
 app.use('/api/posts', postRouter);                  // /api/posts로 시작하는 요청은 전부 postRouter가 처리
 
-const commentRouter= require('./routes/commentRouter');
+const commentRouter = require('./routes/commentRouter');
 app.use('/api', commentRouter);
 
 const exchangeRouter = require('./routes/exchangeRouter');
 app.use('/api/exchange', exchangeRouter);
 
+const bookmarkRouter = require('./routes/bookmarkRouter');
+app.use('/api/bookmarks', bookmarkRouter)
+
+const adminRouter = require('./routes/adminRouter');
+app.use('/api/admin', adminRouter);
+
+const recruitmentRouter = require('./routes/recruitmentRouter');
+app.use('/api/recruitments', recruitmentRouter);
+
+const partyRouter = require('./routes/partyRouter');
+app.use('/api/parties', partyRouter);
+
 // 서버 확인용 주소
 // http://localhost:3000/
 app.get('/', (req, res) => {
-    res.json({ success: true, data:null, message: 'TalesRoom API' });
+    res.json({ success: true, data: null, message: 'TalesRoom API' });
 })
 
 // 포트번호
@@ -54,12 +66,3 @@ sequelize.authenticate()
     .catch((err) => {
         console.error('DB 연결 실패', err.message);
     });
-
-const adminRouter = require('./routes/adminRouter');
-app.use('/api/admin', adminRouter);
-
-const recruitmentRouter = require('./routes/recruitmentRouter');
-app.use('/api/recruitments', recruitmentRouter);
-
-const partyRouter = require('./routes/partyRouter');
-app.use('/api/parties', partyRouter);
