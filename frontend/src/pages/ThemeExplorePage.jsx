@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { getThemes } from "../api/themeApi";
 import useAuth from "../hooks/useAuth";
+import SearchAutocomplete from "../components/SearchAutocomplete";
 import ThemeThumbnail from "../components/ThemeThumbnail";
 import "../styles/ThemeExplorePage.css";
 
@@ -131,12 +132,15 @@ export default function ThemeExplorePage() {
       >
         <div className="theme-search-row">
           <div className="theme-search-field">
-            <input
+            <SearchAutocomplete
+              type="themes"
               name="keyword"
-              type="search"
-              aria-label="테마명 또는 매장명 검색"
+              initialValue={params.get("keyword") || ""}
               placeholder="테마명을 검색해 보세요"
-              defaultValue={params.get("keyword") || ""}
+              ariaLabel="테마명 검색"
+              onSelect={(title) => {
+                update({ keyword: title });
+              }}
             />
             <button
               type="submit"

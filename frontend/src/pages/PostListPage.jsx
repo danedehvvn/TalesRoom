@@ -6,6 +6,7 @@ import { CATEGORIES, formatDate } from "../utils/postFormat";
 import { isSolvedPost, postFlag } from "../utils/communityPost";
 import CategoryBadge from "../components/CategoryBadge";
 import Pagination from "../components/Pagination";
+import SearchAutocomplete from "../components/SearchAutocomplete";
 import "../styles/PostListPage.css";
 
 const PAGE_SIZE = 10;
@@ -102,12 +103,15 @@ export default function PostListPage() {
             });
           }}
         >
-          <input
+          <SearchAutocomplete
+            type="posts"
             name="keyword"
-            type="search"
-            defaultValue={keyword}
+            initialValue={keyword}
             placeholder="제목 또는 내용으로 검색해 보세요"
-            aria-label="게시글 검색"
+            ariaLabel="게시글 검색"
+            onSelect={(title) => {
+              update({ keyword: title, page: "1" });
+            }}
           />
           <button type="submit" aria-label="게시글 검색 실행">
             <svg
