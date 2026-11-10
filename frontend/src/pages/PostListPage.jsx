@@ -90,7 +90,6 @@ export default function PostListPage() {
               </button>
             ))}
           </div>
-          <span className="post-list__sort">최신순</span>
         </div>
         <form
           key={keyword}
