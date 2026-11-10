@@ -10,12 +10,16 @@ const PartyComment = sequelize.define('PartyComment', {
         primaryKey: true,
         autoIncrement: true,
     },
-    partyPostId: {
+    recruitmentId: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
     userId: {
         type: DataTypes.STRING(100),
+        allowNull: false,
+    },
+    content: {
+        type: DataTypes.TEXT,
         allowNull: false,
     },
 }, {

@@ -10,7 +10,6 @@ const Comment = require('./Comment');   // 댓글 모델
 const PostReaction = require('./PostReaction');// 게시글 좋아요 모델
 const Recruitment = require('./Recruitment');                       // 동행 모집글 모델
 const RecruitmentApplication = require('./RecruitmentApplication'); // 모집 신청 모델
-const PartyPost = require('./PartyPost');                           // 파티 공간 글 모델
 const PartyComment = require('./PartyComment');                     // 파티 글 댓글 모델
 
 // 회원 1명 -> 글 여러개 (1:N)
@@ -67,14 +66,9 @@ RecruitmentApplication.belongsTo(User, { foreignKey: 'userId', as: 'applicant' }
 
 // 파티 REQ-PRT
 // 모집글 1 -> 파티글 N
-Recruitment.hasMany(PartyPost, { foreignKey: 'recruitmentId', as: 'partyPosts' });
-PartyPost.belongsTo(Recruitment, { foreignKey: 'recruitmentId' });
-PartyPost.belongsTo(User, { foreignKey: 'userId', as: 'author' });
-
-// 파티글 1 ->  파티댓글 N
-PartyPost.hasMany(PartyComment, { foreignKey: 'partyPostId', as: 'comments' });
-PartyComment.belongsTo(PartyPost, { foreignKey: 'partyPostId' });
+Recruitment.hasMany(PartyComment, { foreignKey: 'recruitmentId', as: 'partyComments' });
+PartyComment.belongsTo(Recruitment, { foreignKey: 'recruitmentId' });
 PartyComment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 
 // 다른 파일에서 const { Post, User, PostLog, Theme, ThemeReview, Comment, PostReactions } = require('../models'); 로 꺼내 쓸 수 있게 내보내는 작업
-module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment, PostReaction, Recruitment, RecruitmentApplication, PartyPost, PartyComment };
+module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment, PostReaction, Recruitment, RecruitmentApplication, PartyComment };
