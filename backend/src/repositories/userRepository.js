@@ -9,6 +9,8 @@ const findById = async (userId) => {
       "email",
       "nickname",
       "role",
+      "score",
+      "grade",
       "createdAt"
     ],
     raw: true
