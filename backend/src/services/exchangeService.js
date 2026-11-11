@@ -6,15 +6,15 @@ const getItems = async () => {
   return await exchangeRepository.findAllItems();
 };
 
-// 2. 상품 교환 처리 (트랜잭션 적용)
+// 2. 상품 교환 처리 (quantity 삭제, 1개 단가 기준 적용)
 const exchangeItem = async (userId, body) => {
-  const { itemId, quantity = 1 } = body;
+  const { itemId } = body;
 
   // 트랜잭션 시작
   const t = await sequelize.transaction();
 
   try {
-    // 유저 정보 및 상품 정보 조회 (트랜잭션 잠금 적용)
+    // 유저 정보 및 상품 정보 조회 (트랜잭션 적용)
     const user = await User.findByPk(userId, { transaction: t });
     const item = await exchangeRepository.findItemById(itemId);
 
@@ -24,19 +24,15 @@ const exchangeItem = async (userId, body) => {
       throw error;
     }
 
-    if (!item) {
-      const error = new Error("존재하지 않는 상품입니다.");
-      error.status = 404;
-      throw error;
-    }
-
-    if (item.stock < quantity) {
-      const error = new Error("상품 재고가 부족합니다.");
+    // 상품 존재 여부 및 재고 확인
+    if (!item || item.stock <= 0) {
+      const error = new Error("존재하지 않거나 품절된 상품입니다.");
       error.status = 400;
       throw error;
     }
 
-    const totalUsedPoints = item.price * quantity;
+    // 포인트 및 점수 계산 (단가 price 기준)
+    const totalUsedPoints = item.price;
     const CONVERSION_RATE = 10; // 1점 = 10P 환산 기준
     const availablePoints = (user.score || 0) * CONVERSION_RATE;
 
@@ -51,8 +47,8 @@ const exchangeItem = async (userId, body) => {
     user.score -= deductedScore;
     await user.save({ transaction: t });
 
-    // 교환 내역 생성 및 재고 차감
-    const exchange = await exchangeRepository.createExchangeAndReduceStock(userId, item, quantity, t);
+    // 교환 내역 생성 및 재고 차감 (repository 인자에서 quantity 제거)
+    const exchange = await exchangeRepository.createExchangeAndReduceStock(userId, item, t);
 
     // 트랜잭션 커밋
     await t.commit();
@@ -70,4 +66,42 @@ const getMyExchanges = async (userId) => {
   return await exchangeRepository.findExchangesByUserId(userId);
 };
 
-module.exports = { getItems, exchangeItem, getMyExchanges, };
+// 4. [관리자] 전체 교환 내역 조회
+const getAllExchanges = async () => {
+  return await exchangeRepository.findAllExchanges();
+};
+
+// [관리자] 상품 등록 비즈니스 로직
+const createItem = async (itemData) => {
+  const { name, price, stock } = itemData;
+  if (!name || price === undefined || stock === undefined) {
+    const err = new Error("상품명, 가격, 재고는 필수 입력 항목입니다.");
+    err.status = 400;
+    throw err;
+  }
+  return await exchangeRepository.createItem(itemData);
+};
+
+// [관리자] 상품 수정 비즈니스 로직
+const updateItem = async (itemId, itemData) => {
+  const updated = await exchangeRepository.updateItem(itemId, itemData);
+  if (!updated) {
+    const err = new Error("해당 상품을 찾을 수 없습니다.");
+    err.status = 404;
+    throw err;
+  }
+  return updated;
+};
+
+// [관리자] 상품 삭제 비즈니스 로직
+const deleteItem = async (itemId) => {
+  const success = await exchangeRepository.deleteItem(itemId);
+  if (!success) {
+    const err = new Error("해당 상품을 찾을 수 없습니다.");
+    err.status = 404;
+    throw err;
+  }
+  return true;
+};
+
+module.exports = { getItems, exchangeItem, getMyExchanges, getAllExchanges, createItem, updateItem, deleteItem };

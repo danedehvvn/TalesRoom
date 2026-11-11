@@ -17,3 +17,29 @@ export async function fetchMyExchanges() {
     const response = await api.get('/exchange/me');
     return response.data.data;
 }
+
+// --- [관리자 전용 API] ---
+
+// 4. 전체 유저 교환 내역
+export async function fetchAllExchanges() {
+    const response = await api.get('/exchange/admin/history');
+    return response.data.data;
+}
+
+// 5. 상품 등록 (관리자용) -> 최종 요청 주소: /api/exchange/items
+export async function createItem(itemData) {
+    const response = await api.post('/exchange/items', itemData);
+    return response.data.data;
+}
+
+// 6. 상품 수정 (관리자용) -> 최종 요청 주소: /api/exchange/items/:itemId
+export async function updateItem(itemId, itemData) {
+    const response = await api.put(`/exchange/items/${itemId}`, itemData);
+    return response.data.data;
+}
+
+// 7. 상품 삭제 (관리자용) -> 최종 요청 주소: /api/exchange/items/:itemId
+export async function deleteItem(itemId) {
+    const response = await api.delete(`/exchange/items/${itemId}`);
+    return response.data.data;
+}
