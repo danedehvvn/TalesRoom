@@ -10,6 +10,7 @@ import {
 } from "../api/themeApi";
 import useAuth from "../hooks/useAuth";
 import ThemeThumbnail from "../components/ThemeThumbnail";
+import BookmarkButton from "../components/BookmarkButton";
 import ThemeMap from "../components/ThemeMap";
 import "../styles/ThemePages.css";
 
@@ -288,6 +289,7 @@ function Reviews({ id, user, summary, onSummary }) {
 
 function ThemeDetail({ id }) {
   const { user } = useAuth();
+  const userId = user?.id ?? user?.userId;
   const navigate = useNavigate();
   const location = useLocation();
   const [state, setState] = useState({ loading: true });
@@ -307,7 +309,7 @@ function ThemeDetail({ id }) {
           setState({ loading: false, error: themeError(err) });
       });
     return () => controller.abort();
-  }, [id, retry]);
+  }, [id, retry, userId]);
   async function remove() {
     if (pending) return;
     setPending(true);
@@ -363,7 +365,17 @@ function ThemeDetail({ id }) {
                 <span className="theme-count-badge">
                   {theme.genre != "?" ? `${theme.genre}` : "미분류"}
                 </span>
-                <h1>{theme.title}</h1>
+                <div className="theme-detail-title-row">
+                  <h1>{theme.title}</h1>
+                  <BookmarkButton
+                    themeId={theme.id}
+                    title={theme.title}
+                    isBookmarked={theme.isBookmarked}
+                    onChange={(isBookmarked) => setState((current) => ({
+                      ...current, theme: { ...current.theme, isBookmarked },
+                    }))}
+                  />
+                </div>
                 <p>{theme.storeName || theme.store_name}</p>
                 <div className="theme-detail-rating">
                   {ratingInfo.avgRating == null ? (

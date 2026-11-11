@@ -24,6 +24,7 @@ function Header() {
           <NavLink to="/recruitment">모집</NavLink>
           {/* 내 파티: 마감된 모집 중 내가 속한 파티 목록 (비로그인이면 RequireAuth가 로그인 화면으로 보냄) */}
           <NavLink to="/parties">내 파티</NavLink>
+          <NavLink to="/exchange">포인트 교환소</NavLink>
         </div>
 
         {/* 로그인 상태에 따라 프로필 또는 로그인 / 회원가입 표시 */}

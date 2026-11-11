@@ -13,7 +13,7 @@ function MyPagePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -153,6 +153,28 @@ function MyPagePage() {
               </span>
               <span aria-hidden="true">›</span>
             </Link>
+            <Link to="/mypage/bookmarks" className="mypage-activity-link">
+              <span className="mypage-activity-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M6 3h12v18l-6-4-6 4Z" /></svg>
+              </span>
+              <span className="mypage-activity-copy">
+                <strong>내 북마크 테마 보기</strong>
+                <small>관심 있는 방탈출 테마를 모아보세요.</small>
+              </span>
+              <span aria-hidden="true">›</span>
+            </Link>
+            {user?.role === "ADMIN" && (
+              <Link to="/admin/users" className="mypage-activity-link">
+                <span className="mypage-activity-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="7" r="3" /><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v2" /></svg>
+                </span>
+                <span className="mypage-activity-copy">
+                  <strong>회원 목록 관리</strong>
+                  <small>관리자 전용 회원 목록을 확인해요.</small>
+                </span>
+                <span aria-hidden="true">›</span>
+              </Link>
+            )}
           </section>
 
           <div className="mypage-bottom-row">

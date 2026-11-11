@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { requestPasswordCode, resetPassword } from '../api/authApi';
+import { isValidPassword, PASSWORD_RULE_MESSAGE, PASSWORD_RULE_LABEL } from '../utils/validators'; //비밀번호 규칙 검사·안내 문구
 import '../styles/FindAccount.css';
 
 function ResetPasswordPage() {
@@ -68,12 +69,10 @@ function ResetPasswordPage() {
       return;
     }
 
-    //새 비밀번호 규칙 (백엔드와 같은 규칙: 8~20자, 영문과 숫자를 각각 1개 이상)
+    //새 비밀번호 규칙 (백엔드와 같은 규칙: 8~20자, 영문·숫자·특수문자를 각각 1개 이상)
     //- 서버도 검사하지만, 요청 전에 먼저 알려주면 인증번호를 아낄 수 있음
-    const hasLetter = /[A-Za-z]/.test(newPassword);
-    const hasNumber = /\d/.test(newPassword);
-    if (newPassword.length < 8 || newPassword.length > 20 || !hasLetter || !hasNumber) {
-      setError('새 비밀번호는 8~20자이며 영문과 숫자를 포함해야 합니다.');
+    if (!isValidPassword(newPassword)) { //utils/validators.js 에서 처리
+      setError(`새 비밀번호는 ${PASSWORD_RULE_MESSAGE}`);
       return;
     }
 
@@ -172,7 +171,7 @@ function ResetPasswordPage() {
               />
             </div>
 
-            <label htmlFor="reset-new-password">새 비밀번호 (8~20자 영문+숫자)</label>
+            <label htmlFor="reset-new-password">새 비밀번호 ({PASSWORD_RULE_LABEL})</label>
             <div className="find-row">
               <input
                 id="reset-new-password"

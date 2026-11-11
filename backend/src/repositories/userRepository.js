@@ -1,5 +1,5 @@
-const { QueryTypes } = require("sequelize"); 
-const {sequelize, Post, User} = require("../models");
+const { QueryTypes } = require("sequelize");
+const { sequelize, Post, User, Bookmark, Theme } = require("../models");
 
 // 내 정보 조회
 const findById = async (userId) => {
@@ -187,6 +187,27 @@ const findMyComments = async (
   );
 };
 
+//내 북마크
+const findMyBookmarks = async (
+  userId,
+  limit,
+  offset
+) => {
+  return await Bookmark.findAll({
+    where: { userId }, //특정 유저 조건으로 조회
+    limit,
+    offset,
+    //themes와 JOIN
+    include: [{
+      model: Theme,
+      as: 'theme',
+      attributes: ['id', 'title', 'storeName', 'thumbnailUrl', 'genre'],
+    }],
+
+    order: [['createdAt', 'DESC']]
+  });
+};
+
 const countMyComments = async (userId) => {
   const rows = await sequelize.query(
     `SELECT COUNT(*) AS totalCount
@@ -204,6 +225,24 @@ const countMyComments = async (userId) => {
   return Number(rows[0].totalCount);
 };
 
+const countMyBookmarks = async (userId) => {
+  const rows = await sequelize.query(
+    `SELECT COUNT(*) AS totalCount
+     FROM bookmarks
+     WHERE user_id = :userId`,
+    {
+      replacements: {
+        userId
+      },
+      type: QueryTypes.SELECT
+    }
+  );
+
+  // count 문자열이면 숫자로 바꾸기
+  return Number(rows[0].totalCount);
+};
+
+
 module.exports = {
   findById,
   findPasswordById,
@@ -213,5 +252,7 @@ module.exports = {
   findMyPosts,
   countMyPosts,
   findMyComments,
-  countMyComments
+  countMyComments,
+  findMyBookmarks,
+  countMyBookmarks
 };

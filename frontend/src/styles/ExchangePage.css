@@ -1,0 +1,251 @@
+/* ExchangePage 전체 레이아웃 */
+.exchange-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  font-family: "Pretendard", sans-serif;
+}
+
+.exchange-page__header {
+  margin-bottom: 24px;
+}
+
+.exchange-page__title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #242035;
+  margin-bottom: 8px;
+}
+
+.exchange-page__description {
+  font-size: 14px;
+  color: #666075;
+}
+
+/* 상단 유저 정보 배너 */
+.exchange-banner {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8f6fc;
+  border-radius: var(--radius-button);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.exchange-banner__welcome {
+  font-size: 14px;
+  color: #666075;
+}
+
+.exchange-banner__welcome strong {
+  color: #242035;
+}
+
+.exchange-banner__stats {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.exchange-banner__stat-item {
+  text-align: right;
+}
+
+.exchange-banner__label {
+  display: block;
+  font-size: 12px;
+  color: #8c859b;
+  margin-bottom: 2px;
+}
+
+.exchange-banner__score-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3b354d;
+}
+
+.exchange-banner__point-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #6854a3;
+}
+
+.exchange-banner__divider {
+  width: 1px;
+  height: 24px;
+  background: #d8d3e3;
+}
+
+/* 섹션 공통 */
+.exchange-section {
+  margin-bottom: 48px;
+}
+
+.exchange-section__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #242035;
+  margin-bottom: 16px;
+}
+
+/* 상품 카드 그리드 */
+.exchange-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.exchange-card {
+  background: #fff;
+  border: 1px solid #e2deec;
+  border-radius: var(--radius-button);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.exchange-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.exchange-card.sold-out {
+  opacity: 0.6;
+}
+
+.exchange-card__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #242035;
+  margin-bottom: 8px;
+}
+
+.exchange-card__desc {
+  font-size: 13px;
+  color: #666075;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.exchange-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid #f0edf6;
+  padding-top: 12px;
+}
+
+.exchange-card__price-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exchange-card__price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #6854a3;
+}
+
+.exchange-card__stock {
+  font-size: 12px;
+  color: #8c859b;
+}
+
+.exchange-card__button {
+  width: 100%;
+  padding: 10px;
+  background: #6854a3;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.exchange-card__button:hover:not(:disabled) {
+  background: #57448d;
+}
+
+.exchange-card__button:disabled {
+  background: #d8d3e3;
+  cursor: not-allowed;
+}
+
+/* 내 교환 내역 섹션 */
+.history-section {
+  margin-top: 48px;
+}
+
+.history-title {
+  margin-bottom: 16px;
+}
+
+.history-login-guide,
+.history-empty {
+  color: #8c859b;
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+  background: #faf8fc;
+  border-radius: var(--radius-button);
+}
+
+.history-table-wrapper {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2deec;
+}
+
+.history-table th {
+  background: #f8f6fc;
+  color: #3b354d;
+  font-weight: 600;
+}
+
+.history-table__name {
+  font-weight: 500;
+  color: #242035;
+}
+
+.history-table__points {
+  color: #e5484d;
+  font-weight: 600;
+}
+
+.history-table__date {
+  color: #8c859b;
+  font-size: 13px;
+}
+
+/* 로딩 및 에러 메시지 */
+.exchange-loading,
+.exchange-error {
+  text-align: center;
+  padding: 60px;
+  font-size: 15px;
+  color: #666075;
+}
+
+.exchange-error {
+  color: #e5484d;
+}
