@@ -60,6 +60,9 @@ function AdminUsersPage() {
   return (
     <div className="admin-users">
       {/* 제목 영역 */}
+      <Link to="/mypage" className="admin-users__back">
+        <span aria-hidden="true">‹</span> 마이페이지로 돌아가기
+      </Link>
       <p className="admin-users__eyebrow">ADMIN</p>
       <h1 className="admin-users__title">회원 관리</h1>
       <p className="admin-users__subtitle">

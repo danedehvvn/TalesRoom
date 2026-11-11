@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');// 로그인 토큰(JWT) 발급
 const { User } = require('../models');
 const { isEmpty, duplicateId, duplicateEmail, duplicateNickname } = require('../services/authService'); // 중복 검사 함수
 const { isVerified, clearVerification } = require('../services/emailVerificationService');//회원가입시 이메일 인증 확인,삭제 함수
+const { isValidPassword, PASSWORD_RULE_MESSAGE } = require('../utils/validators');// 비밀번호 규칙 검사·안내 문구 가져옴
 
 // 회원 가입 컨트롤러
 const signup = async(req,res)=>{
@@ -14,6 +15,11 @@ const signup = async(req,res)=>{
         if (!id || !password || !email || !nickname) {
             // 누락 된 값 있으면 400 에러 응답 반환
             return res.status(400).json({ message: '모든 필드를 입력해주세요!' });
+        }
+
+        // 비밀번호 규칙 확인
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ message: `비밀번호는 ${PASSWORD_RULE_MESSAGE}` });
         }
 
         // 2. 아이디 → 이메일 → 닉네임 순서로 중복 검사 (authService의 세 함수 사용)

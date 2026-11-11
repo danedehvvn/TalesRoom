@@ -13,6 +13,23 @@
   margin-bottom: 28px;
 }
 
+.mypage-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 9px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.mypage-back-link:hover { background: #f0ecf7; }
+.mypage-back-link:focus-visible { outline: 3px solid #aa8ed6; outline-offset: 3px; }
+
 .mypage-heading__eyebrow {
   margin: 0 0 10px;
   color: var(--color-primary);

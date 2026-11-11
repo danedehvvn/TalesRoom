@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const userRepository = require("../repositories/userRepository",);
 const { duplicateNickname } = require("./authService",);
-const User = require("../models/User"); // 명예의 전당 조회 위한 User 모델 추가 
+const User = require("../models/User"); // 명예의 전당 조회 위한 User 모델 추가
+const { isValidPassword, PASSWORD_RULE_MESSAGE } = require("../utils/validators"); // 비밀번호 규칙 검사·안내 문구 가져옴
+const Theme = require("../models/Theme"); //북마크 목록 조회 위한 Theme 모델 추가
 
 const createHttpError = (statusCode, message,) => {
   const error = new Error(message);
@@ -97,11 +99,9 @@ const updateProfile = async (userId, requestBody = {},) => {
     }
 
     // 새 비밀번호에 영어, 숫자 있는지 확인
-    const hasLetter = /[A-Za-z]/.test(newPassword);
-    const hasNumber = /\d/.test(newPassword);
-
-    if (newPassword.length < 8 || newPassword.length > 20 || !hasLetter || !hasNumber) {
-      throw createHttpError(400, "새 비밀번호는 8~20자이며 영문과 숫자를 포함해야 합니다.",);
+    if (!isValidPassword(newPassword)) {//유틸의 validators.js에서 처리
+      
+      throw createHttpError(400, `새 비밀번호는 ${PASSWORD_RULE_MESSAGE}`,);
     }
 
     // 입력한 지금 비밀번호와 db bcrypt 해시랑 비교합니다
@@ -197,6 +197,31 @@ const getMyComments = async (userId, query = {}) => {
   return { items, page, size, totalCount, totalPages: Math.ceil(totalCount / size), };
 };
 
+// U-05 내 북마크 목록
+const getMyBookmarks = async (userId, query = {}) => {
+  const { page, size, offset } = parsePagination(query); // page, size를 실제 페이징 값으로 바꿈
+
+  // 북마크 목록, 북마크 댓글 수 동시에 조회
+  const [rows, totalCount] =
+    await Promise.all([
+      userRepository.findMyBookmarks(userId, size, offset),
+      userRepository.countMyBookmarks(userId),
+    ]);
+
+  // Repository 조회 결과를 API 명세 형식으로 바꿈
+  const items = rows.map((row) => ({
+    id: row.theme.id,
+    title: row.theme.title,
+    storeName: row.theme.storeName,
+    thumbnailUrl: row.theme.thumbnailUrl,
+    genre: row.theme.genre,
+    isBookmarked: true, //무조건 true로 반환
+  }));
+
+  // 목록 페이징 정보 controller에 주기
+  return { items, page, size, totalCount, totalPages: Math.ceil(totalCount / size), };
+};
+
 // 명예의 전당 상위 5명 회원 조회 비즈니스 로직 (동점자 정렬 기준 추가)
 const getHallOfFame = async () => {
   const topUsers = await User.findAll({
@@ -211,4 +236,4 @@ const getHallOfFame = async () => {
   return topUsers;
 };
 
-module.exports = { getUserById, updateProfile, getMyPosts, getMyComments, getHallOfFame, calculateGrade };
+module.exports = { getUserById, updateProfile, getMyPosts, getMyComments, getMyBookmarks, getHallOfFame, calculateGrade };
