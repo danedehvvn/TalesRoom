@@ -7,7 +7,7 @@ const sendErrorResponse = (res, error) => {
   console.error(error);
   const message = statusCode === 500 ? "서버 내부 오류가 발생했습니다." : error.message;
 
-  return res.status(statusCode).json({success: false, data: null, message});
+  return res.status(statusCode).json({ success: false, data: null, message });
 };
 
 // 내 정보 조회
@@ -71,6 +71,21 @@ const getMyComments = async (req, res) => {
   }
 };
 
+const getMyBookmarks = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const data = await userService.getMyBookmarks(userId, req.query);
+
+    return res.status(200).json({
+      success: true,
+      data,
+      message: "OK"
+    });
+  } catch (error) {
+    return sendErrorResponse(res, error);
+  }
+};
+
 // 명예의 전당 조회 컨트롤러 함수
 const getHallOfFame = async (req, res) => {
   try {
@@ -86,4 +101,4 @@ const getHallOfFame = async (req, res) => {
   }
 };
 
-module.exports = { getMyInfo, updateMyInfo, getMyPosts, getMyComments, getHallOfFame };
+module.exports = { getMyInfo, updateMyInfo, getMyPosts, getMyComments, getMyBookmarks, getHallOfFame };

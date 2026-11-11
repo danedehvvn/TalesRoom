@@ -1,185 +1,70 @@
-.post-detail-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 30px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    position: relative;
+﻿.post-detail-container { max-width: 1176px; margin: 50px auto 60px; padding: 40px 48px; background: white; border: 1px solid var(--color-border); border-radius: 20px; box-shadow: 0 12px 30px #30204408; }
+.post-detail-container button, .post-detail-container textarea { font: inherit; }
+.post-detail-container button { cursor: pointer; }
+.post-detail-container button:disabled { cursor: default; opacity: .5; }
+.post-detail-container :focus-visible { outline: 3px solid #aa8ed6; outline-offset: 3px; }
+.post-detail-container .post-detail-back { display: inline-block; margin-bottom: 22px; color: #9181aa; font-size: 13px; font-weight: 600; text-decoration: none; }
+.post-detail-container .post-detail-badges { display: flex; gap: 8px; align-items: center; }
+.post-detail-container .category-badge { min-width: 44px; font-size: 12px; }
+.post-detail-container .post-solved-badge, .post-detail-container .post-spoiler-badge { padding: 7px 11px; border-radius: 24px; background: #e9f4f1; color: #24867b; font-size: 12px; font-weight: 700; }
+.post-detail-container .post-spoiler-badge { background: #fff0f2; color: #c26470; }
+.post-detail-container .post-detail-header h1 { margin: 18px 0 14px; font-size: 32px; line-height: 1.4; letter-spacing: -1px; overflow-wrap: anywhere; }
+.post-detail-container .post-detail-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid #eee9f5; font-size: 12px; color: #91889e; }
+.post-detail-container .post-detail-meta strong { color: #554a66; font-size: 13px; }
+.post-detail-container .post-grade-badge {
+  font-size: 0.75rem;
+  background: #7c3aed;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
 }
-
-.post-header h2 {
-    margin-bottom: 10px;
-}
-
-.post-meta {
-    color: #666;
-    font-size: 14px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.badge-spoiler {
-    background-color: #fff1f0;
-    color: #ff4d4f;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-weight: bold;
-    border: 1px solid #ffa39e;
-}
-
-.post-content-area {
-    margin: 30px 0;
-    line-height: 1.6;
-    font-size: 16px;
-    transition: filter 0.3s ease;
-}
-
-/* 스포일러 동의 전 블러 효과 */
-.post-content-area.blurred {
-    filter: blur(10px);
-    user-select: none;
-    pointer-events: none;
-}
-
-.comments-section {
-    margin-top: 40px;
-}
-
-.comments-section h3 {
-    margin-bottom: 15px;
-}
-
-/* 댓글 작성 폼 스타일 */
-.comment-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
-.comment-textarea {
-    flex: 1;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    resize: none;
-    font-size: 14px;
-}
-
-.comment-submit-btn {
-    padding: 0 24px;
-    background-color: #5c469c;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.comment-submit-btn:hover {
-    background-color: #4a3780;
-}
-
-.login-guide {
-    color: #777;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
-.login-link {
-    color: #5c469c;
-    font-weight: bold;
-}
-
-/* 댓글 아이템 스타일 */
-.comment-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.comment-item {
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.comment-item-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.comment-content-box {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.comment-info-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.comment-author-name {
-    font-weight: bold;
-    font-size: 13px;
-    color: #333;
-}
-
-.comment-date {
-    font-size: 11px;
-    color: #999;
-}
-
-.comment-text {
-    margin: 0;
-    font-size: 14px;
-    color: #444;
-    white-space: pre-wrap;
-    word-break: break-all;
-}
-
-/* 댓글 삭제 버튼 스타일 */
-.comment-delete-btn {
-    background: #fff0f0;
-    border: 1px solid #ffcccc;
-    color: #ff4d4d;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background 0.2s;
-}
-
-.comment-delete-btn:hover {
-    background: #ffe6e6;
-}
-
-.no-comments {
-    color: #888;
-    font-size: 14px;
-    text-align: center;
-    padding: 30px 0;
-}
-
-.btn-back {
-    background-color: #f0f0f0;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.btn-back:hover {
-    background-color: #e0e0e0;
-}
-
-.post-actions {
-    margin-top: 30px;
-    display: flex;
-    gap: 8px;
+.post-detail-container .post-avatar { flex: 0 0 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #eae3f4; color: #7660a9; font-size: 15px; font-weight: 700; }
+.post-detail-container .post-detail-owner-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.post-detail-container .post-detail-owner-actions a, .post-detail-container .post-detail-delete { border: 0; background: transparent; color: #91889e; text-decoration: none; font-size: 12px; padding: 5px 0; }
+.post-detail-container .post-detail-body { padding-top: 22px; min-height: 180px; font-size: 17px; line-height: 2; white-space: pre-wrap; overflow-wrap: anywhere; }
+.post-detail-container .post-detail-body.is-hidden { color: var(--color-text-muted); }
+.post-detail-container .post-detail-like-row { display: flex; justify-content: flex-end; padding: 6px 0 28px; }
+.post-detail-container .post-detail-like { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border: 1px solid #cebeeb; border-radius: 11px; background: white; color: var(--color-primary); font-size: 13px; font-weight: 700; }
+.post-detail-container .post-detail-like span { font-size: 18px; }
+.post-detail-container .post-detail-like.is-liked { background: #f3eefb; }
+.post-detail-container .comments-section { border-top: 1px solid #eee9f5; padding-top: 28px; }
+.post-detail-container .comments-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.post-detail-container .comments-heading h2 { font-size: 22px; margin: 0; }
+.post-detail-container .comments-heading h2 span { color: var(--color-primary); }
+.post-detail-container .comments-heading p { color: #91889e; font-size: 12px; margin: 0; }
+.post-detail-container .comment-list { list-style: none; padding: 0; margin: 0; }
+.post-detail-container .comment-item { display: flex; align-items: flex-start; gap: 12px; padding: 20px 0; border-bottom: 1px solid #eee9f5; }
+.post-detail-container .comment-item--accepted { background: #f5f1fb; border: 1px solid #dfd0fa; border-radius: 12px; padding: 18px; margin-bottom: 5px; }
+.post-detail-container .comment-content-box { flex: 1; min-width: 0; }
+.post-detail-container .comment-info-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 22px; font-size: 14px; }
+.post-detail-container .comment-accepted-badge { background: #e7dcf8; color: #685096; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 4px 7px; }
+.post-detail-container .comment-text { font-size: 14px; line-height: 1.8; margin: 5px 0 0; color: #756a84; white-space: pre-wrap; overflow-wrap: anywhere; }
+.post-detail-container .comment-item-actions { display: flex; align-items: flex-end; flex-direction: column; gap: 12px; padding-top: 5px; }
+.post-detail-container .comment-item-actions time { color: #91889e; font-size: 12px; white-space: nowrap; }
+.post-detail-container .comment-item-actions > div { display: flex; align-items: center; gap: 10px; }
+.post-detail-container .comment-accept-button, .post-detail-container .comment-submit-button { border: 0; border-radius: 10px; padding: 11px 20px; background: var(--color-primary); color: white; font-size: 14px; font-weight: 700; }
+.post-detail-container .comment-delete-button { border: 0; padding: 4px 0; background: transparent; color: #91889e; font-size: 12px; }
+.post-detail-container .comment-form { display: flex; gap: 12px; align-items: flex-start; margin-top: 19px; }
+.post-detail-container .comment-form textarea { flex: 1; width: 100%; min-width: 0; min-height: 48px; resize: vertical; padding: 12px 16px; border: 1px solid #ddd3ee; border-radius: 10px; color: var(--color-text); background: white; font-size: 15px; line-height: 1.5; }
+.post-detail-container .comment-submit-button { min-height: 46px; flex-shrink: 0; }
+.post-detail-container .post-login-guide, .post-detail-container .no-comments { font-size: 14px; color: var(--color-text-muted); padding: 20px 0; }
+.post-detail-container .post-login-guide a { color: var(--color-primary); }
+.post-detail-container .post-detail-notice { color: var(--color-primary); font-size: 13px; }
+.post-detail-container .post-detail-error { color: #b2394d; font-size: 13px; }
+.post-detail-state { padding: 70px 30px; text-align: center; color: var(--color-text-muted); }
+.post-detail-state button, .post-detail-state a { margin: 10px; padding: 10px 16px; border: 1px solid var(--color-border); border-radius: 9px; background: white; color: var(--color-primary); text-decoration: none; }
+@media (max-width: 1240px) { .post-detail-container { margin-left: 24px; margin-right: 24px; } }
+@media (max-width: 600px) {
+  .post-detail-container { margin: 28px 16px 40px; padding: 24px 18px; }
+  .post-detail-container .post-detail-header h1 { font-size: 26px; }
+  .post-detail-container .post-detail-meta { gap: 8px; }
+  .post-detail-container .post-detail-meta time { font-size: 11px; }
+  .post-detail-container .post-detail-body { font-size: 15px; min-height: 170px; }
+  .post-detail-container .comments-heading { flex-wrap: wrap; gap: 8px; }
+  .post-detail-container .comment-item { gap: 8px; flex-wrap: wrap; }
+  .post-detail-container .comment-item-actions { width: 100%; padding-left: 44px; flex-direction: row; align-items: center; justify-content: space-between; }
+  .post-detail-container .comment-item--accepted { padding: 14px; }
+  .post-detail-container .comment-info-row { gap: 6px; }
 }

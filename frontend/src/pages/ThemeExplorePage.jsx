@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { getThemes } from "../api/themeApi";
 import useAuth from "../hooks/useAuth";
+import SearchAutocomplete from "../components/SearchAutocomplete";
 import ThemeThumbnail from "../components/ThemeThumbnail";
+import BookmarkButton from "../components/BookmarkButton";
 import "../styles/ThemeExplorePage.css";
 
 const regions = [
@@ -20,19 +22,27 @@ const regions = [
   "수원",
 ];
 const genres = [
-  "공포",
+  "호러/공포",
   "추리",
-  "스토리",
-  "감성",
+  "드라마",
+  "스릴러",
   "미스터리",
   "판타지",
-  "모험",
+  "SF",
+  "잠입",
+  "감성",
+  "모험/탐험",
   "코미디",
+  "타임어택",
+  "범죄",
+  "야외",
+  "?",
 ];
 const size = 6;
 
 export default function ThemeExplorePage() {
   const { user } = useAuth();
+  const userId = user?.id ?? user?.userId;
   const [params, setParams] = useSearchParams();
   const [state, setState] = useState({
     loading: true,
@@ -60,7 +70,9 @@ export default function ThemeExplorePage() {
       },
       controller.signal,
     )
-      .then((result) => setState({ ...result, loading: false }))
+      .then((result) => {
+        if (!controller.signal.aborted) setState({ ...result, loading: false });
+      })
       .catch((error) => {
         if (!controller.signal.aborted)
           setState({
@@ -76,7 +88,7 @@ export default function ThemeExplorePage() {
           });
       });
     return () => controller.abort();
-  }, [queryString, page, retry]);
+  }, [queryString, page, retry, userId]);
 
   function update(values) {
     const next = new URLSearchParams(params);
@@ -127,12 +139,15 @@ export default function ThemeExplorePage() {
       >
         <div className="theme-search-row">
           <div className="theme-search-field">
-            <input
+            <SearchAutocomplete
+              type="themes"
               name="keyword"
-              type="search"
-              aria-label="테마명 또는 매장명 검색"
+              initialValue={params.get("keyword") || ""}
               placeholder="테마명을 검색해 보세요"
-              defaultValue={params.get("keyword") || ""}
+              ariaLabel="테마명 검색"
+              onSelect={(title) => {
+                update({ keyword: title });
+              }}
             />
             <button
               type="submit"
@@ -245,22 +260,25 @@ export default function ThemeExplorePage() {
         ) : (
           <div className="theme-grid">
             {state.items.map((theme) => (
+              <div key={theme.id} className="theme-card-shell">
               <Link
-                key={theme.id}
                 className="theme-card"
                 to={`/themes/${theme.id}`}
                 aria-label={`${theme.title} 상세 보기`}
               >
                 <div className="theme-artwork">
                   <ThemeThumbnail url={theme.thumbnailUrl} />
-                  {/* <span>{theme.title}</span> */}
+                  <span className="theme-genre-badge">
+                    {theme.genre && theme.genre !== "?"
+                      ? theme.genre
+                      : "미분류"}
+                  </span>
                 </div>
                 <div className="theme-card-content">
                   <h3>{theme.title}</h3>
                   <p>
                     {[
                       theme.region || theme.storeName || theme.store_name,
-                      theme.genre != "?" ? `${theme.genre}` : "미분류",
                       `${theme.minPeople}~${theme.maxPeople}명`,
                       theme.playTime ? `${theme.playTime}분` : null,
                     ]
@@ -281,6 +299,16 @@ export default function ThemeExplorePage() {
                   </div>
                 </div>
               </Link>
+              <BookmarkButton
+                themeId={theme.id}
+                title={theme.title}
+                isBookmarked={theme.isBookmarked}
+                onChange={(isBookmarked) => setState((current) => ({
+                  ...current,
+                  items: current.items.map((item) => item.id === theme.id ? { ...item, isBookmarked } : item),
+                }))}
+              />
+              </div>
             ))}
           </div>
         )}

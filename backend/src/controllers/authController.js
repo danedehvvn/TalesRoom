@@ -100,7 +100,7 @@ const login = async(req,res)=>{
             success: true,
             data: {
                 token,
-                user: { id: user.id, nickname: user.nickname, email: user.email, role: user.role },
+                user: { id: user.id, nickname: user.nickname, email: user.email, role: user.role, score: user.score, grade: user.grade },
             },
             message: '로그인되었습니다.',
         });

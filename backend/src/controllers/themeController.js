@@ -77,7 +77,8 @@ async function getList(req, res) {
     try {
         const data =
             await themeService.getFilteredThemes(
-                req.query
+                req.query,
+                req.user
             );
 
         return res.status(200).json({

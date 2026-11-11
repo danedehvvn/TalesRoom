@@ -10,7 +10,7 @@ const optionalAuthMiddleware = require('../middlewares/optionalAuthMiddleware');
 const router = express.Router();
 
 // 테마 목록·필터는 공개 API
-router.get('/', themeController.getList);
+router.get('/', optionalAuthMiddleware, themeController.getList);
 
 // 경로별 추가g
 router.get('/:id', optionalAuthMiddleware, themeController.getThemeById);

@@ -11,7 +11,7 @@ function httpError(status, message) {
     return err;
 }
 
-function toListItem(post) {
+function toListItem(post, stats) {
     const p = post.get({ plain: true });
     return {
         id: p.id,
@@ -19,7 +19,10 @@ function toListItem(post) {
         title: p.title,
         author: p.author,
         viewCount: p.viewCount,
-        isSpoiler: p.isSpoiler === 1,
+        isSpoiler: p.isSpoiler === 1 || p.isSpoiler === true,
+        isSolved: stats?.isSolved ?? false,
+        commentCount: stats?.commentCount ?? 0,
+        likeCount: stats?.likeCount ?? 0,
         createdAt: p.createdAt,
     };
 }
@@ -44,9 +47,10 @@ async function getPosts(query) {
             offset,
         }),
     ]);
+    const stats = await postRepository.findListStats([...notices, ...result.rows].map(post => post.id));
     return {                                                      // 명세서 응답 양식
-        notices: notices.map(toListItem),
-        items: result.rows.map(toListItem),
+        notices: notices.map(post => toListItem(post, stats.get(String(post.id)))),
+        items: result.rows.map(post => toListItem(post, stats.get(String(post.id)))),
         page,
         size,
         totalCount: result.count,
@@ -67,10 +71,7 @@ async function getPostDetail(id, user) {
     const detailedPost = await postRepository.findByIdWithDetails(id);
     const p = detailedPost.get({plain: true});
 
-    // 좋아요 기능이 아직 구현 전이어서 임시로 해둠
-    // const likeCount =0;
     const likeCount = await postReactionRepository.countReactions(p.id); //실제 좋아요 수 조회
-    // const liked = false;      → reaction을 조회한 다음 줄로 옮김
 
     // 4. 로그인 User의 좋아요 누름 여부
     // const reaction = await postRepository.findReaction(id, user ? user.id : null);
@@ -92,7 +93,7 @@ async function getPostDetail(id, user) {
         isNotice: p.isNotice === 1,
         isSolved: acceptedId !== null, //채택된 ID가 있으면 해결된 글 
         acceptedId:acceptedId,
-        viewCount: p.viewCount +1, // +1 조회수 반영
+        viewCount: p.viewCount,
         likeCount: likeCount, // 좋아요 총 갯수 
         liked:liked, // 본인이 좋아요 눌렀는지 여부 
         isMine: user ? p.userId === user.id : false, // 내가 작성한 글인지 여부 

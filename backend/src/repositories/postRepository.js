@@ -2,11 +2,9 @@ const { Post, Comment, User, PostLog } = require('../models');        // index.j
 const { Op, where } = require('sequelize');                         // Op ?? : Sequelize의 조건 연산자
 
 const List_ATTRIBUTES = ['id', 'category', 'title', 'viewCount', 'isSpoiler', 'createdAt'];
-const AUTHOR_INCLUDE = {
-    model: User,
-    as: 'author',
-    attributes: [['id', 'userId'], 'nickname'],
-};
+const { PostReaction } = require('../models');
+const { fn, col } = require('sequelize');
+
 
 // 게시글 목록 조회 (공지 제외, 최신순, 작성자 포함)
 // async : 비동기 함수 ( DB 조회는 시간이 걸리기 떄문 )
@@ -52,6 +50,32 @@ async function findById(id) {
     return Post.findByPk(id);
 }
 
+// 목록 페이지에서 좋아요, 댓글, 해결됨 여부 등 게시글 추가 집계
+async function findListStats(postIds) {
+    const stats = new Map(postIds.map(id => [String(id), { commentCount: 0, likeCount: 0, isSolved: false }]));
+    if (!postIds.length) return stats;
+    const [comments, reactions] = await Promise.all([
+        Comment.findAll({
+            where: { postId: { [Op.in]: postIds } },
+            attributes: ['postId', [fn('COUNT', col('id')), 'commentCount'], [fn('MAX', col('is_accepted')), 'isSolved']],
+            group: ['postId'], raw: true,
+        }),
+        PostReaction.findAll({
+            where: { postId: { [Op.in]: postIds } },
+            attributes: ['postId', [fn('COUNT', col('id')), 'likeCount']],
+            group: ['postId'], raw: true,
+        }),
+    ]);
+    for (const row of comments) Object.assign(stats.get(String(row.postId)), { commentCount: Number(row.commentCount), isSolved: Number(row.isSolved) === 1 });
+    for (const row of reactions) stats.get(String(row.postId)).likeCount = Number(row.likeCount);
+    return stats;
+}
+const AUTHOR_INCLUDE = {
+    model: User,
+    as: 'author',
+    attributes: [['id', 'userId'], 'nickname'],
+};
+
 // 상세 조회를 위한 게시글 + 작성자 + 댓글 목록 조회
 async function findByIdWithDetails(id) {
     const { Post, Comment, User } = require('../models'); // PostReaction 제외
@@ -62,7 +86,7 @@ async function findByIdWithDetails(id) {
             {
                 model: User,
                 as: 'author',
-                attributes: ['id', 'nickname', 'email', 'role']
+                attributes: ['id', 'nickname', 'email', 'role', 'grade']
             },
             // 2. 댓글 목록 및 댓글 작성자 정보
             {
@@ -74,7 +98,7 @@ async function findByIdWithDetails(id) {
                     {
                         model: User,
                         as: 'author',
-                        attributes: ['id', 'nickname', 'email', 'role']
+                        attributes: ['id', 'nickname', 'email', 'role', 'grade']
                     }
                 ]
             }
@@ -109,4 +133,4 @@ async function findReaction(postId, userId) {
     return PostReaction.findone({ where: { postId, userId } });
 } */
 
-module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove };
+module.exports = { findNotices, findPage, findListStats, create, findById, findByIdWithDetails, viewCount, update, createLog, remove };

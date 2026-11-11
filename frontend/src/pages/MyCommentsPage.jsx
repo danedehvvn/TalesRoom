@@ -24,7 +24,10 @@ function MyCommentsPage() {
         if (!ignore) setData(result);
       })
       .catch((requestError) => {
-        if (!ignore) setError(getErrorMessage(requestError, "작성한 댓글을 불러오지 못했어요."));
+        if (!ignore)
+          setError(
+            getErrorMessage(requestError, "작성한 댓글을 불러오지 못했어요."),
+          );
       })
       .finally(() => {
         if (!ignore) setLoading(false);
@@ -44,14 +47,16 @@ function MyCommentsPage() {
 
   return (
     <div className="mypage-shell mypage-shell--activity">
-      <MyPageHeader eyebrow="MY ACTIVITY" title="내가 쓴 댓글" description="내가 남긴 답변과 댓글을 모아볼 수 있어요." />
+      <MyPageHeader
+        backToMyPage
+        eyebrow="MY ACTIVITY"
+        title="내가 쓴 댓글"
+        description="내가 남긴 답변과 댓글을 모아볼 수 있어요."
+      />
 
       <section className="mypage-card mypage-list-card">
         <div className="mypage-list-toolbar mypage-list-toolbar--comments">
           <strong>전체 댓글 {data?.totalCount ?? 0}개</strong>
-          <select aria-label="댓글 정렬" defaultValue="latest">
-            <option value="latest">최신순</option>
-          </select>
         </div>
 
         {loading ? (
@@ -63,22 +68,36 @@ function MyCommentsPage() {
         ) : (
           <div className="mypage-comment-list">
             {data?.items?.map((comment) => (
-              <Link key={comment.id} to={`/posts/${comment.postId}`} className="mypage-comment-row">
+              <Link
+                key={comment.id}
+                to={`/posts/${comment.postId}`}
+                className="mypage-comment-row"
+              >
                 <div className="mypage-comment-main">
                   <strong>{comment.postTitle}</strong>
                   <p>
                     {comment.content}
-                    {comment.isAccepted && <span className="mypage-accepted">✓ 채택됨</span>}
+                    {comment.isAccepted && (
+                      <span className="mypage-accepted">✓ 채택됨</span>
+                    )}
                   </p>
                 </div>
-                <time dateTime={comment.createdAt}>{formatDate(comment.createdAt)}</time>
+                <time dateTime={comment.createdAt}>
+                  {formatDate(comment.createdAt)}
+                </time>
               </Link>
             ))}
           </div>
         )}
       </section>
 
-      {!loading && !error && <Pagination page={data?.page ?? page} totalPages={data?.totalPages} onChange={handlePage} />}
+      {!loading && !error && (
+        <Pagination
+          page={data?.page ?? page}
+          totalPages={data?.totalPages}
+          onChange={handlePage}
+        />
+      )}
     </div>
   );
 }
