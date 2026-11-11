@@ -93,7 +93,7 @@ async function findByIdWithDetails(id) {
                 model: Comment,
                 as: 'comments',
                 separate: true,
-                order: [['createdAt', 'DESC']],
+                order: [['createdAt', 'ASC']],
                 include: [
                     {
                         model: User,
