@@ -3,7 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 20px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 .exchange-page__header {
@@ -27,7 +27,7 @@
   margin-bottom: 32px;
   padding: 24px;
   background: #f8f6fc;
-  border-radius: 12px;
+  border-radius: var(--radius-button);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -100,12 +100,14 @@
 .exchange-card {
   background: #fff;
   border: 1px solid #e2deec;
-  border-radius: 12px;
+  border-radius: var(--radius-button);
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .exchange-card:hover {
@@ -162,7 +164,7 @@
   background: #6854a3;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -194,7 +196,7 @@
   text-align: center;
   padding: 24px;
   background: #faf8fc;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
 }
 
 .history-table-wrapper {

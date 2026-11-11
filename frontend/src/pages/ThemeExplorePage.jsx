@@ -4,6 +4,7 @@ import { getThemes } from "../api/themeApi";
 import useAuth from "../hooks/useAuth";
 import SearchAutocomplete from "../components/SearchAutocomplete";
 import ThemeThumbnail from "../components/ThemeThumbnail";
+import BookmarkButton from "../components/BookmarkButton";
 import "../styles/ThemeExplorePage.css";
 
 const regions = [
@@ -41,6 +42,7 @@ const size = 6;
 
 export default function ThemeExplorePage() {
   const { user } = useAuth();
+  const userId = user?.id ?? user?.userId;
   const [params, setParams] = useSearchParams();
   const [state, setState] = useState({
     loading: true,
@@ -68,7 +70,9 @@ export default function ThemeExplorePage() {
       },
       controller.signal,
     )
-      .then((result) => setState({ ...result, loading: false }))
+      .then((result) => {
+        if (!controller.signal.aborted) setState({ ...result, loading: false });
+      })
       .catch((error) => {
         if (!controller.signal.aborted)
           setState({
@@ -84,7 +88,7 @@ export default function ThemeExplorePage() {
           });
       });
     return () => controller.abort();
-  }, [queryString, page, retry]);
+  }, [queryString, page, retry, userId]);
 
   function update(values) {
     const next = new URLSearchParams(params);
@@ -256,8 +260,8 @@ export default function ThemeExplorePage() {
         ) : (
           <div className="theme-grid">
             {state.items.map((theme) => (
+              <div key={theme.id} className="theme-card-shell">
               <Link
-                key={theme.id}
                 className="theme-card"
                 to={`/themes/${theme.id}`}
                 aria-label={`${theme.title} 상세 보기`}
@@ -295,6 +299,16 @@ export default function ThemeExplorePage() {
                   </div>
                 </div>
               </Link>
+              <BookmarkButton
+                themeId={theme.id}
+                title={theme.title}
+                isBookmarked={theme.isBookmarked}
+                onChange={(isBookmarked) => setState((current) => ({
+                  ...current,
+                  items: current.items.map((item) => item.id === theme.id ? { ...item, isBookmarked } : item),
+                }))}
+              />
+              </div>
             ))}
           </div>
         )}

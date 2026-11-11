@@ -13,6 +13,7 @@ const RecruitmentApplication = require('./RecruitmentApplication'); // 모집 �
 const PartyComment = require('./PartyComment');                     // 파티 글 댓글 모델
 const Item = require('./Item');    // 상품 모델 (포인트 교환소)
 const PointExchange = require('./PointExchange'); // 포인트 교환 내역 모델 (포인트 교환소)
+const Bookmark = require('./Bookmark');
 
 // 회원 1명 -> 글 여러개 (1:N)
 User.hasMany(Post, { foreignKey: 'userId' });
@@ -81,5 +82,14 @@ PointExchange.belongsTo(Item, { foreignKey: 'itemId' });
 User.hasMany(PointExchange, { foreignKey: 'userId' });
 PointExchange.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// 회원 1명 -> 북마크 여러 개 (1:N)
+User.hasMany(Bookmark, { foreignKey: 'userId', as: 'bookmarks' });
+Bookmark.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// 테마 1개 -> 북마크 여러 개 (1:N)
+Theme.hasMany(Bookmark, { foreignKey: 'themeId', as: 'bookmarks' });
+Bookmark.belongsTo(Theme, { foreignKey: 'themeId', as: 'theme' });
+
+
 // 다른 파일에서 꺼내 쓸 수 있게 내보내는 작업 (팀원 변경사항 + 포인트 교환 모델 통합)
-module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment, PostReaction, Recruitment, RecruitmentApplication, PartyComment, Item, PointExchange };
+module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment, PostReaction, Recruitment, RecruitmentApplication, PartyComment, Item, PointExchange, Bookmark };

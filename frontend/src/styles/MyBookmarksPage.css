@@ -1,0 +1,21 @@
+.my-bookmarks-page .my-bookmarks-explore { color: var(--color-primary); font-size: 13px; text-decoration: none; }
+.my-bookmarks-page .mypage-list-card { overflow: visible; }
+.my-bookmarks-page .mypage-list-toolbar { border-radius: 16px 16px 0 0; }
+.my-bookmarks-list { padding: 0; margin: 0; list-style: none; }
+.my-bookmark-row { display: flex; align-items: center; gap: 18px; padding: 20px 24px; border-bottom: 1px solid var(--color-border); }
+.my-bookmark-row:last-child { border-bottom: 0; }
+.my-bookmark-theme { display: flex; align-items: center; flex: 1; min-width: 0; gap: 20px; text-decoration: none; color: inherit; }
+.my-bookmark-image { width: 100px; height: 100px; flex: 0 0 100px; border-radius: 12px; overflow: hidden; }
+.my-bookmark-image img { width: 100%; height: 100%; object-fit: cover; }
+.my-bookmark-copy { min-width: 0; }
+.my-bookmark-copy > span { display: inline-block; padding: 4px 9px; border-radius: 16px; background: #f2eef9; color: #776098; font-size: 12px; }
+.my-bookmark-copy h2 { margin: 9px 0 7px; font-size: 18px; overflow-wrap: anywhere; }
+.my-bookmark-copy p { margin: 0; font-size: 13px; color: var(--color-text-muted); }
+.my-bookmark-theme:hover h2 { color: var(--color-primary); }
+.my-bookmarks-page :focus-visible { outline: 3px solid #aa8ed6; outline-offset: 3px; }
+@media (max-width: 600px) {
+  .my-bookmark-row { padding: 16px; gap: 10px; }
+  .my-bookmark-theme { gap: 12px; }
+  .my-bookmark-image { width: 72px; height: 88px; flex-basis: 72px; }
+  .my-bookmark-copy h2 { font-size: 16px; }
+}

@@ -48,6 +48,7 @@ function MyCommentsPage() {
   return (
     <div className="mypage-shell mypage-shell--activity">
       <MyPageHeader
+        backToMyPage
         eyebrow="MY ACTIVITY"
         title="내가 쓴 댓글"
         description="내가 남긴 답변과 댓글을 모아볼 수 있어요."

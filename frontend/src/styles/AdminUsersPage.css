@@ -1,5 +1,8 @@
 /* 페이지: 커뮤니티와 같은 1176px 폭 */
 .admin-users { max-width: var(--content-max-width); margin: 0 auto; padding: 48px 16px 80px; }
+.admin-users__back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 22px; padding: 9px 13px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-surface); color: var(--color-primary); font-size: 13px; font-weight: 600; text-decoration: none; }
+.admin-users__back:hover { background: #f0ecf7; }
+.admin-users__back:focus-visible { outline: 3px solid #aa8ed6; outline-offset: 3px; }
 .admin-users__eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--color-primary); }
 .admin-users__title { margin: 0 0 8px; font-size: 32px; font-weight: 700; color: var(--color-text); }
 .admin-users__subtitle { margin: 0 0 24px; font-size: 16px; color: var(--color-text-muted); }

@@ -67,7 +67,7 @@ function MyPostsPage() {
 
   return (
     <div className="mypage-shell mypage-shell--activity">
-      <MyPageHeader eyebrow="MY ACTIVITY" title="내가 쓴 글" description="내가 작성한 커뮤니티 게시글을 확인할 수 있어요." />
+      <MyPageHeader backToMyPage eyebrow="MY ACTIVITY" title="내가 쓴 글" description="내가 작성한 커뮤니티 게시글을 확인할 수 있어요." />
 
       <section className="mypage-card mypage-list-card">
         <div className="mypage-list-toolbar">

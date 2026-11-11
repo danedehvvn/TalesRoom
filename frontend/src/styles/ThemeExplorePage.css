@@ -26,6 +26,10 @@
 .theme-results-heading h2 span { color: var(--color-primary); }
 .theme-results-heading select { border: 0; background: transparent; color: var(--color-text-muted); padding: 6px; cursor: pointer; }
 .theme-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 18px; }
+.theme-card-shell { position: relative; min-width: 0; }
+.theme-card-shell > .theme-card { display: block; height: 100%; text-decoration: none; }
+.theme-card-shell > .bookmark-control { position: absolute; right: 12px; top: 12px; z-index: 2; }
+.theme-card-shell .theme-genre-badge { max-width: calc(100% - 78px); }
 .theme-card { padding: 0; overflow: hidden; text-align: left; background: white; border: 1px solid var(--color-border); border-radius: 16px; color: inherit; box-shadow: 0 12px 30px #30204408; transition: transform .15s, box-shadow .15s; }
 .theme-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px #30204416; }
 .theme-artwork { position: relative; height: 146px; overflow: hidden; }
