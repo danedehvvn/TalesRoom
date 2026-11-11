@@ -146,6 +146,7 @@ CREATE TABLE `bookmarks` (
 
 CREATE TABLE `items` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `user_id` varchar(100) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text,
   `price` int NOT NULL,
@@ -197,3 +198,5 @@ ALTER TABLE `party_comments` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id
 
 ALTER TABLE `bookmarks` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 ALTER TABLE `bookmarks` ADD FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`) ON DELETE CASCADE;
+
+ALTER TABLE `items` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
