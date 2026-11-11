@@ -34,8 +34,8 @@ const commentRouter = require('./routes/commentRouter');
 app.use('/api', commentRouter);
 
 // !!임시 비활성화!! exchangeService 복구 후 주석 해제 필요
-// const exchangeRouter = require('./routes/exchangeRouter');
-// app.use('/api/exchange', exchangeRouter);
+const exchangeRouter = require('./routes/exchangeRouter');
+app.use('/api/exchange', exchangeRouter);
 
 const bookmarkRouter = require('./routes/bookmarkRouter');
 app.use('/api/bookmarks', bookmarkRouter)
