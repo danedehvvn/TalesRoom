@@ -7,20 +7,7 @@ import ThemeThumbnail from "../components/ThemeThumbnail";
 import BookmarkButton from "../components/BookmarkButton";
 import "../styles/ThemeExplorePage.css";
 
-const regions = [
-  "홍대",
-  "강남",
-  "건대",
-  "잠실",
-  "신촌",
-  "대학로",
-  "부산",
-  "대구",
-  "대전",
-  "광주",
-  "인천",
-  "수원",
-];
+const regions = ["서울", "홍대", "강남", "건대", "잠실", "신촌", "대학로"];
 const genres = [
   "호러/공포",
   "추리",
@@ -261,53 +248,57 @@ export default function ThemeExplorePage() {
           <div className="theme-grid">
             {state.items.map((theme) => (
               <div key={theme.id} className="theme-card-shell">
-              <Link
-                className="theme-card"
-                to={`/themes/${theme.id}`}
-                aria-label={`${theme.title} 상세 보기`}
-              >
-                <div className="theme-artwork">
-                  <ThemeThumbnail url={theme.thumbnailUrl} />
-                  <span className="theme-genre-badge">
-                    {theme.genre && theme.genre !== "?"
-                      ? theme.genre
-                      : "미분류"}
-                  </span>
-                </div>
-                <div className="theme-card-content">
-                  <h3>{theme.title}</h3>
-                  <p>
-                    {[
-                      theme.region || theme.storeName || theme.store_name,
-                      `${theme.minPeople}~${theme.maxPeople}명`,
-                      theme.playTime ? `${theme.playTime}분` : null,
-                    ]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                  <div className="theme-card-bottom">
-                    <span className="theme-rating">
-                      <span aria-hidden="true">★</span>{" "}
-                      {Number(theme.avgRating || 0).toFixed(1)}{" "}
-                      <small>
-                        ({Number(theme.reviewCount || 0).toLocaleString()})
-                      </small>
-                    </span>
-                    <span className="theme-difficulty">
-                      난이도 {theme.difficulty}/5
+                <Link
+                  className="theme-card"
+                  to={`/themes/${theme.id}`}
+                  aria-label={`${theme.title} 상세 보기`}
+                >
+                  <div className="theme-artwork">
+                    <ThemeThumbnail url={theme.thumbnailUrl} />
+                    <span className="theme-genre-badge">
+                      {theme.genre && theme.genre !== "?"
+                        ? theme.genre
+                        : "미분류"}
                     </span>
                   </div>
-                </div>
-              </Link>
-              <BookmarkButton
-                themeId={theme.id}
-                title={theme.title}
-                isBookmarked={theme.isBookmarked}
-                onChange={(isBookmarked) => setState((current) => ({
-                  ...current,
-                  items: current.items.map((item) => item.id === theme.id ? { ...item, isBookmarked } : item),
-                }))}
-              />
+                  <div className="theme-card-content">
+                    <h3>{theme.title}</h3>
+                    <p>
+                      {[
+                        theme.region || theme.storeName || theme.store_name,
+                        `${theme.minPeople}~${theme.maxPeople}명`,
+                        theme.playTime ? `${theme.playTime}분` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    <div className="theme-card-bottom">
+                      <span className="theme-rating">
+                        <span aria-hidden="true">★</span>{" "}
+                        {Number(theme.avgRating || 0).toFixed(1)}{" "}
+                        <small>
+                          ({Number(theme.reviewCount || 0).toLocaleString()})
+                        </small>
+                      </span>
+                      <span className="theme-difficulty">
+                        난이도 {theme.difficulty}/5
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                <BookmarkButton
+                  themeId={theme.id}
+                  title={theme.title}
+                  isBookmarked={theme.isBookmarked}
+                  onChange={(isBookmarked) =>
+                    setState((current) => ({
+                      ...current,
+                      items: current.items.map((item) =>
+                        item.id === theme.id ? { ...item, isBookmarked } : item,
+                      ),
+                    }))
+                  }
+                />
               </div>
             ))}
           </div>

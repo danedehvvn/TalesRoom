@@ -181,10 +181,10 @@ export default function PostListPage() {
                   <CategoryBadge category={post.category} />
                   <div className="post-row__body">
                     <div className="post-row__title">
+                      <span className="post-row__title-text">{post.title}</span>
                       {postFlag(post.isSpoiler) && (
                         <span className="post-row__spoiler">스포일러</span>
                       )}
-                      <span className="post-row__title-text">{post.title}</span>
                       {isSolvedPost(post) && (
                         <span className="post-row__solved">해결됨</span>
                       )}
