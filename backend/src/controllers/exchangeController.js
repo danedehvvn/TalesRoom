@@ -39,4 +39,50 @@ const getMyExchanges = async (req, res) => {
     }
 };
 
-module.exports = { getItems, exchangeItem, getMyExchanges, };
+// [관리자] 상품 등록 컨트롤러 (Create)
+const createItem = async (req, res) => {
+    try {
+        const data = await exchangeService.createItem(req.body);
+        return res.status(201).json({ success: true, data, message: "상품이 성공적으로 등록되었습니다." });
+    } catch (error) {
+        return sendErrorResponse(res, error);
+    }
+};
+
+// [관리자] 상품 수정 컨트롤러 (Update)
+const updateItem = async (req, res) => {
+    try {
+        const { itemId } = req.params;
+        const data = await exchangeService.updateItem(itemId, req.body);
+        return res.status(200).json({ success: true, data, message: "상품이 성공적으로 수정되었습니다." });
+    } catch (error) {
+        return sendErrorResponse(res, error);
+    }
+};
+
+// [관리자] 상품 삭제 컨트롤러 (Delete)
+const deleteItem = async (req, res) => {
+    try {
+        const { itemId } = req.params;
+        await exchangeService.deleteItem(itemId);
+        return res.status(200).json({ success: true, data: null, message: "상품이 성공적으로 삭제되었습니다." });
+    } catch (error) {
+        return sendErrorResponse(res, error);
+    }
+};
+
+// [관리자] 전체 교환 내역 조회 컨트롤러
+async function getAllExchanges(req, res, next) {
+    try {
+        if (!req.user || (req.user.role !== 'ADMIN' && req.user.role !== 'admin')) {
+            return res.status(403).json({ success: false, message: '접근 권한이 없습니다.' });
+        }
+        
+        const history = await exchangeService.getAllExchanges();
+        res.status(200).json({ success: true, data: history });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports = { getItems, exchangeItem, getMyExchanges, createItem, updateItem, deleteItem, getAllExchanges };
