@@ -1,6 +1,7 @@
 // frontend/src/hooks/useSignUp.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useDialog from './useDialog';
 // import { signup } from '../api/authApi';
 import { signup, requestSignupCode, verifySignupCode } from '../api/authApi'; //이메일 인증 API 2개 추가
 import { isValidPassword, PASSWORD_RULE_MESSAGE } from '../utils/validators'; //비밀번호 규칙 검사·안내 문구
@@ -10,6 +11,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function useSignUp() {
   const navigate = useNavigate();
+  const { showAlert, showConfirm } = useDialog();
 
   // 입력 폼 데이터 상태 정의
   const [formData, setFormData] = useState({
@@ -151,7 +153,7 @@ export function useSignUp() {
         nickname: formData.nickname,
       });
 
-      alert(res.message || '회원 가입이 완료되었습니다!');
+      await showAlert(res.message || '회원 가입이 완료되었습니다!');
       navigate('/login'); // 가입 성공 시 로그인 페이지로 이동
     } catch (err) {
       setErrorMsg(err.response?.data?.message || '회원 가입 중 오류가 발생했습니다.');
@@ -159,8 +161,8 @@ export function useSignUp() {
   };
 
   // 취소 버튼 핸들러
-  const handleCancel = () => {
-    if (window.confirm('회원가입을 취소하시겠습니까?')) {
+  const handleCancel = async () => {
+    if (await showConfirm('회원가입을 취소하시겠습니까?', { description: '입력한 내용이 저장되지 않습니다.', confirmText: '가입 취소', cancelText: '계속 작성' })) {
       navigate(-1);
     }
   };

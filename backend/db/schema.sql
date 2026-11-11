@@ -178,7 +178,7 @@ CREATE TABLE `point_exchanges` (
     `quantity`     INT NOT NULL DEFAULT 1,
     `used_points`  INT NOT NULL,
     `created_at` timestamp NOT NULL DEFAULT (now()),
-    `updated_at` timestamp
+    `updated_at` timestamp,
 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (item_id) REFERENCES items(id)

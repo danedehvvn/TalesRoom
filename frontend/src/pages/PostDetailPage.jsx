@@ -5,6 +5,7 @@ import CommentSection from '../components/CommentSection';
 import CategoryBadge from '../components/CategoryBadge';
 import SpoilerCheckModal from '../components/SpoilerCheckModal';
 import useAuth from '../hooks/useAuth';
+import useDialog from '../hooks/useDialog';
 import api, { getErrorMessage } from '../api/axiosInstance';
 import { formatDate } from '../utils/postFormat';
 import { isAcceptedReply, isSolvedPost, postFlag } from '../utils/communityPost';
@@ -13,6 +14,7 @@ import '../styles/PostDetail.css';
 function PostDetail({ id }) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { showConfirm } = useDialog();
   const [state, setState] = useState({ loading: true });
   const [retry, setRetry] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
@@ -50,8 +52,8 @@ function PostDetail({ id }) {
       setCommentContent(''); setNotice('댓글이 등록되었습니다.');
     });
   }
-  function removeComment(commentId) {
-    if (!window.confirm('이 댓글을 삭제하시겠습니까?')) return;
+  async function removeComment(commentId) {
+    if (!await showConfirm('이 댓글을 삭제하시겠습니까?', { description: '삭제한 댓글은 복구할 수 없습니다.', confirmText: '삭제', danger: true })) return;
     action(async () => {
       await api.delete(`/comments/${commentId}`);
       changePost((current) => {
@@ -62,8 +64,8 @@ function PostDetail({ id }) {
       setNotice('댓글이 삭제되었습니다.');
     });
   }
-  function acceptComment(commentId) {
-    if (!window.confirm('이 댓글을 답변으로 채택하시겠습니까?')) return;
+  async function acceptComment(commentId) {
+    if (!await showConfirm('이 댓글을 답변으로 채택하시겠습니까?', { description: '질문이 해결됨으로 표시됩니다.', confirmText: '채택' })) return;
     action(async () => {
       const response = await api.patch(`/comments/${commentId}/accept`);
       const data = response.data.data;
