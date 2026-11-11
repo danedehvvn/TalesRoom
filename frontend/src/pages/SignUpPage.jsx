@@ -3,6 +3,7 @@
 //import React from 'react'; // React 18부터는 import React from 'react'; 생략 가능(문제 발생 : 사용위치 없음 일단은 주석처리)
 import { useSignUp } from '../hooks/useSignUp';
 import '../styles/SignUpPage.css';
+import { PASSWORD_RULE_LABEL } from '../utils/validators'; //비밀번호 규칙 검사·안내 문구
 
 function SignUpPage() {
   const {
@@ -47,7 +48,7 @@ function SignUpPage() {
 
           {/* 비밀번호 */}
           <div className="form-group">
-            <label>비밀번호 (8~20자 영문+숫자)</label>
+            <label>비밀번호 ({PASSWORD_RULE_LABEL})</label>
             <input
               type="password"
               name="password"

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { signup } from '../api/authApi';
 import { signup, requestSignupCode, verifySignupCode } from '../api/authApi'; //이메일 인증 API 2개 추가
+import { isValidPassword, PASSWORD_RULE_MESSAGE } from '../utils/validators'; //비밀번호 규칙 검사·안내 문구
 
 //이메일 형식 검사 (발송 버튼과 가입 버튼에서 함께 사용, 백엔드와 같은 규칙)
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -106,10 +107,9 @@ export function useSignUp() {
       return;
     }
 
-    // 3. 비밀번호 유효성 검사 (8~20자, 영문+숫자)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
-    if (!passwordRegex.test(formData.password)) {
-      setErrorMsg('비밀번호는 8~20자의 영문과 숫자 조합이어야 합니다.');
+    //비밀번호 유효성 검사 (8~20자, 영문+숫자+특수문자)
+    if (!isValidPassword(formData.password)) { //utils/validators.js에서 처리
+      setErrorMsg(`비밀번호는 ${PASSWORD_RULE_MESSAGE}`);
       return;
     }
 
