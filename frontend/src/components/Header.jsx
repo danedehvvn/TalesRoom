@@ -22,6 +22,8 @@ function Header() {
           <NavLink to="/posts" className={({ isActive }) => (isActive || isCommunityActivity ? "active" : undefined)}>커뮤니티</NavLink>
           <NavLink to="/themes">테마 탐색</NavLink>
           <NavLink to="/recruitment">모집</NavLink>
+          {/* 내 파티: 마감된 모집 중 내가 속한 파티 목록 (비로그인이면 RequireAuth가 로그인 화면으로 보냄) */}
+          <NavLink to="/parties">내 파티</NavLink>
           <NavLink to="/exchange">포인트 교환소</NavLink>
         </div>
 

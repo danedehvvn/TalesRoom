@@ -48,6 +48,7 @@ async function getPartyDetail(id, user) {
     return {
         id: p.id,
         title: p.title,
+        themeName: p.themeName,
         content: p.content,
         meetDate: p.meetDate,
         theme: p.theme,

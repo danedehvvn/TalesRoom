@@ -16,6 +16,10 @@ const Recruitment = sequelize.define('Recruitment', {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
+    themeName: {
+        type: DataTypes.STRING(150),
+        allowNull: true,
+    },
     title: {
         type: DataTypes.STRING(200),
         allowNull: false,

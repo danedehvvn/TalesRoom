@@ -18,6 +18,11 @@ import MyPagePage from './pages/MyPagePage';
 import MyPageEditPage from './pages/MyPageEditPage';
 import MyPostsPage from './pages/MyPostsPage';
 import MyCommentsPage from './pages/MyCommentsPage';
+import RecruitmentListPage from './pages/RecruitmentListPage';
+import RecruitmentDetailPage from './pages/RecruitmentDetailPage'; // 모집 상세 (R-03~R-07)
+import RecruitmentFormPage from './pages/RecruitmentFormPage'; // 모집글 쓰기 (R-01)
+import PartyListPage from './pages/PartyListPage'; // 내 파티 목록 (PT-01)
+import PartyDetailPage from './pages/PartyDetailPage'; // 파티 상세·대화 (PT-02, PT-03)
 import MyBookmarksPage from './pages/MyBookmarksPage';
 import ExchangePage from './pages/ExchangePage'; // 포인트 교환소 페이지
 import RecruitmentListPage from './pages/RecruitmentListPage'; // 파티/모집 목록 페이지
@@ -40,6 +45,8 @@ function App() {
             {/* 커뮤니티: 같은 PostFormPage를 주소에 :id가 있는지로 작성/수정 구분 */}
             <Route path="/posts" element={<PostListPage />} />
             <Route path="/recruitment" element={<RecruitmentListPage />} />
+            {/* 모집 상세는 비로그인도 볼 수 있음 (신청·승인 버튼은 화면이 로그인 상태에 따라 표시) */}
+            <Route path="/recruitment/:id" element={<RecruitmentDetailPage />} />
             <Route path="/posts/new" element={<PostFormPage key="new" />} />
             <Route path="/posts/:id/edit" element={<PostFormPage key="edit" />} />
 
@@ -64,6 +71,10 @@ function App() {
               <Route path="/mypage/edit" element={<MyPageEditPage />} />
               <Route path="/mypage/posts" element={<MyPostsPage />} />
               <Route path="/mypage/comments" element={<MyCommentsPage />} />
+              {/* 로그인이 필요한 모집·파티 화면 (RequireAuth = 비로그인이면 로그인 화면으로) */}
+              <Route path="/recruitment/new" element={<RecruitmentFormPage />} />
+              <Route path="/parties" element={<PartyListPage />} />
+              <Route path="/parties/:id" element={<PartyDetailPage />} />
               <Route path="/mypage/bookmarks" element={<MyBookmarksPage />} />
             </Route>
           </Route>
