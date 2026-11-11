@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom"; // Link: 카드 클릭 → 상세, useNavigate: 글쓰기 버튼 이동
+import useAuth from "../hooks/useAuth"; // 로그인 여부 (비로그인이면 글쓰기 → 로그인 화면)
 import { fetchRecruitments } from "../api/recruitmentApi";
 import Pagination from "../components/Pagination";
 import "../styles/RecruitmentListPage.css";
+import "../styles/RecruitmentPages.css"; // 카드 링크·글쓰기 버튼 스타일
 
 const PAGE_SIZE = 10;
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
@@ -49,7 +51,9 @@ function RecruitmentCard({ item }) {
       ? ["closed", "정원 마감"]
       : statuses[item.status] || ["unknown", "상태 미정"];
   return (
-    <li className="recruitment-card">
+    // 카드 전체를 상세 화면(/recruitment/:id)으로 가는 링크로 감쌈 (R-03)
+    <li className="recruitment-card rp-clickable">
+      <Link to={`/recruitment/${item.id}`} className="rp-card-link">
       <div className="recruitment-card-top">
         <span
           className={`recruitment-status recruitment-status--${statusClass}`}
@@ -63,6 +67,10 @@ function RecruitmentCard({ item }) {
           </time>
         </span>
       </div>
+      {/* 테마를 골랐거나 직접 썼으면 제목 위에 굵게 표시 (고른 테마 우선, 없으면 직접 쓴 이름) */}
+      {(item.theme?.title || item.themeName) && (
+        <p className="rp-card-theme">{item.theme?.title || item.themeName}</p>
+      )}
       <h2>{item.title || "제목 없는 모집글"}</h2>
       <dl className="recruitment-facts">
         <div>
@@ -115,11 +123,14 @@ function RecruitmentCard({ item }) {
           </span>
         )}
       </div>
+      </Link>
     </li>
   );
 }
 
 export default function RecruitmentListPage() {
+  const navigate = useNavigate();      // 코드로 페이지 이동
+  const { isLoggedIn } = useAuth();    // 로그인 여부
   const [params, setParams] = useSearchParams();
   const rawPage = Number(params.get("page") || 1);
   const page = Number.isSafeInteger(rawPage) && rawPage > 0 ? rawPage : 1;
@@ -160,10 +171,16 @@ export default function RecruitmentListPage() {
   const data = state.data;
   return (
     <div className="recruitment-page">
-      <header className="recruitment-heading">
-        <p className="recruitment-eyebrow">RECRUITMENT</p>
-        <h1>모집</h1>
-        <p>함께 탈출할 동료를 모집하고 원하는 파티를 꾸릴 수 있어요.</p>
+      <header className="recruitment-heading rp-heading-row">
+        <div>
+          <p className="recruitment-eyebrow">RECRUITMENT</p>
+          <h1>모집</h1>
+          <p>함께 탈출할 동료를 모집하고 원하는 파티를 꾸릴 수 있어요.</p>
+        </div>
+        {/* 모집글 쓰기 (R-01): 비로그인이면 로그인 화면으로 */}
+        <button type="button" className="rp-btn rp-btn--primary" onClick={() => navigate(isLoggedIn ? "/recruitment/new" : "/login")}>
+          + 모집글 쓰기
+        </button>
       </header>
       <section
         className="recruitment-results"
