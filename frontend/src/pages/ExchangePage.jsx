@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { fetchItems, exchangeItem, fetchMyExchanges } from '../api/exchangeApi';
 import { fetchMyInfo } from '../api/userApi';
-import { isLoggedIn, getErrorMessage } from '../api/axiosInstance'; 
+import { isLoggedIn, getErrorMessage } from '../api/axiosInstance';
 import '../styles/ExchangePage.css';
 
 function ExchangePage() {
   const [items, setItems] = useState([]);
   const [myHistory, setMyHistory] = useState([]);
-  
+
   // 유저 정보 상태 (닉네임과 점수)
   const [user, setUser] = useState({
     nickname: '',
@@ -164,16 +164,21 @@ function ExchangePage() {
                 </tr>
               </thead>
               <tbody>
-                {myHistory.map((history) => (
-                  <tr key={history.id}>
-                    <td className="history-table__name">{history.itemName}</td>
-                    <td>{history.quantity}개</td>
-                    <td className="history-table__points">-{history.usedPoints.toLocaleString()} P</td>
-                    <td className="history-table__date">
-                      {new Date(history.createdAt).toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
+                {myHistory.map((history) => {
+                  // 백엔드 응답 속성명(itemName, item_name, 조인된 Item.name 등)에 유연하게 대응
+                  const productName = history.itemName || history.item_name || history.Item?.name || '상품 정보 없음';
+
+                  return (
+                    <tr key={history.id}>
+                      <td className="history-table__name">{productName}</td>
+                      <td>{history.quantity}개</td>
+                      <td className="history-table__points">-{history.usedPoints.toLocaleString()} P</td>
+                      <td className="history-table__date">
+                        {new Date(history.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
