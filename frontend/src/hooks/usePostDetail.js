@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPostDetail } from '../api/postApi';
+import useDialog from './useDialog';
 
 export function usePostDetail(id) {
     const navigate = useNavigate();
+    const { showAlert } = useDialog();
 
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -11,11 +13,13 @@ export function usePostDetail(id) {
     const [isSpoilerConfirmed, setIsSpoilerConfirmed] = useState(false); // 스포일러 열람 동의 상태
 
     useEffect(() => {
+        let active = true;
         const fetchPostDetail = async () => {
             try {
                 setLoading(true);
                 // 상세 데이터 조회 
                 const postData = await getPostDetail(id);
+                if (!active) return;
 
                 // 백엔드에서 받아온 응답 데이터를 그대로 상태에 반영
                 setPost(postData);
@@ -28,16 +32,18 @@ export function usePostDetail(id) {
                     setIsSpoilerConfirmed(true); // 일반 글은 바로 열람 허용
                 }
             } catch (err) {
+                if (!active) return;
                 console.error('게시글 상세 조회 실패:', err);
-                alert('게시글을 불러오지 못했습니다.');
-                navigate(-1);
+                await showAlert('게시글을 불러오지 못했습니다.');
+                if (active) navigate(-1);
             } finally {
-                setLoading(false);
+                if (active) setLoading(false);
             }
         };
 
         fetchPostDetail();
-    }, [id, navigate]);
+        return () => { active = false; };
+    }, [id, navigate, showAlert]);
 
     // 모달에서 '열람'을 선택한 경우
     const handleSpoilerConfirm = () => {

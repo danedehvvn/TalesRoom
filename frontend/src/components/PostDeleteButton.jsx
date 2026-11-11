@@ -1,14 +1,14 @@
-// 게시글 삭제 버튼 (P-05)
-// 게시글 상세 화면(강민하님 담당)의 "수정 · 삭제" 자리에 <PostDeleteButton postId={post.id} /> 한 줄로 넣으면
 // 확인 팝업 → 삭제 요청 → 목록으로 이동까지 이 컴포넌트가 다 처리해요
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "./ConfirmModal";
 import { deletePost } from "../api/postApi";
 import { getErrorMessage } from "../api/axiosInstance";
+import useDialog from "../hooks/useDialog";
 
 // props: postId = 지울 글 번호, className = 상세 화면 쪽 스타일을 입히고 싶을 때
 function PostDeleteButton({ postId, className = "" }) {
+  const { showAlert } = useDialog();
   const navigate = useNavigate(); // 코드로 페이지를 이동하는 함수
   const [open, setOpen] = useState(false); // 확인 팝업 열림 여부
   const [loading, setLoading] = useState(false); // 삭제 요청 중 여부 (버튼 잠금용)
@@ -23,7 +23,9 @@ function PostDeleteButton({ postId, className = "" }) {
       setLoading(false); // 실패하면 다시 누를 수 있게
       setOpen(false); // 팝업 닫고
       // 401(로그인 만료) · 403(권한 없음) · 404(이미 삭제됨) 이유를 그대로 안내
-      window.alert(getErrorMessage(error, "삭제하지 못했어요. 다시 시도해 주세요."));
+      await showAlert(
+        getErrorMessage(error, "삭제하지 못했어요. 다시 시도해 주세요."),
+      );
     }
   };
 

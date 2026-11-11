@@ -1,34 +1,36 @@
 /* 화면 전체를 덮는 어두운 배경 */
-.confirm-modal__backdrop {
-  position: fixed;                 /* 스크롤과 상관없이 화면에 고정 */
-  inset: 0;                        /* 위·오른쪽·아래·왼쪽 모두 0 = 화면 전체 */
-  z-index: 100;                    /* 헤더보다 위에 */
-  display: flex;
-  align-items: center;             /* 팝업을 화면 가운데로 */
-  justify-content: center;
-  padding: 16px;
-  background: rgba(36, 32, 53, 0.45); /* ink 색을 반투명하게 */
+.confirm-modal::backdrop {
+  background: rgba(86, 86, 87, 0.45);
 }
 
 /* 팝업 상자 (디자인 가이드 04: 연보라 배경 카드) */
 .confirm-modal {
-  width: 100%;
+  width: calc(100% - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  margin: auto;
+  border: 1px solid #ddd4eb;
   max-width: 420px;
-  padding: 32px 32px 24px;
-  border-radius: var(--radius-card);  /* 16px */
-  background: #f0ecf7;
+  padding: 28px 28px 20px;
+  border-radius: var(--radius-card);
+  background: #ffffff;
   text-align: center;
   box-shadow: 0 20px 48px rgba(36, 32, 53, 0.18);
 }
 
 .confirm-modal__title {
-  margin: 0 0 10px;
-  font-size: 22px;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  margin: 0 0 8px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--color-text);
 }
 
 .confirm-modal__desc {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
   margin: 0 0 24px;
   font-size: 14px;
   color: var(--color-text-muted);
@@ -45,19 +47,23 @@
 /* 확인 버튼 (기본 보라) */
 .confirm-modal__confirm {
   min-width: 140px;
-  height: 46px;                        /* 가이드: 주요 버튼 높이 46px 이상 */
+  height: 40px;
   border: none;
   border-radius: var(--radius-button);
   background: var(--color-primary);
   color: #ffffff;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
 }
 
 /* 삭제처럼 위험한 동작은 빨간 버튼 */
-.confirm-modal__confirm.is-danger { background: #d35a63; }
-.confirm-modal__confirm:hover:not(:disabled) { filter: brightness(0.95); }
+.confirm-modal__confirm.is-danger {
+  background: #d35a63;
+}
+.confirm-modal__confirm:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
 
 /* 취소: 배경 없는 글자 버튼 */
 .confirm-modal__cancel {
@@ -69,5 +75,11 @@
   cursor: pointer;
 }
 
-.confirm-modal button:disabled { opacity: 0.6; cursor: default; }
-.confirm-modal button:focus-visible { outline: 2px solid #e9a34a; outline-offset: 2px; }
+.confirm-modal button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.confirm-modal button:focus-visible {
+  outline: 2px solid #e9a34a;
+  outline-offset: 2px;
+}

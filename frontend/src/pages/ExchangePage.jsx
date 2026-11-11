@@ -1,10 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fetchItems, exchangeItem, fetchMyExchanges } from '../api/exchangeApi';
 import { fetchMyInfo } from '../api/userApi';
 import { isLoggedIn, getErrorMessage } from '../api/axiosInstance';
 import '../styles/ExchangePage.css';
+import useDialog from '../hooks/useDialog';
+
+async function fetchExchangeData() {
+  const items = await fetchItems();
+  if (!isLoggedIn()) return { items, user: null, history: [] };
+  const [user, history] = await Promise.all([fetchMyInfo(), fetchMyExchanges()]);
+  return { items, user, history };
+}
 
 function ExchangePage() {
+  const { showAlert, showConfirm } = useDialog();
   const [items, setItems] = useState([]);
   const [myHistory, setMyHistory] = useState([]);
 
@@ -22,21 +31,15 @@ function ExchangePage() {
   const CONVERSION_RATE = 10;
   const availablePoints = user.score * CONVERSION_RATE;
 
+  const applyData = useCallback(({ items, user, history }) => {
+    setItems(items);
+    setUser(user || { nickname: '', username: '', score: 0 });
+    setMyHistory(history);
+  }, []);
+
   const loadData = async () => {
     try {
-      setLoading(true);
-      // 1. 상품 목록 불러오기
-      const itemsData = await fetchItems();
-      setItems(itemsData);
-
-      // 2. 로그인된 경우에만 유저 정보 및 교환 내역 불러오기
-      if (isLoggedIn()) {
-        const myInfoData = await fetchMyInfo();
-        setUser(myInfoData);
-
-        const historyData = await fetchMyExchanges();
-        setMyHistory(historyData);
-      }
+      applyData(await fetchExchangeData());
     } catch (err) {
       console.error('데이터 로드 실패:', err);
       setError(getErrorMessage(err, '데이터를 불러오는 중 오류가 발생했습니다.'));
@@ -46,32 +49,38 @@ function ExchangePage() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    let active = true;
+    fetchExchangeData()
+      .then((data) => { if (active) applyData(data); })
+      .catch((err) => { if (active) setError(getErrorMessage(err, '데이터를 불러오는 중 오류가 발생했습니다.')); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [applyData]);
 
   // 교환하기 버튼 클릭 핸들러
   const handleExchangeClick = async (itemId, itemName, price) => {
     if (!isLoggedIn()) {
-      alert('로그인이 필요한 서비스입니다.');
+      await showAlert('로그인이 필요한 서비스입니다.');
       return;
     }
 
     if (availablePoints < price) {
-      alert('보유 포인트가 부족합니다! 커뮤니티 활동을 더 열심히 참여해 보세요.');
+      await showAlert('보유 포인트가 부족합니다! 커뮤니티 활동을 더 열심히 참여해 보세요.');
       return;
     }
 
-    if (!window.confirm(`"${itemName}" 상품을 ${price.toLocaleString()} 포인트로 교환하시겠습니까?`)) {
+    if (!await showConfirm('상품을 교환하시겠습니까?', { description: `"${itemName}" 상품을 ${price.toLocaleString()} 포인트로 교환합니다.`, confirmText: '교환하기' })) {
       return;
     }
 
     try {
       await exchangeItem(itemId, 1);
-      alert('교환이 완료되었습니다!');
+      await showAlert('교환이 완료되었습니다!');
+      setLoading(true);
       loadData(); // 데이터 새로고침
     } catch (err) {
       const errorMsg = getErrorMessage(err, '교환 중 오류가 발생했습니다.');
-      alert(errorMsg);
+      await showAlert(errorMsg);
     }
   };
 
