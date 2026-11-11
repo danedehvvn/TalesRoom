@@ -5,6 +5,7 @@ import { getErrorMessage } from "../api/axiosInstance";
 import { fetchMyInfo, updateMyInfo } from "../api/userApi";
 import useAuth from "../hooks/useAuth";
 import "../styles/MyPage.css";
+import { isValidPassword, PASSWORD_RULE_MESSAGE } from "../utils/validators"; //비밀번호 규칙 검사·안내 문구
 
 const EMPTY_FORM = {
   nickname: "",
@@ -69,8 +70,9 @@ function MyPageEditPage() {
         setError("새 비밀번호가 서로 일치하지 않습니다.");
         return;
       }
-      if (form.newPassword.length < 8 || form.newPassword.length > 20 || !/[A-Za-z]/.test(form.newPassword) || !/\d/.test(form.newPassword)) {
-        setError("새 비밀번호는 8~20자이며 영문과 숫자를 포함해야 합니다.");
+      
+      if (!isValidPassword(form.newPassword)) { //utils/validators.js에서 처리(영문+숫자+특수문자)
+        setError(`새 비밀번호는 ${PASSWORD_RULE_MESSAGE}`);
         return;
       }
     }

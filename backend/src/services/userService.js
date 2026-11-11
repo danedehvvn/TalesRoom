@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const userRepository = require("../repositories/userRepository",);
 const { duplicateNickname } = require("./authService",);
-const User = require("../models/User"); // 명예의 전당 조회 위한 User 모델 추가 
+const User = require("../models/User"); // 명예의 전당 조회 위한 User 모델 추가
+const { isValidPassword, PASSWORD_RULE_MESSAGE } = require("../utils/validators"); // 비밀번호 규칙 검사·안내 문구 가져옴
 
 const createHttpError = (statusCode, message,) => {
   const error = new Error(message);
@@ -97,11 +98,9 @@ const updateProfile = async (userId, requestBody = {},) => {
     }
 
     // 새 비밀번호에 영어, 숫자 있는지 확인
-    const hasLetter = /[A-Za-z]/.test(newPassword);
-    const hasNumber = /\d/.test(newPassword);
-
-    if (newPassword.length < 8 || newPassword.length > 20 || !hasLetter || !hasNumber) {
-      throw createHttpError(400, "새 비밀번호는 8~20자이며 영문과 숫자를 포함해야 합니다.",);
+    if (!isValidPassword(newPassword)) {//유틸의 validators.js에서 처리
+      
+      throw createHttpError(400, `새 비밀번호는 ${PASSWORD_RULE_MESSAGE}`,);
     }
 
     // 입력한 지금 비밀번호와 db bcrypt 해시랑 비교합니다

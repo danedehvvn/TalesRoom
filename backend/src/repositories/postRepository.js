@@ -109,5 +109,4 @@ async function findReaction(postId, userId) {
     return PostReaction.findone({ where: { postId, userId } });
 } */
 
-// module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove, findReaction};
-module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove };   //--! 주석 처리한 findReaction 제거 (postReactionRepository로 옮김)
+module.exports = { findNotices, findPage, create, findById, findByIdWithDetails, viewCount, update, createLog, remove };

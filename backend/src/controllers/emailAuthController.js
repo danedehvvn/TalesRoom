@@ -15,14 +15,7 @@ const { User } = require('../models');
 const { isEmpty, duplicateEmail } = require('../services/authService');
 const { issueCode, verifyCode, clearVerification } = require('../services/emailVerificationService');
 const { sendMail } = require('../utils/mailer');
-
-// 이메일 형식 검사 (예: kim@test.com) → "글자@글자.글자" 모양인지만 간단히 확인
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;//정규식 설명은 아래에
-// / ... / (정규식 리터럴 감싸기)
-// ^ : 문자열 시작, $ : 문자열 끝
-// [^\s@]+ : 공백과 @를 제외한 글자가 1개 이상
-// \. : 마침표 (정규식에서 .은 "아무 글자" 의미이므로, 실제 마침표를 쓰기위해 \.처럼 이스케이프 처리)
-// 즉, "공백과 @를 제외한 글자 1개 이상 + @ + 공백과 @를 제외한 글자 1개 이상 + . + 공백과 @를 제외한 글자 1개 이상" 모양이면 통과
+const { isValidEmail, isValidPassword, PASSWORD_RULE_MESSAGE } = require('../utils/validators');//이메일 형식·비밀번호 규칙 검사(userService와 같은 규칙을 함께 사용) 및 비밀번호 안내 문구도 함께 가져옴
 
 // 용도별 메일 제목
 const MAIL_SUBJECTS = {
@@ -75,7 +68,7 @@ const requestSignupCode = async (req, res) => {
         }
 
         const trimmedEmail = email.trim();
-        if (!EMAIL_REGEX.test(trimmedEmail)) {//.test(문자열) 문자열이 정규식 규칙에 맞으면 true, 안 맞으면 false
+        if (!isValidEmail(trimmedEmail)) {//.test(문자열) 문자열이 정규식 규칙에 맞으면 true, 안 맞으면 false (유틸 : validators.js)
             return res.status(400).json({ success: false, data: null, message: '이메일 형식이 올바르지 않습니다.' });
         }
 
@@ -199,12 +192,10 @@ const resetPassword = async (req, res) => {
             return res.status(400).json({ success: false, data: null, message: '아이디, 이메일, 인증번호, 새 비밀번호를 모두 입력해 주세요' });
         }
 
-        //새 비밀번호 규칙 확인 (내 정보 수정 userService와 같은 규칙: 8~20자, 영문+숫자 포함)
+        //새 비밀번호 규칙 확인 (내 정보 수정 userService와 같은 규칙: 8~20자, 영문+숫자+특수문자 포함)
         //- 비밀번호 형식을 인증번호 확인보다 먼저 검사
-        const hasLetter = /[A-Za-z]/.test(newPassword);    // 영문이 1개 이상 있는지
-        const hasNumber = /\d/.test(newPassword);          // 숫자가 1개 이상 있는지
-        if (newPassword.length < 8 || newPassword.length > 20 || !hasLetter || !hasNumber) {
-            return res.status(400).json({ success: false, data: null, message: '새 비밀번호는 8~20자이며 영문과 숫자를 포함해야 합니다.' });
+        if (!isValidPassword(newPassword)) {//유틸의 validators.js에서 처리
+            return res.status(400).json({ success: false, data: null, message: `새 비밀번호는 ${PASSWORD_RULE_MESSAGE}` });
         }
 
         //여기까지가 입력 상태 기본검사
