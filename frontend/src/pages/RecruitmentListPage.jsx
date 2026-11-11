@@ -54,83 +54,83 @@ function RecruitmentCard({ item }) {
     // 카드 전체를 상세 화면(/recruitment/:id)으로 가는 링크로 감쌈 (R-03)
     <li className="recruitment-card rp-clickable">
       <Link to={`/recruitment/${item.id}`} className="rp-card-link">
-      <div className="recruitment-card-top">
-        <span
-          className={`recruitment-status recruitment-status--${statusClass}`}
-        >
-          {statusLabel}
-        </span>
-        <span className="recruitment-created">
-          등록{" "}
-          <time dateTime={item.createdAt || undefined}>
-            {formattedDate(item.createdAt)}
-          </time>
-        </span>
-      </div>
-      {/* 테마를 골랐거나 직접 썼으면 제목 위에 굵게 표시 (고른 테마 우선, 없으면 직접 쓴 이름) */}
-      {(item.theme?.title || item.themeName) && (
-        <p className="rp-card-theme">{item.theme?.title || item.themeName}</p>
-      )}
-      <h2>{item.title || "제목 없는 모집글"}</h2>
-      <dl className="recruitment-facts">
-        <div>
-          <dt>
-            <span aria-hidden="true">◷</span> 모임 일시
-          </dt>
-          <dd>
-            <time dateTime={item.meetDate || undefined}>
-              {formattedDate(item.meetDate, true)}
+        <div className="recruitment-card-top">
+          <span
+            className={`recruitment-status recruitment-status--${statusClass}`}
+          >
+            {statusLabel}
+          </span>
+          <span className="recruitment-created">
+            등록{" "}
+            <time dateTime={item.createdAt || undefined}>
+              {formattedDate(item.createdAt)}
             </time>
-          </dd>
-        </div>
-        <div>
-          <dt>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.7"
-              aria-hidden="true"
-            >
-              <circle cx="9" cy="7" r="3" />
-              <path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v2" />
-            </svg>{" "}
-            참여 인원
-          </dt>
-          <dd>
-            {validCount ? (
-              <>
-                <strong>{count}</strong> / {capacity}명
-              </>
-            ) : (
-              "정보 없음"
-            )}
-          </dd>
-        </div>
-      </dl>
-      <div className="recruitment-card-bottom">
-        <div className="recruitment-author">
-          <span className="recruitment-avatar" aria-hidden="true">
-            {Array.from(nickname)[0]}
           </span>
-          <span>{nickname}</span>
         </div>
-        {item.status === "OPEN" && validCount && !full && (
-          <span className="recruitment-remaining">
-            {capacity - count}자리 남았어요
-          </span>
+        {/* 테마를 골랐거나 직접 썼으면 제목 위에 굵게 표시 (고른 테마 우선, 없으면 직접 쓴 이름) */}
+        {(item.theme?.title || item.themeName) && (
+          <p className="rp-card-theme">{item.theme?.title || item.themeName}</p>
         )}
-      </div>
+        <h2>{item.title || "제목 없는 모집글"}</h2>
+        <dl className="recruitment-facts">
+          <div>
+            <dt>
+              <span aria-hidden="true">◷</span> 모임 일시
+            </dt>
+            <dd>
+              <time dateTime={item.meetDate || undefined}>
+                {formattedDate(item.meetDate, true)}
+              </time>
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                aria-hidden="true"
+              >
+                <circle cx="9" cy="7" r="3" />
+                <path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v2" />
+              </svg>{" "}
+              참여 인원
+            </dt>
+            <dd>
+              {validCount ? (
+                <>
+                  <strong>{count}</strong> / {capacity}명
+                </>
+              ) : (
+                "정보 없음"
+              )}
+            </dd>
+          </div>
+        </dl>
+        <div className="recruitment-card-bottom">
+          <div className="recruitment-author">
+            <span className="recruitment-avatar" aria-hidden="true">
+              {Array.from(nickname)[0]}
+            </span>
+            <span>{nickname}</span>
+          </div>
+          {item.status === "OPEN" && validCount && !full && (
+            <span className="recruitment-remaining">
+              {capacity - count}자리 남음
+            </span>
+          )}
+        </div>
       </Link>
     </li>
   );
 }
 
 export default function RecruitmentListPage() {
-  const navigate = useNavigate();      // 코드로 페이지 이동
-  const { isLoggedIn } = useAuth();    // 로그인 여부
+  const navigate = useNavigate(); // 코드로 페이지 이동
+  const { isLoggedIn } = useAuth(); // 로그인 여부
   const [params, setParams] = useSearchParams();
   const rawPage = Number(params.get("page") || 1);
   const page = Number.isSafeInteger(rawPage) && rawPage > 0 ? rawPage : 1;
@@ -178,7 +178,11 @@ export default function RecruitmentListPage() {
           <p>함께 탈출할 동료를 모집하고 원하는 파티를 꾸릴 수 있어요.</p>
         </div>
         {/* 모집글 쓰기 (R-01): 비로그인이면 로그인 화면으로 */}
-        <button type="button" className="rp-btn rp-btn--primary" onClick={() => navigate(isLoggedIn ? "/recruitment/new" : "/login")}>
+        <button
+          type="button"
+          className="rp-btn rp-btn--primary"
+          onClick={() => navigate(isLoggedIn ? "/recruitment/new" : "/login")}
+        >
           + 모집글 쓰기
         </button>
       </header>
