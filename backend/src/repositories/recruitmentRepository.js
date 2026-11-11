@@ -27,7 +27,7 @@ async function findPage({ limit, offset }) {
     return Recruitment.findAndCountAll({
         where: { status: { [Op.in]: ['OPEN', 'CANCELED' ] } },
         attributes: [
-            'id', 'title', 'meetDate', 'capacity', 'status', 'createdAt' ,
+            'id', 'title', 'themeName', 'meetDate', 'capacity', 'status', 'createdAt' ,   // themeName = 직접 쓴 테마 이름
             [
                 sequelize.literal(`(
                     SELECT COUNT(*) FROM recruitment_applications As ra
@@ -37,8 +37,11 @@ async function findPage({ limit, offset }) {
                     'approvedCount',
             ],
         ],
-        include: [{ model: User, as: 'author', attributes: [['id', 'userId'], 'nickname'] }],
-        order: [['createdAt', 'DESC']],
+        include: [
+            { model: User, as: 'author', attributes: [['id', 'userId'], 'nickname'] },
+            { model: Theme, as: 'theme', attributes: ['id', 'title', 'storeName'] },   // 테마 찾기로 고른 테마 (없으면 null, LEFT JOIN)
+        ],
+        order: [['createdAt', 'DESC'], ['id', 'DESC']],   // 최신순, 같은 초에 쓴 글은 번호 큰 순 (순서가 매번 같게)
         limit,
         offset,
     });
@@ -47,6 +50,11 @@ async function findPage({ limit, offset }) {
 // 모집글 1개
 async function findById(id) {
     return Recruitment.findByPk(id);
+}
+
+// 테마 확인
+async function findThemeById(id) {
+    return Theme.findByPk(id, { attributes: ['id'] });
 }
 
 // 특정 회원이 특정 글에 신청(중복 방지)
@@ -85,4 +93,4 @@ async function updateStatus(recruitment, status, transaction) {
     return recruitment.update({ status }, { transaction } );
 }
 
-module.exports = { create, findPage, findByIdWithDetails, findById, findApplication, countApproved, createApplication, findApplicationById, updateApplicationStatus, deleteUnapproved, updateStatus };
+module.exports = { create, findPage, findByIdWithDetails, findById, findApplication, countApproved, createApplication, findApplicationById, updateApplicationStatus, deleteUnapproved, updateStatus, findThemeById };

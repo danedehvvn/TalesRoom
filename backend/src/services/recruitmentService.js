@@ -13,11 +13,23 @@ const MAX_CAPACITY = 10;
 
 // 모집글 작성
 async function createRecruitment(user, body) {
-    const { themeId, title, content, meetDate, capacity } = body || {};
+    const { themeId, themeName, title, content, meetDate, capacity } = body || {};
 
     // 필수값
     if (!title || !title.trim()) throw httpError(400, '제목을 입력해 주세요.');
     if (!content || !content.trim()) throw httpError(400, '내용을 입력해 주세요.');
+
+    // 테마
+    const hasThemeId = themeId !== undefined && themeId !== null && themeId !== '';
+    const name = typeof themeName === 'string' ? themeName.trim() : '';
+    if (hasThemeId && name) throw httpError(400, '테마는 찾기 또는 직접 쓰기 중 하나만 선택해 주세요.'); // 둘 다 보내면 어느 쪽인지 모호하니 막기
+    if (name.length > 150) throw httpError(400, '테마 이름은 150자 이하로 입력해 주세요.');
+    if (hasThemeId) {
+        const tid = Number(themeId);
+        if (!Number.isInteger(tid) || tid < 1) throw httpError(400, '잘못된 테마 번호입니다.');
+        const theme = await recruitmentRepository.findThemeById(tid);
+        if (!theme) throw httpError(400, '존재하지 않는 테마입니다.');
+    }
 
     // 날짜(미래)
     const date = new Date(meetDate);
@@ -33,7 +45,8 @@ async function createRecruitment(user, body) {
     // 저장
     const recruitment = await recruitmentRepository.create({
         userId: user.id,
-        themeId: themeId ?? null,
+        themeId: hasThemeId ? Number(themeId) : null,
+        themeName: name || null,
         title: title.trim(),
         content: content.trim(),
         meetDate: date,
@@ -47,7 +60,7 @@ async function createRecruitment(user, body) {
 async function getRecruitments(query) {
     const page = Math.max(parseInt(query.page, 10) || 1, 1);
     const size = Math.min(Math.max(parseInt(query.size, 10) || 10, 1), 50);
-    const offset = (page - 1) * page;
+    const offset = (page - 1) * size;
 
     const result = await recruitmentRepository.findPage({ limit: size, offset });
 
@@ -62,6 +75,8 @@ async function getRecruitments(query) {
                 currentCount: Number(p.approvedCount) + 1,
                 status: p.status,
                 author: p.author,
+                theme: p.theme,                 // 고른 테마 { id, title, storeName } 또는 null
+                themeName: p.themeName,         // 직접 쓴 테마 이름 또는 null
                 createdAt: p.createdAt,
             };
         }),
@@ -90,6 +105,7 @@ async function getRecruitmentDetail(id, user) {
     return {
         id: r.id,
         title: r.title,
+        themeName: r.themeName,
         content: r.content,
         meetDate: r.meetDate,
         capacity: r.capacity,
