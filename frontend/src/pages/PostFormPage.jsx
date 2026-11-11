@@ -6,6 +6,7 @@ import { createPost, fetchPost, updatePost } from "../api/postApi";
 import { getErrorMessage, getStoredUser, isLoggedIn } from "../api/axiosInstance";
 import { CATEGORIES } from "../utils/postFormat";
 import "../styles/PostFormPage.css";
+import useDialog from "../hooks/useDialog";
 
 const TITLE_MAX = 100; // 제목 최대 글자 수
 const CONTENT_MAX = 5000; // 내용 최대 글자 수 (화면의 "0 / 5,000자")
@@ -17,6 +18,7 @@ function PostFormPage() {
   const { id } = useParams(); // 주소의 :id 꺼내기. 작성 모드면 undefined
   const isEdit = Boolean(id); // id가 있으면 수정 모드
   const navigate = useNavigate();
+  const { showAlert } = useDialog();
   const isAdmin = getStoredUser()?.role === "ADMIN"; // 관리자만 "공지 등록" 체크박스 보이기
 
   const [form, setForm] = useState(EMPTY_FORM); // 입력값 전체를 객체 하나로 관리
@@ -33,14 +35,16 @@ function PostFormPage() {
   // 수정 모드: 기존 글을 불러와서 폼에 채우기
   useEffect(() => {
     if (!isEdit) return; // 작성 모드면 할 일 없음
+    let active = true;
     fetchPost(id)
-      .then((post) => {
+      .then(async (post) => {
+        if (!active) return;
         // 작성자가 아니면 수정 불가 (서버도 막지만 화면에서도 미리 돌려보내기)
         // 상세 API의 isMine은 지금 항상 false라서(로그인 정보를 안 읽음), 작성자 id와 내 id를 직접 비교해요
         const authorId = post.author?.id ?? post.author?.userId; // 상세는 id, 목록은 userId로 와요
         if (authorId !== getStoredUser()?.id) {
-          window.alert("작성자만 수정할 수 있어요.");
-          navigate("/posts", { replace: true }); // 목록으로 돌려보내기
+          await showAlert("작성자만 수정할 수 있어요.");
+          if (active) navigate("/posts", { replace: true }); // 목록으로 돌려보내기
           return;
         }
         // 서버 값 중 폼에 필요한 것만 골라 넣기
@@ -52,9 +56,10 @@ function PostFormPage() {
           isNotice: Boolean(post.isNotice),
         });
       })
-      .catch((err) => setSubmitError(getErrorMessage(err, "글을 불러오지 못했어요.")))
-      .finally(() => setLoading(false));
-  }, [id, isEdit, navigate]); // 이 값이 바뀌면 다시 불러오기
+      .catch((err) => { if (active) setSubmitError(getErrorMessage(err, "글을 불러오지 못했어요.")); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [id, isEdit, navigate, showAlert]); // 이 값이 바뀌면 다시 불러오기
 
   // 입력 공통 처리: name 속성으로 어떤 칸인지 구분해서 그 값만 바꿔요
   const handleChange = (e) => {
