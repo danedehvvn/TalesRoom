@@ -42,7 +42,10 @@ const getMyExchanges = async (req, res) => {
 // [관리자] 상품 등록 컨트롤러 (Create)
 const createItem = async (req, res) => {
     try {
-        const data = await exchangeService.createItem(req.body);
+        const data = await exchangeService.createItem({
+            ...req.body,
+            userId: req.user.id,
+        });
         return res.status(201).json({ success: true, data, message: "상품이 성공적으로 등록되었습니다." });
     } catch (error) {
         return sendErrorResponse(res, error);

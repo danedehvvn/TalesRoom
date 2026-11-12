@@ -13,14 +13,15 @@ async function findItemById(itemId) {
     return await Item.findByPk(itemId);
 }
 
-// 교환 내역 생성 및 상품 재고 차감 (quantity 제거, 1개 고정 차감)
+// 교환 내역 생성 및 상품 재고 차감 (1개 고정 차감)
 async function createExchangeAndReduceStock(userId, item, transaction) {
     const totalPoints = item.price; // 1개 단가 기준
 
-    // 1. 교환 내역 기록 생성 (quantity 필드 제거)
+    // 1. 교환 내역 기록 생성
     const exchange = await PointExchange.create({
         userId,
         itemId: item.id,
+        itemName: item.name,
         usedPoints: totalPoints,
     }, { transaction });
 

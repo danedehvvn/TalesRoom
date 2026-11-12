@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MyPageHeader from "../components/MyPageHeader";
 import { getErrorMessage } from "../api/axiosInstance";
 import { fetchMyComments, fetchMyInfo, fetchMyPosts } from "../api/userApi";
@@ -14,7 +14,6 @@ function MyPagePage() {
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -50,7 +49,8 @@ function MyPagePage() {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    // 홈을 새로 열어 보호 라우트의 로그인 리다이렉트와 충돌하지 않게 한다.
+    window.location.replace("/");
   };
 
   const handleRetry = () => {

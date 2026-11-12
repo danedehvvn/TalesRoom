@@ -75,8 +75,8 @@ PartyComment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 
 // 포인트 교환소 관계 설정 (Item <-> PointExchange)
 // 상품 1개 -> 교환 내역 여러 개(1:N)
-Item.hasMany(PointExchange, { foreignKey: 'itemId' });
-PointExchange.belongsTo(Item, { foreignKey: 'itemId' });
+Item.hasMany(PointExchange, { foreignKey: 'itemId', onDelete: 'SET NULL' });
+PointExchange.belongsTo(Item, { foreignKey: 'itemId', onDelete: 'SET NULL' });
 
 // 회원 1명 -> 교환 내역 여러 개 (1:N)
 User.hasMany(PointExchange, { foreignKey: 'userId' });
