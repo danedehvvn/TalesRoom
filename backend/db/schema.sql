@@ -187,16 +187,16 @@ ALTER TABLE `comments` ADD CONSTRAINT `fk_comments_post_id` FOREIGN KEY (`post_i
 ALTER TABLE `theme_reviews` ADD CONSTRAINT `fk_theme_reviews_theme_id` FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`) ON DELETE CASCADE;
 ALTER TABLE `theme_reviews` ADD CONSTRAINT `fk_theme_reviews_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
-ALTER TABLE `recruitments` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-ALTER TABLE `recruitments` ADD FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`);
+ALTER TABLE `recruitments` ADD CONSTRAINT `fk_recruitments_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `recruitments` ADD CONSTRAINT `fk_recruitments_theme_id` FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`);
 
-ALTER TABLE `recruitment_applications` ADD FOREIGN KEY (`recruitment_id`) REFERENCES `recruitments` (`id`) ON DELETE CASCADE;
-ALTER TABLE `recruitment_applications` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `recruitment_applications` ADD CONSTRAINT `fk_recruitment_applications_recruitment_id` FOREIGN KEY (`recruitment_id`) REFERENCES `recruitments` (`id`) ON DELETE CASCADE;
+ALTER TABLE `recruitment_applications` ADD CONSTRAINT `fk_recruitment_applications_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
-ALTER TABLE `party_comments` ADD FOREIGN KEY (`recruitment_id`) REFERENCES `recruitments` (`id`) ON DELETE CASCADE;
-ALTER TABLE `party_comments` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `party_comments` ADD CONSTRAINT `fk_party_comments_recruitment_id` FOREIGN KEY (`recruitment_id`) REFERENCES `recruitments` (`id`) ON DELETE CASCADE;
+ALTER TABLE `party_comments` ADD CONSTRAINT `fk_party_comments_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
-ALTER TABLE `bookmarks` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-ALTER TABLE `bookmarks` ADD FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`) ON DELETE CASCADE;
+ALTER TABLE `bookmarks` ADD CONSTRAINT `fk_bookmarks_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `bookmarks` ADD CONSTRAINT `fk_bookmarks_theme_id` FOREIGN KEY (`theme_id`) REFERENCES `themes` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `items` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `items` ADD CONSTRAINT `fk_items_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
