@@ -9,20 +9,21 @@ async function fetchExchangeData() {
   const items = await fetchItems();
   if (!isLoggedIn()) return { items, user: null, history: [], allHistory: [] };
 
-  const [user, history] = await Promise.all([fetchMyInfo(), fetchMyExchanges()]);
-  let allHistory = [];
-
-  // user 객체에서 role 추출 후 관리자 권한 확인
+  const user = await fetchMyInfo();
   const userRole = user?.role ? user.role.toLowerCase() : '';
+
   if (userRole === 'admin') {
+    let allHistory = [];
     try {
       allHistory = await fetchAllExchanges();
     } catch (e) {
       console.error('전체 교환 내역 로드 실패:', e);
     }
+    return { items, user, history: [], allHistory };
   }
 
-  return { items, user, history, allHistory };
+  const history = await fetchMyExchanges();
+  return { items, user, history, allHistory: [] };
 }
 
 function ExchangePage() {
@@ -30,13 +31,14 @@ function ExchangePage() {
   const [items, setItems] = useState([]);
   const [myHistory, setMyHistory] = useState([]);
   const [allHistory, setAllHistory] = useState([]);
-  const [activeTab, setActiveTab] = useState('my'); // 'my' 또는 'all' (관리자용 탭)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
 
   const [user, setUser] = useState({ nickname: '', username: '', score: 0, role: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 관리자 모달 및 폼 상태 (isActive 상태 제거)
+  // 관리자 모달 및 폼 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -56,6 +58,7 @@ function ExchangePage() {
     setUser(user || { nickname: '', username: '', score: 0, role: '' });
     setMyHistory(history);
     setAllHistory(allHistory);
+    setCurrentPage(1);
   }, []);
 
   const loadData = async () => {
@@ -165,13 +168,18 @@ function ExchangePage() {
     e.preventDefault();
     const { id, name, description, price, stock } = formData;
 
-    if (!name || price === '' || stock === '') {
+    if (!name.trim() || price === '' || stock === '') {
       await showAlert('상품명, 가격, 재고는 필수 입력 항목입니다.');
       return;
     }
 
+    if (Number(price) <= 0 || Number(stock) < 0) {
+      await showAlert('가격은 1P 이상, 재고는 0개 이상으로 입력해 주세요.');
+      return;
+    }
+
     const payload = {
-      name,
+      name: name.trim(),
       description,
       price: Number(price),
       stock: Number(stock)
@@ -327,88 +335,89 @@ function ExchangePage() {
       <section className="history-section">
         <div className="history-header-row">
           <h3 className="exchange-section__title history-title">
-            {isAdmin && activeTab === 'all' ? '전체 유저 교환 내역 (관리자 대시보드)' : '나의 교환 내역'}
+            {isAdmin ? `전체 유저 교환 내역 (${allHistory.length}건)` : `나의 교환 내역 (${myHistory.length}건)`}
           </h3>
-          {isAdmin && (
-            <div className="history-tabs">
-              <button
-                type="button"
-                className={`history-tab-btn ${activeTab === 'my' ? 'active' : ''}`}
-                onClick={() => setActiveTab('my')}
-              >
-                내 내역
-              </button>
-              <button
-                type="button"
-                className={`history-tab-btn ${activeTab === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveTab('all')}
-              >
-                전체 유저 내역 ({allHistory.length})
-              </button>
-            </div>
-          )}
         </div>
 
         {!isLoggedIn() ? (
           <p className="history-login-guide">로그인 후 교환 내역을 확인하실 수 있습니다.</p>
-        ) : activeTab === 'all' && isAdmin ? (
-          /* 전체 유저 내역 테이블 */
-          allHistory.length === 0 ? (
-            <p className="history-empty">전체 교환 내역이 없습니다.</p>
-          ) : (
-            <div className="history-table-wrapper">
-              <table className="history-table">
-                <thead>
-                  <tr>
-                    <th>유저 ID</th>
-                    <th>상품명</th>
-                    <th>사용 포인트</th>
-                    <th>교환 일시</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allHistory.map((h) => (
-                    <tr key={h.id}>
-                      <td className="history-table__user"><strong>{h.userId || h.user_id}</strong></td>
-                      <td className="history-table__name">{h.itemName || h.item_name || h.Item?.name || '상품 정보 없음'}</td>
-                      <td className="history-table__points">-{h.usedPoints?.toLocaleString() || h.used_points?.toLocaleString()} P</td>
-                      <td className="history-table__date">{new Date(h.createdAt || h.created_at).toLocaleString()}</td>
+        ) : (() => {
+          const targetList = isAdmin ? allHistory : myHistory;
+          const totalPages = Math.ceil(targetList.length / ITEMS_PER_PAGE);
+          const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+          const currentItems = targetList.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+          if (targetList.length === 0) {
+            return (
+              <p className="history-empty">
+                {isAdmin ? '전체 교환 내역이 없습니다.' : '아직 교환한 상품이 없습니다.'}
+              </p>
+            );
+          }
+
+          return (
+            <>
+              <div className="history-table-wrapper">
+                <table className="history-table">
+                  <thead>
+                    <tr>
+                      {isAdmin && <th>유저 ID</th>}
+                      <th>상품명</th>
+                      <th>사용 포인트</th>
+                      <th>교환 일시</th>
                     </tr>
+                  </thead>
+                  <tbody>
+                    {currentItems.map((h) => {
+                      const productName = h.itemName || h.item_name || h.Item?.name || '상품 정보 없음';
+                      return (
+                        <tr key={h.id}>
+                          {isAdmin && <td className="history-table__user"><strong>{h.userId || h.user_id}</strong></td>}
+                          <td className="history-table__name">{productName}</td>
+                          <td className="history-table__points">-{(h.usedPoints ?? h.used_points ?? 0).toLocaleString()} P</td>
+                          <td className="history-table__date">{new Date(h.createdAt || h.created_at).toLocaleString()}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="history-pagination">
+                  <button
+                    type="button"
+                    className="history-pagination__btn"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    이전
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      className={`history-pagination__btn ${currentPage === page ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )
-        ) : (
-          /* 개인 교환 내역 테이블 */
-          myHistory.length === 0 ? (
-            <p className="history-empty">아직 교환한 상품이 없습니다.</p>
-          ) : (
-            <div className="history-table-wrapper">
-              <table className="history-table">
-                <thead>
-                  <tr>
-                    <th>상품명</th>
-                    <th>사용 포인트</th>
-                    <th>교환 일시</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {myHistory.map((history) => {
-                    const productName = history.itemName || history.item_name || history.Item?.name || '상품 정보 없음';
-                    return (
-                      <tr key={history.id}>
-                        <td className="history-table__name">{productName}</td>
-                        <td className="history-table__points">-{history.usedPoints.toLocaleString()} P</td>
-                        <td className="history-table__date">{new Date(history.createdAt).toLocaleString()}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )
-        )}
+
+                  <button
+                    type="button"
+                    className="history-pagination__btn"
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    다음
+                  </button>
+                </div>
+              )}
+            </>
+          );
+        })()}
       </section>
 
       {/* 상품 등록 / 수정 모달 */}
@@ -444,6 +453,7 @@ function ExchangePage() {
                 <input
                   type="number"
                   name="price"
+                  min="1"
                   value={formData.price}
                   onChange={handleFormChange}
                   placeholder="필요 포인트 입력"
@@ -451,10 +461,11 @@ function ExchangePage() {
                 />
               </div>
               <div className="exchange-modal__form-group">
-                <label className="exchange-modal__label">초기 재고 수량</label>
+                <label className="exchange-modal__label">{editMode ? '재고 수량' : '초기 재고 수량'}</label>
                 <input
                   type="number"
                   name="stock"
+                  min="0"
                   value={formData.stock}
                   onChange={handleFormChange}
                   placeholder="재고 수량 입력"

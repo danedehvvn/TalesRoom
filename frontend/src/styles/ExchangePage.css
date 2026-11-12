@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
 }
 
 .exchange-page__title {
@@ -37,6 +38,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: background 0.2s;
 }
 
@@ -53,6 +55,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   box-sizing: border-box;
 }
 
@@ -145,6 +148,13 @@
   opacity: 0.6;
 }
 
+.exchange-card__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
 .exchange-card__name {
   font-size: 16px;
   font-weight: 600;
@@ -206,11 +216,43 @@
   cursor: not-allowed;
 }
 
+/* 퀵 재고 조절 위젯 스타일 */
+.exchange-quick-stock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exchange-quick-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.exchange-quick-btns button {
+  width: 22px;
+  height: 22px;
+  background: #e2deec;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.exchange-quick-btns button:hover {
+  background: #6854a3;
+  color: #fff;
+}
+
 /* 카드 내 관리자 버튼 영역 */
 .exchange-card__admin-actions {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .exchange-card__admin-btn {
@@ -221,6 +263,7 @@
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .exchange-card__admin-btn--edit {
@@ -241,13 +284,50 @@
   background: #c82333;
 }
 
-/* 내 교환 내역 섹션 */
+/* 교환 내역 섹션 */
 .history-section {
   margin-top: 48px;
 }
 
-.history-title {
+.history-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 16px;
+}
+
+.history-title {
+  margin-bottom: 0;
+}
+
+.history-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.history-tab-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #d8d3e3;
+  background: #fff;
+  color: #666075;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.history-tab-btn:hover {
+  border-color: #6854a3;
+  color: #6854a3;
+}
+
+.history-tab-btn.active {
+  background: #6854a3;
+  color: #fff;
+  border-color: #6854a3;
 }
 
 .history-login-guide,
@@ -281,6 +361,10 @@
   background: #f8f6fc;
   color: #3b354d;
   font-weight: 600;
+}
+
+.history-table__user {
+  color: #3b354d;
 }
 
 .history-table__name {
@@ -317,7 +401,7 @@
   padding: 30px;
   border-radius: 12px;
   width: 400px;
-  maxWidth: 90%;
+  max-width: 90%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
 }
@@ -351,6 +435,12 @@
   box-sizing: border-box;
   font-size: 14px;
   font-family: inherit;
+}
+
+.exchange-modal__input:focus,
+.exchange-modal__textarea:focus {
+  outline: none;
+  border-color: #6854a3;
 }
 
 .exchange-modal__textarea {
@@ -404,124 +494,42 @@
   color: #e5484d;
 }
 
-/* 관리자 기능 관련 추가 스타일 */
-.exchange-card.hidden-item {
-  border: 2px dashed #b5b0c9;
-  background-color: #fbfbfd;
-}
-
-.exchange-card__header-row {
+/* 교환 내역 페이지네이션 */
+.history-pagination {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.exchange-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.badge-active {
-  background: #e6f4ea;
-  color: #137333;
-}
-
-.badge-hidden {
-  background: #f1f3f4;
-  color: #5f6368;
-}
-
-/* 퀵 재고 조절 위젯 스타일 */
-.exchange-quick-stock {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.exchange-quick-btns {
-  display: flex;
-  gap: 2px;
-}
-
-.exchange-quick-btns button {
-  width: 22px;
-  height: 22px;
-  background: #e2deec;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 12px;
-}
-
-.exchange-quick-btns button:hover {
-  background: #6854a3;
-  color: #fff;
-}
-
-/* 숨기기 / 노출 버튼 스타일 */
-.exchange-card__admin-btn--hide {
-  background: #6c757d;
-  color: #fff;
-}
-.exchange-card__admin-btn--hide:hover {
-  background: #5a6268;
-}
-
-.exchange-card__admin-btn--show {
-  background: #17a2b8;
-  color: #fff;
-}
-.exchange-card__admin-btn--show:hover {
-  background: #138496;
-}
-
-/* 관리자 대시보드 탭 스타일 */
-.history-header-row {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  gap: 6px;
+  margin-top: 20px;
 }
 
-.history-tabs {
-  display: flex;
-  gap: 8px;
-}
-
-.history-tab-btn {
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
+.history-pagination__btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
   border: 1px solid #d8d3e3;
   background: #fff;
-  color: #666075;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.history-tab-btn.active {
-  background: #6854a3;
-  color: #fff;
-  border-color: #6854a3;
-}
-
-/* 모달 내 체크박스 */
-.exchange-modal__checkbox-group {
-  margin-top: 15px;
-}
-
-.exchange-modal__checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
   color: #3b354d;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s;
+}
+
+.history-pagination__btn:hover:not(:disabled) {
+  border-color: #6854a3;
+  color: #6854a3;
+}
+
+.history-pagination__btn.active {
+  background: #6854a3;
+  border-color: #6854a3;
+  color: #fff;
+}
+
+.history-pagination__btn:disabled {
+  background: #f5f3fa;
+  color: #b5b0c9;
+  cursor: not-allowed;
 }
