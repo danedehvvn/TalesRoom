@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   createThemeReview,
@@ -483,5 +483,8 @@ function ThemeDetail({ id }) {
 
 export default function ThemeDetailPage() {
   const { id } = useParams();
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [id]);
   return <ThemeDetail key={id} id={id} />;
 }

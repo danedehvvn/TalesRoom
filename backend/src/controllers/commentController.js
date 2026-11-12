@@ -1,7 +1,7 @@
 const commentService = require('../services/commentService');
 
 // 1. 댓글 작성 
-const createComment = async (req, res) => {
+const createComment = async (req, res, next) => {
     try {
         const postId = req.params.id;
         const { content } = req.body;
@@ -25,17 +25,12 @@ const createComment = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('댓글 작성 에러: ', error);
-        const status = error.status || 500;
-        return res.status(status).json({
-            success: false,
-            message: error.message || '서버 내부 오류가 발생했습니다.'
-        });
+        return next(error);
     }
 };
 
 // 2. 댓글 삭제
-const deleteComment = async (req, res) => {
+const deleteComment = async (req, res, next) => {
     try {
         const commentId = req.params.id;
         const loginUser = req.user;
@@ -58,17 +53,12 @@ const deleteComment = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('댓글 삭제 에러: ', error);
-        const status = error.status || 500;
-        return res.status(status).json({
-            success: false,
-            message: error.message || '서버 내부 오류가 발생했습니다.'
-        });
+        return next(error);
     }
 };
 
 //3. 답변 채택
-const acceptComment= async(req,res)=>{
+const acceptComment= async(req, res, next)=>{
     try{
         const commentId=Number(req.params.id); //댓글 번호
         const loginUser=req.user;
@@ -86,13 +76,8 @@ const acceptComment= async(req,res)=>{
         
         res.status(200).json({success: true, data: result, message:"답변이 채택되었습니다."});
 
-    }catch(error){
-        console.error('답변 채택 에러: ', error);
-        const status = error.status || 500;
-        return res.status(status).json({
-            success: false,
-            message: error.message || '서버 내부 오류가 발생했습니다.'
-        });
+    } catch (error) {
+        return next(error);
     }
 }
 

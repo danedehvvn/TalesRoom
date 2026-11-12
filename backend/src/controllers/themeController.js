@@ -20,14 +20,8 @@ const getThemes= async (req,res,next)=>{
 
     res.status(200).json({success: true, data: result, message:"OK"});
 
-  }catch(err){
-
-    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
-    console.error(err)
-
-    const status =err.status||500
-    res.status(status).json({error: err.message || "서버 오류가 발생했습니다."})
-
+  } catch (err) {
+      return next(err);
   }
 }
 
@@ -49,31 +43,14 @@ const getThemeById = async(req,res,next)=>{
     
     res.status(200).json({success: true, data: theme, message: 'OK'});
 
-  }catch(err){
-    return sendErrorResponse(res, err);
+  } catch (err) {
+      return next(err);
   }
 }
 
-function sendErrorResponse(res, error) {
-    const statusCode =
-        error.statusCode ||
-        error.status ||
-        500;
-
-    console.error(error);
-
-    return res.status(statusCode).json({
-        success: false,
-        data: null,
-        message:
-            statusCode === 500
-                ? '서버 내부 오류가 발생했습니다.'
-                : error.message
-    });
-}
 
 // T-01 테마 목록·복합 필터
-async function getList(req, res) {
+async function getList(req, res, next) {
     try {
         const data =
             await themeService.getFilteredThemes(
@@ -87,15 +64,12 @@ async function getList(req, res) {
             message: 'OK'
         });
     } catch (error) {
-        return sendErrorResponse(
-            res,
-            error
-        );
+        return next(error);
     }
 }
 
 // M-01 관리자 테마 등록
-async function create(req, res) {
+async function create(req, res, next) {
     try {
         const data =
             await themeService.createTheme(
@@ -110,15 +84,12 @@ async function create(req, res) {
                 '테마가 등록되었습니다.'
         });
     } catch (error) {
-        return sendErrorResponse(
-            res,
-            error
-        );
+        return next(error);
     }
 }
 
 // M-02 관리자 테마 수정
-async function update(req, res) {
+async function update(req, res, next) {
     try {
         const data =
             await themeService.updateTheme(
@@ -133,15 +104,12 @@ async function update(req, res) {
             message: '수정되었습니다.'
         });
     } catch (error) {
-        return sendErrorResponse(
-            res,
-            error
-        );
+        return next(error);
     }
 }
 
 // M-03 관리자 테마 삭제
-async function remove(req, res) {
+async function remove(req, res, next) {
     try {
         await themeService.deleteTheme(
             req.user,
@@ -154,10 +122,7 @@ async function remove(req, res) {
             message: '삭제되었습니다.'
         });
     } catch (error) {
-        return sendErrorResponse(
-            res,
-            error
-        );
+        return next(error);
     }
 }
 
