@@ -6,7 +6,7 @@ const { isVerified, clearVerification } = require('../services/emailVerification
 const { isValidPassword, PASSWORD_RULE_MESSAGE } = require('../utils/validators');// 비밀번호 규칙 검사·안내 문구 가져옴
 
 // 회원 가입 컨트롤러
-const signup = async(req,res)=>{
+const signup = async(req, res, next)=>{
     try {
         // 요청 본문에서 필요한 데이터 추출
         const { id, password, email, nickname } = req.body;
@@ -58,14 +58,12 @@ const signup = async(req,res)=>{
         res.status(201).json({ message: '회원 가입이 완료되었습니다!' });
 
     } catch (error) {
-        // 500 에러 응답 반환
-        console.error('회원 가입 중 오류 발생:', error);
-        res.status(500).json({ message: '서버 내부 오류가 발생했습니다!' });
+        return next(error);
     }
 }
 
 // 로그인 컨트롤러 (REQ-USR-004)
-const login = async(req,res)=>{
+const login = async(req, res, next)=>{
     try {
         const { id, password } = req.body;
 
@@ -105,14 +103,13 @@ const login = async(req,res)=>{
             message: '로그인되었습니다.',
         });
     } catch (error) {
-        console.error('로그인 중 오류 발생:', error);
-        res.status(500).json({ success: false, data: null, message: '서버 내부 오류가 발생했습니다!' });
+        return next(error);
     }
 }
 
 // 중복 검사 컨트롤러 (회원가입 전 확인용): 아이디 → 이메일 → 닉네임 순서로 검사
 // 검사 함수들은 services/authService.js 에 있다
-const duplicate = async (req, res) => {
+const duplicate = async (req, res, next) => {
     try {
         const { id, email, nickname } = req.body || {};//body 없이 요청이 와도 에러 나지 않게
 
@@ -134,8 +131,7 @@ const duplicate = async (req, res) => {
         // 4. 세 값 모두 정상
         res.status(200).json({ success: true, data: null, message: '사용 가능한 아이디, 이메일, 닉네임입니다.' });
     } catch (error) {
-        console.error('중복 검사 중 오류 발생:', error);
-        res.status(500).json({ success: false, data: null, message: '서버 내부 오류가 발생했습니다!' });
+        return next(error);
     }
 };
 

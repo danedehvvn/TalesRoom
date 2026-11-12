@@ -28,14 +28,8 @@ const getThemeReviews= async (req,res,next)=>{
 
     res.status(200).json(result);
 
-  }catch(err){
-
-    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
-    console.error(err)
-
-    const status =err.status||500
-    res.status(status).json({error: err.message || "서버 오류가 발생했습니다."})
-
+  } catch (err) {
+      return next(err);
   }
 }
 
@@ -60,12 +54,8 @@ const createThemeReview=async(req,res,next)=>{
     res.status(201).json({success: true, data: result, message:"후기가 등록되었습니다."})
 
 
-  }catch(err){
-    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
-    console.error(err)
-
-    const status =err.status||500
-    res.status(status).json({error: err.message || "서버 오류가 발생했습니다."})
+  } catch (err) {
+      return next(err);
   }
 }
 
@@ -84,12 +74,8 @@ const deleteThemeReview=async (req,res,next)=>{
 
     res.status(200).json({success: true, data: result, message:"후기가 삭제되었습니다."})
 
-  }catch(err){
-    // next(err); //공통 에러 미들웨어로 넘김(아직 없음)
-    console.error(err)
-
-    const status =err.status||500
-    res.status(status).json({error: err.message || "서버 오류가 발생했습니다."})
+  } catch (err) {
+      return next(err);
   }
 }
 

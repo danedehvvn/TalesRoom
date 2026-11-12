@@ -2,6 +2,7 @@ require('dotenv').config();             // 불러오기
 const express = require('express');     // 웹 서버 만드는 도구
 const cors = require('cors');           // 다른 주소에서 오는 요청 허용
 const sequelize = require('./config/db');   // 팀원이 만든 DB 연결 객체
+const errorHandler = require('./middlewares/errorHandler');
 
 // 서버 객체 만들기
 const app = express();
@@ -54,6 +55,14 @@ app.use('/api/parties', partyRouter);
 app.get('/', (req, res) => {
     res.json({ success: true, data: null, message: 'TalesRoom API' });
 })
+
+// 등록되지 않은 API 경로도 공통 JSON 오류 형식으로 응답한다.
+app.use((req, res, next) => {
+    const error = new Error('요청한 경로를 찾을 수 없습니다.');
+    error.status = 404;
+    next(error);
+});
+app.use(errorHandler);
 
 // 포트번호
 const PORT = process.env.PORT || 3000;

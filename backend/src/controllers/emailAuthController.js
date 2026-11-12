@@ -45,19 +45,8 @@ async function sendCode(email, purpose) {
     }
 }
 
-// 공통: 에러 응답 (err.status가 있으면 그 코드, 없으면 예상 못 한 에러이므로 500)
-function sendError(res, err, label) {
-    if (err.status) {
-        return res.status(err.status).json({ success: false, data: null, message: err.message });
-    }
-
-    console.error(`${label} 중 오류 발생:`, err);
-
-    return res.status(500).json({ success: false, data: null, message: '서버 내부 오류가 발생했습니다!' });
-}
-
 //회원가입 인증번호 요청
-const requestSignupCode = async (req, res) => {
+const requestSignupCode = async (req, res, next) => {
     try {
         const { email } = req.body || {}; //빈 body 없이 요청이 와도 에러 나지 않게
 
@@ -76,12 +65,12 @@ const requestSignupCode = async (req, res) => {
 
         res.status(200).json({ success: true, data: null, message: '인증번호를 발송했습니다. 5분 안에 입력해 주세요.' });
     } catch (err) {
-        sendError(res, err, '회원가입 인증번호 요청');
+        return next(err);
     }
 };
 
 //아이디 찾기 인증번호 요청
-const requestFindIdCode = async (req, res) => {
+const requestFindIdCode = async (req, res, next) => {
     try {
         const { email } = req.body || {};
 
@@ -100,12 +89,12 @@ const requestFindIdCode = async (req, res) => {
 
         res.status(200).json({ success: true, data: null, message: '인증번호를 발송했습니다. 5분 안에 입력해 주세요.' });
     } catch (err) {
-        sendError(res, err, '아이디 찾기 인증번호 요청');
+        return next(err);
     }
 };
 
 //비밀번호 재설정 인증번호 요청
-const requestPasswordCode = async (req, res) => {
+const requestPasswordCode = async (req, res, next) => {
     try {
         const { id, email } = req.body || {};
 
@@ -124,12 +113,12 @@ const requestPasswordCode = async (req, res) => {
 
         res.status(200).json({ success: true, data: null, message: '인증번호를 발송했습니다. 5분 안에 입력해 주세요.' });
     } catch (err) {
-        sendError(res, err, '비밀번호 재설정 인증번호 요청');
+        return next(err);
     }
 };
 
 //회원가입 인증번호 확인
-const verifySignupCode = async (req, res) => {
+const verifySignupCode = async (req, res, next) => {
     try {
         const { email, code } = req.body || {};
 
@@ -139,19 +128,19 @@ const verifySignupCode = async (req, res) => {
         }
 
         //인증번호 확인 (서비스가 처리)
-        //- 틀림 / 만료 / 5회 초과 / 요청한 적 없음 -> 서비스가 400 에러를 던지고 catch의 sendError가 응답
+        //- 틀림 / 만료 / 5회 초과 / 요청한 적 없음 -> 공통 에러 미들웨어에서 400 응답
         //- 맞음 -> 아무것도 던지지 않고 "인증 완료" 상태로 바뀜 (10분 유지)
         verifyCode(email.trim(), 'signup', code);
 
         //성공 응답 (이 10분 안에 POST /api/auth/signup으로 가입해야 함)
         res.status(200).json({ success: true, data: null, message: '이메일 인증이 완료되었습니다.' });
     } catch (err) {
-        sendError(res, err, '회원가입 인증번호를 확인 해주세요');
+        return next(err);
     }
 };
 
 // 아이디 찾기 인증번호 확인
-const verifyFindIdCode = async (req, res) => {
+const verifyFindIdCode = async (req, res, next) => {
     try {
         const { email, code } = req.body || {};
 
@@ -162,7 +151,7 @@ const verifyFindIdCode = async (req, res) => {
         const trimmedEmail = email.trim();
 
         //인증번호 확인 (서비스가 처리)
-        //- 틀림 / 만료 / 5회 초과 / 요청한 적 없음 -> 서비스가 400 에러를 던지고 catch의 sendError가 응답
+        //- 틀림 / 만료 / 5회 초과 / 요청한 적 없음 -> 공통 에러 미들웨어에서 400 응답
         verifyCode(trimmedEmail, 'find-id', code);
 
         //인증번호가 맞음 -> 이 이메일로 가입된 회원의 아이디 찾기
@@ -178,12 +167,12 @@ const verifyFindIdCode = async (req, res) => {
 
         res.status(200).json({ success: true, data: { id: user.id }, message: '아이디를 찾았습니다.' });
     } catch (err) {
-        sendError(res, err, '아이디 찾기의 인증번호를 확인 해주세요');
+        return next(err);
     }
 };
 
 // 비밀번호 재설정 (인증번호 확인 + 비밀번호 변경을 한 번에)
-const resetPassword = async (req, res) => {
+const resetPassword = async (req, res, next) => {
     try {
         const { id, email, code, newPassword } = req.body || {};
 
@@ -211,7 +200,7 @@ const resetPassword = async (req, res) => {
         }
 
         //인증번호 확인 (서비스가 처리)
-        //- 틀림 / 만료 / 5회 초과 / 요청한 적 없음 -> 서비스가 400 에러를 던지고 catch의 sendError가 응답
+        //- 틀림 / 만료 / 5회 초과 / 요청한 적 없음 -> 공통 에러 미들웨어에서 400 응답
         verifyCode(trimmedEmail, 'password-reset', code);
 
         //새 비밀번호 암호화 후 저장 (회원가입과 같은 saltRounds 10)
@@ -227,7 +216,7 @@ const resetPassword = async (req, res) => {
 
         res.status(200).json({ success: true, data: null, message: '비밀번호가 변경되었습니다. 새 비밀번호로 로그인해 주세요.' });
     } catch (err) {
-        sendError(res, err, '비밀번호 재설정');
+        return next(err);
     }
 };
 

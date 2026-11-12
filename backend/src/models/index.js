@@ -79,8 +79,8 @@ User.hasMany(Item, { foreignKey: 'userId' });
 Item.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 
 // 상품 1개 -> 교환 내역 여러 개(1:N)
-Item.hasMany(PointExchange, { foreignKey: 'itemId' });
-PointExchange.belongsTo(Item, { foreignKey: 'itemId' });
+Item.hasMany(PointExchange, { foreignKey: 'itemId', onDelete: 'SET NULL' });
+PointExchange.belongsTo(Item, { foreignKey: 'itemId', onDelete: 'SET NULL' });
 
 // 회원 1명 -> 교환 내역 여러 개 (1:N)
 User.hasMany(PointExchange, { foreignKey: 'userId' });

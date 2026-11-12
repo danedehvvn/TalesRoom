@@ -1,8 +1,7 @@
 .exchange-page {
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
-  padding: 32px 20px;
-  font-family: "Pretendard", sans-serif;
+  padding: 44px 0 64px;
 }
 
 .exchange-page__header {
@@ -12,38 +11,51 @@
 .exchange-page__header-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 16px;
 }
 
+.exchange-page__eyebrow {
+  margin: 0 0 12px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
 .exchange-page__title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   color: #242035;
-  margin-bottom: 8px;
+  margin: 0;
+  letter-spacing: -1px;
+  line-height: 1.45;
 }
 
 .exchange-page__description {
-  font-size: 14px;
-  color: #666075;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
 }
 
 .exchange-page__admin-register-btn {
   width: auto;
-  padding: 10px 20px;
-  background: #28a745;
+  min-height: 44px;
+  padding: 0 18px;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: var(--radius-button, 6px);
   font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
+  font-weight: 700;
   white-space: nowrap;
+  cursor: pointer;
   transition: background 0.2s;
 }
 
 .exchange-page__admin-register-btn:hover {
-  background: #218838;
+  background: var(--color-primary-dark);
 }
 
 /* 상단 유저 정보 배너 */
@@ -51,11 +63,11 @@
   margin-bottom: 32px;
   padding: 24px;
   background: #f8f6fc;
-  border-radius: var(--radius-button, 6px);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
   box-sizing: border-box;
 }
 
@@ -69,7 +81,7 @@
 }
 
 .exchange-banner__admin-badge {
-  color: #28a745;
+  color: var(--color-primary);
   font-weight: bold;
   margin-left: 4px;
 }
@@ -115,8 +127,8 @@
 }
 
 .exchange-section__title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 21px;
+  font-weight: 700;
   color: #242035;
   margin-bottom: 16px;
 }
@@ -130,13 +142,15 @@
 
 .exchange-card {
   background: #fff;
-  border: 1px solid #e2deec;
-  border-radius: var(--radius-button, 6px);
-  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .exchange-card:hover {
@@ -146,13 +160,6 @@
 
 .exchange-card.sold-out {
   opacity: 0.6;
-}
-
-.exchange-card__header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
 }
 
 .exchange-card__name {
@@ -208,7 +215,7 @@
 }
 
 .exchange-card__button:hover:not(:disabled) {
-  background: #57448d;
+  background: var(--color-primary-dark);
 }
 
 .exchange-card__button:disabled {
@@ -216,43 +223,11 @@
   cursor: not-allowed;
 }
 
-/* 퀵 재고 조절 위젯 스타일 */
-.exchange-quick-stock {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.exchange-quick-btns {
-  display: flex;
-  gap: 4px;
-}
-
-.exchange-quick-btns button {
-  width: 22px;
-  height: 22px;
-  background: #e2deec;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  transition: background 0.15s, color 0.15s;
-}
-
-.exchange-quick-btns button:hover {
-  background: #6854a3;
-  color: #fff;
-}
-
 /* 카드 내 관리자 버튼 영역 */
 .exchange-card__admin-actions {
   display: flex;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .exchange-card__admin-btn {
@@ -263,71 +238,37 @@
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 .exchange-card__admin-btn--edit {
-  background: #ffc107;
-  color: #242035;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  color: #665b76;
 }
 
 .exchange-card__admin-btn--edit:hover {
-  background: #e0a800;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: #faf8fc;
 }
 
 .exchange-card__admin-btn--delete {
-  background: #dc3545;
-  color: #fff;
+  background: #fff0f2;
+  border: 1px solid #f0d6db;
+  color: #b75a69;
 }
 
 .exchange-card__admin-btn--delete:hover {
-  background: #c82333;
+  background: #fbe4e8;
 }
 
-/* 교환 내역 섹션 */
+/* 내 교환 내역 섹션 */
 .history-section {
   margin-top: 48px;
 }
 
-.history-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
 .history-title {
-  margin-bottom: 0;
-}
-
-.history-tabs {
-  display: flex;
-  gap: 8px;
-}
-
-.history-tab-btn {
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid #d8d3e3;
-  background: #fff;
-  color: #666075;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.history-tab-btn:hover {
-  border-color: #6854a3;
-  color: #6854a3;
-}
-
-.history-tab-btn.active {
-  background: #6854a3;
-  color: #fff;
-  border-color: #6854a3;
+  margin-bottom: 16px;
 }
 
 .history-login-guide,
@@ -342,6 +283,9 @@
 
 .history-table-wrapper {
   overflow-x: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
 }
 
 .history-table {
@@ -361,10 +305,6 @@
   background: #f8f6fc;
   color: #3b354d;
   font-weight: 600;
-}
-
-.history-table__user {
-  color: #3b354d;
 }
 
 .history-table__name {
@@ -399,9 +339,11 @@
 .exchange-modal {
   background: #fff;
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 8px;
   width: 400px;
-  max-width: 90%;
+  max-width: calc(100% - 32px);
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
 }
@@ -435,12 +377,6 @@
   box-sizing: border-box;
   font-size: 14px;
   font-family: inherit;
-}
-
-.exchange-modal__input:focus,
-.exchange-modal__textarea:focus {
-  outline: none;
-  border-color: #6854a3;
 }
 
 .exchange-modal__textarea {
@@ -478,7 +414,7 @@
 }
 
 .exchange-modal__btn--submit:hover {
-  background: #57448d;
+  background: var(--color-primary-dark);
 }
 
 /* 로딩 및 에러 메시지 */
@@ -494,7 +430,193 @@
   color: #e5484d;
 }
 
-/* 교환 내역 페이지네이션 */
+/* 관리자 기능 관련 추가 스타일 */
+.exchange-card.hidden-item {
+  border: 2px dashed #b5b0c9;
+  background-color: #fbfbfd;
+}
+
+.exchange-card__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.exchange-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badge-active {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.badge-hidden {
+  background: #f1f3f4;
+  color: #5f6368;
+}
+
+/* 퀵 재고 조절 위젯 스타일 */
+.exchange-quick-stock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exchange-quick-btns {
+  display: flex;
+  gap: 2px;
+}
+
+.exchange-quick-btns button {
+  width: 22px;
+  height: 22px;
+  background: #e2deec;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.exchange-quick-btns button:hover {
+  background: #6854a3;
+  color: #fff;
+}
+
+/* 숨기기 / 노출 버튼 스타일 */
+.exchange-card__admin-btn--hide {
+  background: #6c757d;
+  color: #fff;
+}
+.exchange-card__admin-btn--hide:hover {
+  background: #5a6268;
+}
+
+.exchange-card__admin-btn--show {
+  background: #17a2b8;
+  color: #fff;
+}
+.exchange-card__admin-btn--show:hover {
+  background: #138496;
+}
+
+/* 관리자 대시보드 탭 스타일 */
+.history-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.history-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.history-tab-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #d8d3e3;
+  background: #fff;
+  color: #666075;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.history-tab-btn.active {
+  background: #6854a3;
+  color: #fff;
+  border-color: #6854a3;
+}
+
+/* 모달 내 체크박스 */
+.exchange-modal__checkbox-group {
+  margin-top: 15px;
+}
+
+.exchange-modal__checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #3b354d;
+  cursor: pointer;
+}
+
+.exchange-page :focus-visible,
+.exchange-modal :focus-visible {
+  outline: 3px solid #aa8ed6;
+  outline-offset: 3px;
+}
+
+.exchange-modal__input:focus,
+.exchange-modal__textarea:focus {
+  border-color: #aa8ed6;
+}
+
+@media (max-width: 1240px) {
+  .exchange-page {
+    margin: 0 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .exchange-page {
+    margin: 0 16px;
+    padding-top: 30px;
+  }
+  .exchange-page__header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .exchange-page__title {
+    font-size: 27px;
+  }
+  .exchange-page__description {
+    font-size: 14px;
+  }
+  .exchange-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding: 20px;
+  }
+  .exchange-banner__stats {
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .exchange-banner__stat-item {
+    text-align: left;
+  }
+  .exchange-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .exchange-card {
+    padding: 20px;
+  }
+  .exchange-modal {
+    padding: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exchange-card {
+    transition: none;
+  }
+  .exchange-card:hover {
+    transform: none;
+  }
+}
+
 .history-pagination {
   display: flex;
   justify-content: center;

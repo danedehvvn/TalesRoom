@@ -11,10 +11,7 @@ const createBookmark = async (req, res, next) => {
     res.status(201).json({ success: true, data: result, message: "북마크가 추가되었습니다." })
 
   } catch (error) {
-    console.error(error)
-
-    const status = error.status || 500
-    res.status(status).json({ error: error.message || "서버 오류가 발생했습니다." })
+      return next(error);
   }
 }
 
@@ -29,10 +26,7 @@ const deleteBookmark = async (req, res, next) => {
     res.status(200).json({ success: true, data: result, message: "북마크가 삭제되었습니다." })
 
   } catch (error) {
-    console.error(error)
-
-    const status = error.status || 500
-    res.status(status).json({ error: error.message || "서버 오류가 발생했습니다." })
+      return next(error);
   }
 }
 

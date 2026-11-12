@@ -6,7 +6,7 @@ const getItems = async () => {
   return await exchangeRepository.findAllItems();
 };
 
-// 2. 상품 교환 처리 (quantity 삭제, 1개 단가 기준 적용)
+// 2. 상품 교환 처리 (1개 단가 기준 적용)
 const exchangeItem = async (userId, body) => {
   const { itemId } = body;
 
@@ -47,7 +47,7 @@ const exchangeItem = async (userId, body) => {
     user.score -= deductedScore;
     await user.save({ transaction: t });
 
-    // 교환 내역 생성 및 재고 차감 (repository 인자에서 quantity 제거)
+    // 교환 내역 생성 및 재고 차감
     const exchange = await exchangeRepository.createExchangeAndReduceStock(userId, item, t);
 
     // 트랜잭션 커밋

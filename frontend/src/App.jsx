@@ -5,6 +5,7 @@ import ThemeExplorePage from "./pages/ThemeExplorePage";
 import ThemeDetailPage from "./pages/ThemeDetailPage";
 import ThemeFormPage from "./pages/ThemeFormPage";
 import HomePage from "./pages/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import FindIdPage from "./pages/FindIdPage"; //아이디 찾기 화면
@@ -88,6 +89,7 @@ function App() {
               <Route path="/parties/:id" element={<PartyDetailPage />} />
               <Route path="/mypage/bookmarks" element={<MyBookmarksPage />} />
             </Route>
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
 const userRepository = require("../repositories/userRepository",);
 const { duplicateNickname } = require("./authService",);
 const User = require("../models/User"); // 명예의 전당 조회 위한 User 모델 추가
@@ -226,6 +227,12 @@ const getMyBookmarks = async (userId, query = {}) => {
 const getHallOfFame = async () => {
   const topUsers = await User.findAll({
     attributes: ['id', 'nickname', 'score', 'grade'],
+    where: {
+      [Op.or]: [
+        { role: { [Op.ne]: 'ADMIN' } },
+        { role: null },
+      ],
+    },
     order: [
       ['score', 'DESC'],       // 1순위: 점수가 높은 순
       ['createdAt', 'ASC']     // 2순위: 먼저 가입한 회원 우선 (또는 'DESC'로 최근 가입 순)

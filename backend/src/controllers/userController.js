@@ -1,17 +1,9 @@
 const userService = require("../services/userService");
 
 // User Controller에서 사용할 에러 응답 함수
-const sendErrorResponse = (res, error) => {
-  const statusCode = error.statusCode || 500;
-
-  console.error(error);
-  const message = statusCode === 500 ? "서버 내부 오류가 발생했습니다." : error.message;
-
-  return res.status(statusCode).json({ success: false, data: null, message });
-};
 
 // 내 정보 조회
-const getMyInfo = async (req, res) => {
+const getMyInfo = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const data = await userService.getUserById(userId);
@@ -22,11 +14,11 @@ const getMyInfo = async (req, res) => {
       message: "OK"
     });
   } catch (error) {
-    return sendErrorResponse(res, error);
+      return next(error);
   }
 };
 
-const updateMyInfo = async (req, res) => {
+const updateMyInfo = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const data = await userService.updateProfile(userId, req.body);
@@ -37,11 +29,11 @@ const updateMyInfo = async (req, res) => {
       message: "수정되었습니다."
     });
   } catch (error) {
-    return sendErrorResponse(res, error);
+      return next(error);
   }
 };
 
-const getMyPosts = async (req, res) => {
+const getMyPosts = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const data = await userService.getMyPosts(userId, req.query);
@@ -52,11 +44,11 @@ const getMyPosts = async (req, res) => {
       message: "OK"
     });
   } catch (error) {
-    return sendErrorResponse(res, error);
+      return next(error);
   }
 };
 
-const getMyComments = async (req, res) => {
+const getMyComments = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const data = await userService.getMyComments(userId, req.query);
@@ -67,11 +59,11 @@ const getMyComments = async (req, res) => {
       message: "OK"
     });
   } catch (error) {
-    return sendErrorResponse(res, error);
+      return next(error);
   }
 };
 
-const getMyBookmarks = async (req, res) => {
+const getMyBookmarks = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const data = await userService.getMyBookmarks(userId, req.query);
@@ -82,12 +74,12 @@ const getMyBookmarks = async (req, res) => {
       message: "OK"
     });
   } catch (error) {
-    return sendErrorResponse(res, error);
+      return next(error);
   }
 };
 
 // 명예의 전당 조회 컨트롤러 함수
-const getHallOfFame = async (req, res) => {
+const getHallOfFame = async (req, res, next) => {
   try {
     const data = await userService.getHallOfFame();
 
@@ -97,7 +89,7 @@ const getHallOfFame = async (req, res) => {
       message: "명예의 전당 조회 성공"
     });
   } catch (error) {
-    return sendErrorResponse(res, error);
+      return next(error);
   }
 };
 
