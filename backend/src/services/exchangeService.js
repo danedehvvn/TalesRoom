@@ -72,14 +72,19 @@ const getAllExchanges = async () => {
 };
 
 // [관리자] 상품 등록 비즈니스 로직
-const createItem = async (itemData) => {
+const createItem = async (itemData, userId) => {
   const { name, price, stock } = itemData;
+  if (!userId) {
+    const err = new Error("관리자 정보가 없습니다.");
+    err.status = 401;
+    throw err;
+  }
   if (!name || price === undefined || stock === undefined) {
     const err = new Error("상품명, 가격, 재고는 필수 입력 항목입니다.");
     err.status = 400;
     throw err;
   }
-  return await exchangeRepository.createItem(itemData);
+  return await exchangeRepository.createItem({...itemData, userId });
 };
 
 // [관리자] 상품 수정 비즈니스 로직

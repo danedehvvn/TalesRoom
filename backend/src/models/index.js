@@ -73,7 +73,11 @@ Recruitment.hasMany(PartyComment, { foreignKey: 'recruitmentId', as: 'partyComme
 PartyComment.belongsTo(Recruitment, { foreignKey: 'recruitmentId' });
 PartyComment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 
-// 포인트 교환소 관계 설정 (Item <-> PointExchange)
+// 포인트 교환소 관계 설정 (User <-> Item, Item <-> PointExchange)
+// 회원(관리자) 1명 -> 상품 여러 개 (1:N)
+User.hasMany(Item, { foreignKey: 'userId' });
+Item.belongsTo(User, { foreignKey: 'userId', as: 'author' });
+
 // 상품 1개 -> 교환 내역 여러 개(1:N)
 Item.hasMany(PointExchange, { foreignKey: 'itemId', onDelete: 'SET NULL' });
 PointExchange.belongsTo(Item, { foreignKey: 'itemId', onDelete: 'SET NULL' });
@@ -89,7 +93,6 @@ Bookmark.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 // 테마 1개 -> 북마크 여러 개 (1:N)
 Theme.hasMany(Bookmark, { foreignKey: 'themeId', as: 'bookmarks' });
 Bookmark.belongsTo(Theme, { foreignKey: 'themeId', as: 'theme' });
-
 
 // 다른 파일에서 꺼내 쓸 수 있게 내보내는 작업 (팀원 변경사항 + 포인트 교환 모델 통합)
 module.exports = { sequelize, User, Post, PostLog, Theme, ThemeReview, Comment, PostReaction, Recruitment, RecruitmentApplication, PartyComment, Item, PointExchange, Bookmark };

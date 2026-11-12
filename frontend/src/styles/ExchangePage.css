@@ -616,3 +616,42 @@
     transform: none;
   }
 }
+
+.history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.history-pagination__btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #d8d3e3;
+  background: #fff;
+  color: #3b354d;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.history-pagination__btn:hover:not(:disabled) {
+  border-color: #6854a3;
+  color: #6854a3;
+}
+
+.history-pagination__btn.active {
+  background: #6854a3;
+  border-color: #6854a3;
+  color: #fff;
+}
+
+.history-pagination__btn:disabled {
+  background: #f5f3fa;
+  color: #b5b0c9;
+  cursor: not-allowed;
+}
