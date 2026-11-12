@@ -15,11 +15,6 @@ const PointExchange = sequelize.define('PointExchange', {
         type: DataTypes.INTEGER,
         allowNull: false, // 교환한 상품 ID
     },
-    quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1,  // 교환 수량
-    },
     usedPoints: {
         type: DataTypes.INTEGER,
         allowNull: false, // 당시 소모된 총 포인트 (price * quantity)
