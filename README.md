@@ -95,7 +95,7 @@ TalesRoom은 흩어진 방탈출 정보를 찾는 수고를 줄이고, 테마 �
 
 
 ## 아키텍처
-(추가 필요)
+<img width="1864" alt="image" src="https://github.com/user-attachments/assets/d000be7e-4b08-400e-8c3c-22db3072ac2f" />
 
 ## 프로젝트 구조
 
