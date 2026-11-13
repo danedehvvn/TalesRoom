@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { startTransition, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import MyPageHeader from "../components/MyPageHeader";
 import { getErrorMessage } from "../api/axiosInstance";
 import { fetchMyComments, fetchMyInfo, fetchMyPosts } from "../api/userApi";
@@ -14,6 +14,7 @@ function MyPagePage() {
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -48,9 +49,12 @@ function MyPagePage() {
   }, [reloadKey]);
 
   const handleLogout = () => {
-    logout();
-    // 홈을 새로 열어 보호 라우트의 로그인 리다이렉트와 충돌하지 않게 한다.
-    window.location.replace("/");
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
+    startTransition(() => {
+      logout();
+      navigate("/", { replace: true });
+    });
   };
 
   const handleRetry = () => {
@@ -155,7 +159,17 @@ function MyPagePage() {
             </Link>
             <Link to="/mypage/bookmarks" className="mypage-activity-link">
               <span className="mypage-activity-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M6 3h12v18l-6-4-6 4Z" /></svg>
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 3h12v18l-6-4-6 4Z" />
+                </svg>
               </span>
               <span className="mypage-activity-copy">
                 <strong>내 북마크 테마 보기</strong>
@@ -166,7 +180,18 @@ function MyPagePage() {
             {user?.role === "ADMIN" && (
               <Link to="/admin/users" className="mypage-activity-link">
                 <span className="mypage-activity-icon" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="7" r="3" /><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v2" /></svg>
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
+                    <circle cx="9" cy="7" r="3" />
+                    <path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v2" />
+                  </svg>
                 </span>
                 <span className="mypage-activity-copy">
                   <strong>회원 목록 관리</strong>

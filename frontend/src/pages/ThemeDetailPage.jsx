@@ -371,9 +371,12 @@ function ThemeDetail({ id }) {
                     themeId={theme.id}
                     title={theme.title}
                     isBookmarked={theme.isBookmarked}
-                    onChange={(isBookmarked) => setState((current) => ({
-                      ...current, theme: { ...current.theme, isBookmarked },
-                    }))}
+                    onChange={(isBookmarked) =>
+                      setState((current) => ({
+                        ...current,
+                        theme: { ...current.theme, isBookmarked },
+                      }))
+                    }
                   />
                 </div>
                 <p>{theme.storeName || theme.store_name}</p>
@@ -414,7 +417,12 @@ function ThemeDetail({ id }) {
               {[
                 ["주소", theme.address || "정보 없음"],
                 ["장르", theme.genre != "?" ? `${theme.genre}` : "미분류"],
-                ["권장 인원", `${theme.minPeople}~${theme.maxPeople}명`],
+                [
+                  "권장 인원",
+                  theme.minPeople != 0 && theme.maxPeople != 0
+                    ? `${theme.minPeople}~${theme.maxPeople}명`
+                    : "인원 정보 없음",
+                ],
                 [
                   "플레이타임",
                   theme.playTime ? `${theme.playTime}분` : "정보 없음",
