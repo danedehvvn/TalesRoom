@@ -1,5 +1,7 @@
 # BEJV27-1st-2TEAM
 
+<img width="1066" height="402" alt="image" src="https://github.com/user-attachments/assets/c9a0a406-ba0b-4851-99a7-b387366a7fa4" />
+
 # 🗝️ TalesRoom (테일즈룸)
 
 **테마를 찾고, 궁금증을 나누고, 함께 탈출할 동료를 만나는 방탈출 커뮤니티**
