@@ -4,6 +4,23 @@ import { createTheme, getTheme, themeError, updateTheme } from '../api/themeApi'
 import useAuth from '../hooks/useAuth';
 import '../styles/ThemePages.css';
 
+const THEME_GENRES = [
+  '호러/공포',
+  '추리',
+  '드라마',
+  '스릴러',
+  '미스터리',
+  '판타지',
+  'SF',
+  '잠입',
+  '감성',
+  '모험/탐험',
+  '코미디',
+  '타임어택',
+  '범죄',
+  '야외',
+];
+
 export default function ThemeFormPage() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -35,7 +52,15 @@ export default function ThemeFormPage() {
     for (const key of ['minPeople', 'maxPeople', 'playTime', 'difficulty', 'price']) values[key] = Number(values[key]);
     for (const key of ['latitude', 'longitude']) values[key] = values[key] === '' ? null : Number(values[key]);
     values.thumbnailUrl = values.thumbnailUrl || null;
-    if (values.minPeople > values.maxPeople) return setSubmitError('최대 인원은 최소 인원 이상이어야 합니다.');
+    if (
+      !Number.isInteger(values.minPeople) ||
+      !Number.isInteger(values.maxPeople) ||
+      values.minPeople < 2 ||
+      values.minPeople > 20 ||
+      values.maxPeople < values.minPeople ||
+      values.maxPeople > 20
+    ) return setSubmitError('인원은 2명 이상 20명 이하로 입력하고, 최대 인원은 최소 인원 이상으로 설정해 주세요.');
+    if (!THEME_GENRES.includes(values.genre)) return setSubmitError('올바른 장르를 선택해 주세요.');
     if (['title', 'storeName', 'address', 'genre', 'content'].some((key) => !values[key])) return setSubmitError('필수 항목을 입력해 주세요.');
     setPending(true); setSubmitError('');
     try {
@@ -51,10 +76,11 @@ export default function ThemeFormPage() {
       <p className="theme-admin-notice">🔒 테마 등록·수정은 관리자 계정에서만 가능합니다.</p>
       <fieldset disabled={pending}>
         <div className="theme-form-grid">
-          {[['title', '테마명', 150, '테마명을 입력해 주세요'], ['storeName', '매장', 100, '매장명을 입력해 주세요'], ['address', '주소', 255, '매장의 도로명 또는 지번 주소'], ['genre', '장르', 50, '예: 공포, 추리']].map(([name, label, maxLength, placeholder]) =>
+          {[['title', '테마명', 150, '테마명을 입력해 주세요'], ['storeName', '매장', 100, '매장명을 입력해 주세요'], ['address', '주소', 255, '매장의 도로명 또는 지번 주소']].map(([name, label, maxLength, placeholder]) =>
             <label key={name}>{label} *<input name={name} required maxLength={maxLength} placeholder={placeholder} defaultValue={theme[name] ?? (name === 'storeName' ? theme.store_name : '') ?? ''} /></label>)}
-          {[['minPeople', '최소 인원', 1, 2], ['maxPeople', '최대 인원', 1, 4], ['playTime', '플레이타임 (분)', 1, 60]].map(([name, label, min, value]) =>
-            <label key={name}>{label} *<input name={name} type="number" step="1" required min={min} defaultValue={theme[name] ?? value} /></label>)}
+          <label>장르 *<select name="genre" required defaultValue={theme.genre ?? ''}><option value="" disabled>장르를 선택해 주세요</option>{THEME_GENRES.map((genre) => <option key={genre} value={genre}>{genre}</option>)}</select></label>
+          {[['minPeople', '최소 인원', 2, 20, 2], ['maxPeople', '최대 인원', 2, 20, 4], ['playTime', '플레이타임 (분)', 1, undefined, 60]].map(([name, label, min, max, value]) =>
+            <label key={name}>{label} *<input name={name} type="number" step="1" required min={min} max={max} defaultValue={theme[name] ?? value} onInput={max ? (event) => { if (Number(event.currentTarget.value) > max) event.currentTarget.value = String(max); } : undefined} /></label>)}
           <label>난이도 (1~5) *<select name="difficulty" required defaultValue={theme.difficulty ?? ''}><option value="" disabled>난이도를 선택해 주세요</option>{[1, 2, 3, 4, 5].map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
           <label>가격 (원 / 1인) *<input name="price" type="number" min="0" step="1" required defaultValue={theme.price ?? ''} placeholder="예: 25000" /></label>
           <label>위도 · Y좌표 (선택)<input name="latitude" type="number" min="-90" max="90" step="0.0000001" placeholder="예: 37.5665" defaultValue={theme.latitude ?? ''} /></label>
