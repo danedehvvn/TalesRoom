@@ -61,6 +61,7 @@ function HomeThemeRecommendations() {
             className={genre === item ? "is-active" : ""}
             aria-pressed={genre === item}
             onClick={() => {
+              if (genre === item) return;
               setState((current) => ({ ...current, loading: true, error: "" }));
               setGenre(item);
             }}

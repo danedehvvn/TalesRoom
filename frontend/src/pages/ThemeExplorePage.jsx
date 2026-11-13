@@ -266,7 +266,9 @@ export default function ThemeExplorePage() {
                     <p>
                       {[
                         theme.region || theme.storeName || theme.store_name,
-                        `${theme.minPeople}~${theme.maxPeople}명`,
+                        theme.minPeople != 0 && theme.maxPeople != 0
+                          ? `${theme.minPeople}~${theme.maxPeople}명`
+                          : "인원 정보 없음",
                         theme.playTime ? `${theme.playTime}분` : null,
                       ]
                         .filter(Boolean)
