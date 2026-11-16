@@ -1,0 +1,94 @@
+/* 로그인 페이지 */
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding: 80px 24px;
+  background-color: var(--color-background);
+  min-height: 100%;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.login-card h1 {
+  margin: 0;
+  font-size: 28px;
+  color: var(--color-text);
+}
+
+.login-subtitle {
+  margin: 8px 0 28px;
+  color: var(--color-text-muted);
+}
+
+.login-card label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.login-card input {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  outline: none;
+}
+
+.login-card input:focus {
+  border-color: var(--color-primary);
+}
+
+.login-error {
+  margin: -6px 0 14px;
+  font-size: 14px;
+  color: #d64545;
+}
+
+.login-button {
+  padding: 13px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.login-links a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.login-links a:hover {
+  color: var(--color-primary);
+}

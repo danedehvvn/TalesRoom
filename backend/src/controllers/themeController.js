@@ -1,0 +1,129 @@
+const themeService = require('../services/themeService');
+
+//1. 테마 목록 조회
+const getThemes= async (req,res,next)=>{
+  try{
+    //쿼리스트링에서 받아옴
+    let page=Number(req.query.page ) || 1;
+
+    if(!Number.isSafeInteger(page) || page <1){
+      page=1;
+    }
+
+    let size=Number(req.query.size ) || 10;
+
+    if(!Number.isSafeInteger(size) || size <1){
+      page=10;
+    }
+
+    const result =await themeService.getThemes(page, size);
+
+    res.status(200).json({success: true, data: result, message:"OK"});
+
+  } catch (err) {
+      return next(err);
+  }
+}
+
+//2. 테마 상세 정보 조회
+const getThemeById = async(req,res,next)=>{
+  try{
+    //params에서 id 추출
+    const id=Number(req.params.id);
+
+    if(!Number.isSafeInteger(id) || id <1){
+      return res.status(400).json({
+        success: false,
+        data: null,
+        message: "올바른 테마 ID를 입력해 주세요."
+      });
+    }
+
+    const theme=await themeService.getThemeById(id, req.user);
+    
+    res.status(200).json({success: true, data: theme, message: 'OK'});
+
+  } catch (err) {
+      return next(err);
+  }
+}
+
+
+// T-01 테마 목록·복합 필터
+async function getList(req, res, next) {
+    try {
+        const data =
+            await themeService.getFilteredThemes(
+                req.query,
+                req.user
+            );
+
+        return res.status(200).json({
+            success: true,
+            data,
+            message: 'OK'
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// M-01 관리자 테마 등록
+async function create(req, res, next) {
+    try {
+        const data =
+            await themeService.createTheme(
+                req.user,
+                req.body
+            );
+
+        return res.status(201).json({
+            success: true,
+            data,
+            message:
+                '테마가 등록되었습니다.'
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// M-02 관리자 테마 수정
+async function update(req, res, next) {
+    try {
+        const data =
+            await themeService.updateTheme(
+                req.user,
+                req.params.id,
+                req.body
+            );
+
+        return res.status(200).json({
+            success: true,
+            data,
+            message: '수정되었습니다.'
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// M-03 관리자 테마 삭제
+async function remove(req, res, next) {
+    try {
+        await themeService.deleteTheme(
+            req.user,
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            data: null,
+            message: '삭제되었습니다.'
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+module.exports = { getThemes, getThemeById, getList, create, update, remove};

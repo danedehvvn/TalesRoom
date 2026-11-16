@@ -1,0 +1,74 @@
+/* 페이지: 글쓰기는 너무 넓으면 읽기 힘들어서 860px로 */
+.post-form { max-width: 860px; margin: 0 auto; padding: 48px 16px 80px; }
+.post-form__eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--color-primary); }
+.post-form__title { margin: 0 0 24px; font-size: 32px; font-weight: 700; color: var(--color-text); }
+.post-form__loading { padding: 120px 16px; text-align: center; color: var(--color-text-muted); }
+
+/* 흰 카드 (가이드: radius 16, padding 24~32) */
+.post-form__card {
+  display: flex;
+  flex-direction: column;                /* 칸들을 세로로 쌓기 */
+  gap: 24px;
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+
+/* 한 칸 = 라벨 위 + 입력 아래 (가이드: label은 위에) */
+.post-form__field { display: flex; flex-direction: column; gap: 8px; }
+.post-form__label { font-size: 15px; font-weight: 700; color: var(--color-text); }
+.post-form__label em { font-style: normal; color: #d35a63; }   /* 필수 * 빨간색 */
+
+/* 카테고리 칩 */
+.post-form__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.post-form__chip { height: 40px; padding: 0 18px; border: 1px solid var(--color-border); border-radius: 999px; background: #fff; color: var(--color-text-muted); font-size: 14px; cursor: pointer; }
+.post-form__chip.is-active { border-color: var(--color-primary); background: #f0ecf7; color: var(--color-primary); font-weight: 700; }
+
+/* 입력창 · 본문 공통 */
+.post-form__input,
+.post-form__textarea {
+  width: 100%;
+  box-sizing: border-box;                /* padding을 폭 안에 포함 → 카드 밖으로 안 넘침 */
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;                    /* 가이드: 입력창 radius 8 */
+  font: inherit;                         /* textarea 기본 고정폭 글꼴 대신 페이지 글꼴 */
+  font-size: 15px;
+  color: var(--color-text);
+}
+.post-form__input { height: 48px; }
+.post-form__textarea { min-height: 280px; resize: vertical; line-height: 1.6; }   /* 세로로만 늘리기 */
+.post-form__input:focus,
+.post-form__textarea:focus { outline: none; border-color: #e9a34a; box-shadow: 0 0 0 3px #fff4df; }  /* Focus = gold */
+.has-error { border-color: #d35a63 !important; }                                /* 에러 칸은 빨간 테두리 */
+
+/* 에러 문구 + 글자 수 한 줄 */
+.post-form__row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.post-form__error { margin: 0; font-size: 13px; color: #d35a63; }
+.post-form__count { font-size: 13px; color: var(--color-text-muted); white-space: nowrap; }
+
+/* 체크박스 줄 */
+.post-form__check { display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--color-text); cursor: pointer; }
+.post-form__check input { width: 18px; height: 18px; accent-color: var(--color-primary); }  /* 체크 색을 보라로 */
+.post-form__check small { color: var(--color-text-muted); font-size: 13px; }
+.post-form__admin-chip { padding: 3px 10px; border-radius: 999px; background: #302340; color: #fff; font-size: 12px; font-weight: 700; }
+
+.post-form__submit-error { margin: 0; padding: 12px 16px; border-radius: 8px; background: #fcebee; color: #d35a63; font-size: 14px; }
+
+/* 버튼 줄: 오른쪽 정렬 */
+.post-form__actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 8px; border-top: 1px solid var(--color-border); }
+.post-form__cancel,
+.post-form__submit { height: 48px; padding: 0 24px; border-radius: var(--radius-button); font-size: 15px; font-weight: 700; cursor: pointer; }
+.post-form__cancel { border: 1px solid var(--color-border); background: #fff; color: var(--color-text-muted); }
+.post-form__submit { border: none; background: var(--color-primary); color: #fff; }
+.post-form__submit:hover:not(:disabled) { background: var(--color-primary-dark); }
+.post-form button:disabled { opacity: 0.6; cursor: default; }
+.post-form button:focus-visible { outline: 2px solid #e9a34a; outline-offset: 2px; }
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .post-form__card { padding: 20px; }
+  .post-form__title { font-size: 26px; }
+  .post-form__actions > button { flex: 1; }   /* 버튼 두 개가 반반 */
+}

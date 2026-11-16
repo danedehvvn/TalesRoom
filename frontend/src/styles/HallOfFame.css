@@ -1,0 +1,87 @@
+.hall-of-fame-card {
+  background: #ffffff;
+  border-radius: var(--radius-button);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  border: 1px solid #eaeaea;
+}
+
+.hof-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.hof-subtitle {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.hof-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hof-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f4f4f4;
+  transition: background 0.2s;
+}
+
+.hof-item:last-child {
+  border-bottom: none;
+}
+
+.hof-item:hover {
+  background: #faf8ff;
+  border-radius: var(--radius-button);
+}
+
+.hof-rank {
+  font-size: 1.1rem;
+  font-weight: bold;
+  width: 36px;
+  text-align: center;
+}
+
+.hof-user-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.hof-nickname {
+  font-weight: 600;
+  color: #222;
+}
+
+.hof-grade-badge {
+  font-size: 0.75rem;
+  background: #7c3aed;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.hof-score {
+  font-weight: 700;
+  color: #7c3aed;
+  font-size: 0.95rem;
+}
+
+.hof-loading,
+.hof-empty {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  font-size: 0.9rem;
+}

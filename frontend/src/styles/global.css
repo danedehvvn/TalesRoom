@@ -1,0 +1,8 @@
+* { box-sizing: border-box; }
+/* 목록 높이가 바뀌어도 스크롤바 공간을 유지해 좌우 흔들림을 방지한다. */
+html { scrollbar-gutter: stable; }
+@supports not (scrollbar-gutter: stable) {
+  html { overflow-y: scroll; }
+}
+body { margin: 0; min-width: 320px; background: var(--color-background); color: var(--color-text); font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+button, input, select, textarea { font-family: inherit; }

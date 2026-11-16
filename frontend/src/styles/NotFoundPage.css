@@ -1,0 +1,56 @@
+.not-found-page {
+  max-width: 720px;
+  margin: 64px auto;
+  padding: 64px 24px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.not-found-page__code {
+  margin: 0 0 16px;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.not-found-page h1 {
+  margin: 0 0 16px;
+  color: var(--color-text);
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+.not-found-page > p:not(.not-found-page__code) {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+.not-found-page a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 20px;
+  padding: 0 20px;
+  border-radius: var(--radius-button);
+  background: var(--color-primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.not-found-page a:hover {
+  background: var(--color-primary-dark);
+}
+.not-found-page a:focus-visible {
+  outline: 3px solid #aa8ed6;
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .not-found-page {
+    margin: 40px 16px;
+    padding: 48px 20px;
+  }
+  .not-found-page h1 {
+    font-size: 24px;
+  }
+}

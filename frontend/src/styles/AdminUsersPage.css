@@ -1,0 +1,53 @@
+/* 페이지: 커뮤니티와 같은 1176px 폭 */
+.admin-users { max-width: var(--content-max-width); margin: 0 auto; padding: 48px 16px 80px; }
+.admin-users__back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 22px; padding: 9px 13px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-surface); color: var(--color-primary); font-size: 13px; font-weight: 600; text-decoration: none; }
+.admin-users__back:hover { background: #f0ecf7; }
+.admin-users__back:focus-visible { outline: 3px solid #aa8ed6; outline-offset: 3px; }
+.admin-users__eyebrow { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: var(--color-primary); }
+.admin-users__title { margin: 0 0 8px; font-size: 32px; font-weight: 700; color: var(--color-text); }
+.admin-users__subtitle { margin: 0 0 24px; font-size: 16px; color: var(--color-text-muted); }
+.admin-users__subtitle strong { color: var(--color-primary); }
+
+/* 흰 카드 */
+.admin-users__card { border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); overflow: hidden; }
+.admin-users__table-wrap { overflow-x: auto; }           /* 좁은 화면에서 표만 가로 스크롤 */
+
+/* 표 */
+.admin-users__table { width: 100%; min-width: 640px; border-collapse: collapse; /* 칸 테두리 겹치기 */ }
+.admin-users__table th {
+  padding: 14px 24px;
+  background: #f0ecf7;                                   /* soft 보라 머리줄 */
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+.admin-users__table td {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border);             /* 줄 사이 구분선 */
+  font-size: 15px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.admin-users__table tbody tr:hover { background: #faf8fc; }
+.admin-users__id { font-weight: 600; }
+.admin-users__muted { color: var(--color-text-muted) !important; font-size: 14px !important; }
+
+/* 권한 배지 */
+.admin-users__role { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #f0ecf7; color: var(--color-primary); font-size: 12px; font-weight: 700; }
+.admin-users__role.is-admin { background: #302340; color: #fff; }   /* night 색 */
+
+/* 빈 목록 · 에러 */
+.admin-users__state { padding: 64px 24px !important; text-align: center; color: var(--color-text-muted) !important; }
+
+/* 스켈레톤 막대 */
+.admin-users__skeleton { display: block; width: 70%; height: 16px; border-radius: 6px; background: #ece8f2; animation: admin-pulse 1.2s ease-in-out infinite; }
+@keyframes admin-pulse { 50% { opacity: 0.5; } }
+
+/* 권한 없음 안내 */
+.admin-users__denied { padding: 96px 24px; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); text-align: center; }
+.admin-users__denied-title { margin: 0 0 20px; font-size: 20px; font-weight: 700; color: var(--color-text); }
+.admin-users__denied-link { display: inline-flex; align-items: center; height: 46px; padding: 0 22px; border-radius: var(--radius-button); background: var(--color-primary); color: #fff; font-weight: 700; text-decoration: none; }
+
+@media (max-width: 600px) { .admin-users__title { font-size: 26px; } }

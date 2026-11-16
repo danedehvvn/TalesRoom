@@ -1,0 +1,17 @@
+:root {
+  --color-primary: #6854a3;
+  --color-primary-dark: #4a397b;
+
+  --color-background: #f5f3f8;
+  --color-surface: #ffffff;
+
+  --color-text: #242035;
+  --color-text-muted: #797386;
+  --color-border: #e6e0ef;
+
+  --content-max-width: 1176px;
+  --header-height: 82px;
+
+  --radius-card: 8px;
+  --radius-button: 8px;
+}
